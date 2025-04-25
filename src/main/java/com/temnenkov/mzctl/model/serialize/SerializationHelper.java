@@ -51,7 +51,7 @@ public final class SerializationHelper {
 
     private static class CellKeyDeserializer extends KeyDeserializer {
         @Override
-        public @NotNull Cell deserializeKey(@NotNull String key, DeserializationContext ctxt) throws IOException {
+        public @NotNull Cell deserializeKey(@NotNull String key, DeserializationContext ctxt) {
             List<Integer> coordinates = Arrays.stream(key.split(",")).map(Integer::parseInt).toList();
             return new Cell(coordinates);
         }

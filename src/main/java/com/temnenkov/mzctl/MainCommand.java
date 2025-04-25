@@ -3,7 +3,6 @@ package com.temnenkov.mzctl;
 
 import picocli.CommandLine;
 
-import java.util.Scanner;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;

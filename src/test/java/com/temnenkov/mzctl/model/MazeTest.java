@@ -27,7 +27,7 @@ class MazeTest {
     }
 
     @Test
-    void testMessagePackSerialization() throws Exception {
+    void testMessagePackSerialization() {
         Maze maze = new Maze();
         Cell cellA = new Cell(List.of(0, 0));
         Cell cellB = new Cell(List.of(0, 1));
