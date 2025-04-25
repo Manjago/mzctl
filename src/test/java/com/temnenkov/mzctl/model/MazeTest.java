@@ -1,16 +1,14 @@
 package com.temnenkov.mzctl.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.temnenkov.mzctl.model.serialize.CellKeyDeserializer;
-import com.temnenkov.mzctl.model.serialize.CellKeySerializer;
+import com.temnenkov.mzctl.model.serialize.SerializationHelper;
 import org.junit.jupiter.api.Test;
-import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MazeTest {
 
@@ -35,18 +33,11 @@ class MazeTest {
         Cell cellB = new Cell(List.of(0, 1));
         maze.addPass(cellA, Set.of(cellB));
 
-        ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
-
-        SimpleModule module = new SimpleModule();
-        module.addKeySerializer(Cell.class, new CellKeySerializer());
-        module.addKeyDeserializer(Cell.class, new CellKeyDeserializer());
-        mapper.registerModule(module);
-
-        byte[] bytes = mapper.writeValueAsBytes(maze);
+        byte[] bytes = SerializationHelper.mazeToMessagePack(maze);
         assertNotNull(bytes);
         assertTrue(bytes.length > 0);
 
-        Maze loadedMaze = mapper.readValue(bytes, Maze.class);
+        Maze loadedMaze = SerializationHelper.mazeFromMessagePack(bytes);
         assertNotNull(loadedMaze);
         assertTrue(loadedMaze.canPass(cellA, cellB));
         assertTrue(loadedMaze.canPass(cellB, cellA));
