@@ -6,6 +6,9 @@ import picocli.CommandLine;
 import java.util.Scanner;
 
 @CommandLine.Command(
+        name = "mzctl",
+        description = "Maze CLI utility",
+        mixinStandardHelpOptions = true,
         subcommands = {
                 Generate1Command.class,
                 Generate2Command.class
@@ -29,7 +32,17 @@ public class MainCommand implements Runnable  {
                 System.out.println("Goodbye!");
                 break;
             }
-            cmd.execute(line.split("\\s+"));
+
+            if (!line.isEmpty()) {
+                String[] arguments = line.split("\\s+");
+                try {
+                    cmd.execute(arguments);
+                } catch (CommandLine.UnmatchedArgumentException e) {
+                    System.out.println("Unknown command or invalid arguments. Type '--help' for usage.");
+                } catch (Exception e) {
+                    System.out.println("Error executing command: " + e.getMessage());
+                }
+            }
         }
 
         scanner.close();
@@ -37,12 +50,7 @@ public class MainCommand implements Runnable  {
 
     @Override
     public void run() {
-        if (args == null || args.length == 0) {
-            System.out.println("No command provided.");
-            return;
-        }
-
-        String command = args[0];
-        System.out.println("Unknown command: " + command);
+        // no command branch
+        CommandLine.usage(this, System.out);
     }
 }
