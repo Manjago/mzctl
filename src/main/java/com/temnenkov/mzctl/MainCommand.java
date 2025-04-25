@@ -4,7 +4,10 @@ package com.temnenkov.mzctl;
 import picocli.CommandLine;
 
 import java.util.Scanner;
-
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
+import org.jline.reader.EndOfFileException;
 @CommandLine.Command(
         name = "mzctl",
         description = "Maze CLI utility",
@@ -16,38 +19,38 @@ import java.util.Scanner;
 )
 public class MainCommand implements Runnable  {
 
-    @CommandLine.Parameters(index = "0", description = "Command to execute", arity = "0..*")
-    private String[] args;
-
     public static void main(String[] args) {
-        final Scanner scanner = new Scanner(System.in);
         final CommandLine cmd = new CommandLine(new MainCommand());
 
-        System.out.println("Welcome to Maze REPL. Type '/quit' to exit.");
+        if (args.length > 0) {
+            // execute single command and exit
+            int exitCode = cmd.execute(args);
+            System.exit(exitCode);
+        } else {
+            //start REPL
+            final LineReader reader = LineReaderBuilder.builder().build();
+            System.out.println("Welcome to Maze REPL. Type '/quit' to exit.");
 
-        while (true) {
-            System.out.print("> ");
-            String line = scanner.nextLine().trim();
-            if ("/quit".equalsIgnoreCase(line)) {
-                System.out.println("Goodbye!");
-                break;
-            }
-
-            if (!line.isEmpty()) {
-                String[] arguments = line.split("\\s+");
+            while (true) {
+                String line;
                 try {
-                    cmd.execute(arguments);
-                } catch (CommandLine.UnmatchedArgumentException e) {
-                    System.out.println("Unknown command or invalid arguments. Type '--help' for usage.");
+                    line = reader.readLine("> ").trim();
+                    if ("/quit".equalsIgnoreCase(line)) {
+                        System.out.println("Goodbye!");
+                        break;
+                    }
+                    if (!line.isEmpty()) {
+                        cmd.execute(line.split("\\s+"));
+                    }
+                } catch (UserInterruptException | EndOfFileException e) {
+                    System.out.println("\nGoodbye!");
+                    break;
                 } catch (Exception e) {
-                    System.out.println("Error executing command: " + e.getMessage());
+                    System.out.println("Error: " + e.getMessage());
                 }
             }
         }
-
-        scanner.close();
     }
-
     @Override
     public void run() {
         // no command branch
