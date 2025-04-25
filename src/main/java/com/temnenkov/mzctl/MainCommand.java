@@ -32,7 +32,7 @@ public class MainCommand implements Runnable  {
             System.out.println("Welcome to Maze REPL. Type '/quit' to exit.");
 
             while (true) {
-                String line;
+                String line = null;
                 try {
                     line = reader.readLine("> ").trim();
                     if ("/quit".equalsIgnoreCase(line)) {
@@ -40,9 +40,15 @@ public class MainCommand implements Runnable  {
                         break;
                     }
                     if (!line.isEmpty()) {
-                        cmd.execute(line.split("\\s+"));
+                        CommandLine.ParseResult parseResult = cmd.parseArgs(line.split("\\s+"));
+                        cmd.execute(parseResult.originalArgs().toArray(new String[0]));
                     }
-                } catch (UserInterruptException | EndOfFileException e) {
+                } catch (CommandLine.UnmatchedArgumentException e) {
+                    System.out.println("Unknown command: " + line);
+                    System.out.println("Available commands:");
+                    cmd.getSubcommands().keySet().forEach(c -> System.out.println("  " + c));
+                }
+                catch (UserInterruptException | EndOfFileException e) {
                     System.out.println("\nGoodbye!");
                     break;
                 } catch (Exception e) {
