@@ -2,10 +2,14 @@ package com.temnenkov.mzctl.model;
 
 import com.temnenkov.mzctl.model.serialize.SerializationHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,5 +45,25 @@ class MazeTest {
         assertNotNull(loadedMaze);
         assertTrue(loadedMaze.canPass(cellA, cellB));
         assertTrue(loadedMaze.canPass(cellB, cellA));
+
+        assertEquals(maze, loadedMaze);
+    }
+
+    @Test
+    void testMazeSaveAndLoad(@TempDir Path tempDir) {
+        Maze maze = new Maze();
+        Cell cellA = new Cell(List.of(0, 0));
+        Cell cellB = new Cell(List.of(0, 1));
+        maze.addPass(cellA, Set.of(cellB));
+
+        final Path file = tempDir.resolve("test.mzpack");
+        SerializationHelper.saveMazeToFile(maze, file.toString());
+        Maze loadedMaze = SerializationHelper.loadMazeFromFile(file.toString());
+
+        assertNotNull(loadedMaze);
+        assertTrue(loadedMaze.canPass(cellA, cellB));
+        assertTrue(loadedMaze.canPass(cellB, cellA));
+
+        assertEquals(maze, loadedMaze);
     }
 }

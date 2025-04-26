@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +42,25 @@ public final class SerializationHelper {
         }
     }
 
+    public static void saveMazeToFile(@NotNull Maze maze, @NotNull String filename) {
+        final byte[] bytes = mazeToMessagePack(maze);
+        try {
+            Files.write(Path.of(filename), bytes);
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot save maze to file " + filename, e);
+        }
+    }
+
+    public static @NotNull Maze loadMazeFromFile(@NotNull String filename) {
+        final byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(Path.of(filename));
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot read maze from file " + filename, e);
+        }
+        return mazeFromMessagePack(bytes);
+    }
+
     private static @NotNull ObjectMapper createMessagePackMapper() {
         final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
         final SimpleModule module = new SimpleModule();
@@ -47,24 +68,6 @@ public final class SerializationHelper {
         module.addKeyDeserializer(Cell.class, new CellKeyDeserializer());
         mapper.registerModule(module);
         return mapper;
-    }
-
-    private static class CellKeyDeserializer extends KeyDeserializer {
-        @Override
-        public @NotNull Cell deserializeKey(@NotNull String key, DeserializationContext ctxt) {
-            List<Integer> coordinates = Arrays.stream(key.split(",")).map(Integer::parseInt).toList();
-            return new Cell(coordinates);
-        }
-    }
-
-    private static class CellKeySerializer extends JsonSerializer<Cell> {
-        @Override
-        public void serialize(@NotNull Cell cell,
-                @NotNull JsonGenerator jsonGenerator,
-                SerializerProvider serializerProvider) throws IOException {
-            String key = cell.coordinates().stream().map(Object::toString).collect(Collectors.joining(","));
-            jsonGenerator.writeFieldName(key);
-        }
     }
 
     private static String bytesToString(byte[] bytes, int maxLength) {
@@ -84,6 +87,24 @@ public final class SerializationHelper {
         }
         sb.append("]");
         return sb.toString();
+    }
+
+    private static class CellKeyDeserializer extends KeyDeserializer {
+        @Override
+        public @NotNull Cell deserializeKey(@NotNull String key, DeserializationContext ctxt) {
+            List<Integer> coordinates = Arrays.stream(key.split(",")).map(Integer::parseInt).toList();
+            return new Cell(coordinates);
+        }
+    }
+
+    private static class CellKeySerializer extends JsonSerializer<Cell> {
+        @Override
+        public void serialize(@NotNull Cell cell,
+                @NotNull JsonGenerator jsonGenerator,
+                SerializerProvider serializerProvider) throws IOException {
+            String key = cell.coordinates().stream().map(Object::toString).collect(Collectors.joining(","));
+            jsonGenerator.writeFieldName(key);
+        }
     }
 }
 

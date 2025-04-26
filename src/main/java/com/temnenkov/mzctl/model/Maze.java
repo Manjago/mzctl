@@ -37,4 +37,23 @@ public class Maze {
     public boolean canPass(Cell from, Cell to) {
         return passes.getOrDefault(from, Set.of()).contains(to);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Maze maze = (Maze) o;
+        return passes.equals(maze.passes);
+    }
+
+    @Override
+    public int hashCode() {
+        return passes.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Maze{" + "passes=" + passes + '}';
+    }
 }
