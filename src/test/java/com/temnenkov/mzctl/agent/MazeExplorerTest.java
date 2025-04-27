@@ -47,10 +47,78 @@ class MazeExplorerTest {
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
 
         assertFalse(mazeExplorer.isConnected());
-        for(int i = 0; i < 100; ++i) {
-            for(int j = 0; j < 100; ++j) {
+        for (int i = 0; i < 100; ++i) {
+            for (int j = 0; j < 100; ++j) {
                 assertFalse(mazeExplorer.isConnected(Cell.of(i, j)));
             }
         }
+    }
+
+    /*
+    (0,0) — (0,1)
+      |       |
+    (1,0) — (1,1)
+     */
+    @Test
+    void hasLoop() {
+        final Maze maze = Maze.of(2, 2);
+        maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
+        maze.addPass(Cell.of(1, 1), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
+
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        assertFalse(mazeExplorer.isAcyclic());
+        assertTrue(mazeExplorer.isConnected());
+        assertFalse(mazeExplorer.isPerfect());
+    }
+
+    /*
+    (0,0) — (0,1)
+    |
+    (1,0)   (1,1)
+    */
+    @Test
+    void noLoop() {
+        final Maze maze = Maze.of(2, 2);
+        maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
+
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        assertTrue(mazeExplorer.isAcyclic());
+        assertFalse(mazeExplorer.isConnected());
+        assertFalse(mazeExplorer.isPerfect());
+    }
+
+    /*
+    (0,0) — (0,1)
+    |
+    (1,0) - (1,1)
+    */
+    @Test
+    void perfectNoLoop() {
+        final Maze maze = Maze.of(2, 2);
+        maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
+        maze.addPass(Cell.of(1, 0), Set.of(Cell.of(1, 1)));
+
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        assertTrue(mazeExplorer.isAcyclic());
+        assertTrue(mazeExplorer.isConnected());
+        assertTrue(mazeExplorer.isPerfect());
+    }
+
+    /*
+    (0,0) — (0,1)
+
+    (1,0) — (1,1)
+     */
+    @Test
+    void disconnectedMaze() {
+        Maze maze = Maze.of(2, 2);
+        // два отдельных прохода, не связанных друг с другом
+        maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1)));
+        maze.addPass(Cell.of(1, 0), Set.of(Cell.of(1, 1)));
+
+        MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        assertFalse(mazeExplorer.isConnected());
+        assertTrue(mazeExplorer.isAcyclic()); // нет циклов в каждой отдельной компоненте
+        assertFalse(mazeExplorer.isPerfect()); // не connected, значит не perfect
     }
 }
