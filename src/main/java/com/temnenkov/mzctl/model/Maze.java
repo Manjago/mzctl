@@ -14,8 +14,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Многомерный лабиринт
@@ -24,6 +27,7 @@ import java.util.stream.Stream;
 public class Maze implements Iterable<Cell> {
     private final @NotNull MazeDim mazeDimension;
     private final @NotNull Map<Cell, Set<Cell>> passes;
+    private final int totalCellCount;
 
     /**
      * Конструктор для сериализации jackson
@@ -37,6 +41,7 @@ public class Maze implements Iterable<Cell> {
         this.mazeDimension = mazeDimension;
         this.passes = new HashMap<>();
         passes.forEach((key, value) -> this.passes.put(key, new HashSet<>(value)));
+        this.totalCellCount = calculateTotalCellCount();
     }
 
     /**
@@ -47,6 +52,7 @@ public class Maze implements Iterable<Cell> {
     public Maze(@NotNull MazeDim mazeDimension) {
         this.mazeDimension = mazeDimension;
         this.passes = new HashMap<>();
+        this.totalCellCount = calculateTotalCellCount();
     }
 
     /**
@@ -114,9 +120,13 @@ public class Maze implements Iterable<Cell> {
      * @return число - общее количество комнат в лабиринте
      */
     public int totalCellCount() {
+        return totalCellCount;
+    }
+
+    private int calculateTotalCellCount() {
         int result = 1;
-        for(int i= 0; i<mazeDimension.size() ; i++) {
-             result *= mazeDimension.dimSize(i);
+        for (int i = 0; i < mazeDimension.size(); i++) {
+            result *= mazeDimension.dimSize(i);
         }
         return result;
     }
@@ -162,6 +172,17 @@ public class Maze implements Iterable<Cell> {
             coords.add(random.nextInt(mazeDimension.dimSize(i)));
         }
         return new Cell(coords);
+    }
+
+    public Stream<Cell> stream() {
+        return StreamSupport.stream(
+                Spliterators.spliterator(
+                        iterator(),
+                        totalCellCount(),
+                        Spliterator.ORDERED | Spliterator.IMMUTABLE | Spliterator.SIZED | Spliterator.SUBSIZED
+                ),
+                false
+        );
     }
 
     @Override

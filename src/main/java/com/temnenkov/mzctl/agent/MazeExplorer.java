@@ -79,11 +79,6 @@ public class MazeExplorer {
         return isConnected() && isAcyclic();
     }
 
-    // Проверка, что количество проходов равно N-1 (для perfect maze)
-    public boolean hasCorrectNumberOfPasses() {
-        return false;
-    }
-
 // Дополнительные проверки (опционально)
 
     private void dfs(@NotNull Cell current, @NotNull Set<Cell> visited) {

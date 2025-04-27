@@ -87,7 +87,7 @@ class MazeTest {
 
     @Test
     void testLoop() {
-        Maze maze = Maze.of(2, 3);
+        final Maze maze = Maze.of(2, 3);
 
         final List<Cell> expected = List.of(
                 Cell.of(0, 0),
@@ -98,18 +98,12 @@ class MazeTest {
                 Cell.of(1, 2)
                 );
 
-        final List<Cell> actual = new ArrayList<>();
-
-        for (Cell cell : maze) {
-            actual.add(cell);
-        }
-
-        assertEquals(expected, actual);
+        assertMazeCells(maze, expected);
     }
 
     @Test
     void testLoopThreeDimensions() {
-        Maze maze = Maze.of(2, 2, 2);
+        final Maze maze = Maze.of(2, 2, 2);
 
         final List<Cell> expected = List.of(
                 Cell.of(0, 0, 0),
@@ -122,12 +116,19 @@ class MazeTest {
                 Cell.of(1, 1, 1)
         );
 
-        final List<Cell> actual = new ArrayList<>();
+        assertMazeCells(maze, expected);
+    }
 
+    private void assertMazeCells(Maze maze, List<Cell> expected) {
+        // проверка итератора
+        List<Cell> fromIterator = new ArrayList<>();
         for (Cell cell : maze) {
-            actual.add(cell);
+            fromIterator.add(cell);
         }
+        assertEquals(expected, fromIterator);
 
-        assertEquals(expected, actual);
+        // проверка Stream
+        List<Cell> fromStream = maze.stream().toList();
+        assertEquals(expected, fromStream);
     }
 }
