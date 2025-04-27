@@ -5,8 +5,9 @@ import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -61,16 +62,24 @@ public class RecBack {
         return maze;
     }
 
-    private void generateMazeFrom(@NotNull Cell currentCell) {
-        visited.add(currentCell);
+    private void generateMazeFrom(@NotNull Cell startCell) {
+        final Deque<Cell> stack = new ArrayDeque<>();
+        visited.add(startCell);
+        stack.push(startCell);
 
-        final List<Cell> unvisitedNeighbors = new ArrayList<>(getUnvisitedNeighbors(currentCell));
-        Collections.shuffle(unvisitedNeighbors, random);
+        while (!stack.isEmpty()) {
+            final Cell currentCell = stack.peek();
 
-        for (Cell neighbor : unvisitedNeighbors) {
-            if (!visited.contains(neighbor)) {
+            final List<Cell> unvisitedNeighbors = new ArrayList<>(getUnvisitedNeighbors(currentCell));
+
+            if (!unvisitedNeighbors.isEmpty()) {
+                // сразу берем случайный элемент
+                final Cell neighbor = unvisitedNeighbors.get(random.nextInt(unvisitedNeighbors.size()));
                 maze.addPass(currentCell, Set.of(neighbor));
-                generateMazeFrom(neighbor);
+                visited.add(neighbor);
+                stack.push(neighbor);
+            } else {
+                stack.pop();
             }
         }
     }
