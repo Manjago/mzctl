@@ -4,7 +4,6 @@ import com.temnenkov.mzctl.model.serialize.SerializationHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +17,7 @@ class MazeTest {
 
     @Test
     void testAddPassAndCanPass() {
-        Maze maze = new Maze();
+        Maze maze = new Maze(new MazeDim(List.of(3, 3)));
         Cell cellA = new Cell(List.of(0, 0));
         Cell cellB = new Cell(List.of(0, 1));
         Cell cellC = new Cell(List.of(1, 1));
@@ -32,7 +31,7 @@ class MazeTest {
 
     @Test
     void testMessagePackSerialization() {
-        Maze maze = new Maze();
+        Maze maze = new Maze(new MazeDim(List.of(3, 3)));
         Cell cellA = new Cell(List.of(0, 0));
         Cell cellB = new Cell(List.of(0, 1));
         maze.addPass(cellA, Set.of(cellB));
@@ -51,7 +50,7 @@ class MazeTest {
 
     @Test
     void testMazeSaveAndLoad(@TempDir Path tempDir) {
-        Maze maze = new Maze();
+        Maze maze = new Maze(new MazeDim(List.of(3, 3)));;
         Cell cellA = new Cell(List.of(0, 0));
         Cell cellB = new Cell(List.of(0, 1));
         maze.addPass(cellA, Set.of(cellB));
