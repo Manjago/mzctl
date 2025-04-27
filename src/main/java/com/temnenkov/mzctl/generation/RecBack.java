@@ -16,11 +16,9 @@ public class RecBack {
 
     private final @NotNull Random random = new SecureRandom();
     private final @NotNull Set<Cell> visited = new HashSet<>();
-    private final @NotNull MazeDim mazeDim;
     private final @NotNull Maze maze;
 
     public RecBack(@NotNull MazeDim mazeDim) {
-        this.mazeDim = mazeDim;
         maze = new Maze(mazeDim);
     }
 

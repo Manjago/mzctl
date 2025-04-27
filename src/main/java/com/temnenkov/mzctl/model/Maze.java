@@ -33,7 +33,8 @@ public class Maze {
     public Maze(@JsonProperty("mazeDimension") @NotNull MazeDim mazeDimension,
             @JsonProperty("passes") @NotNull Map<Cell, Set<Cell>> passes) {
         this.mazeDimension = mazeDimension;
-        this.passes = passes;
+        this.passes = new HashMap<>();
+        passes.forEach((key, value) -> this.passes.put(key, new HashSet<>(value)));
     }
 
     /**
@@ -47,16 +48,31 @@ public class Maze {
     }
 
     /**
+     * Получить размерность лабиринта
+     *
+     * @return размерность лабиринта
+     */
+    public @NotNull MazeDim getMazeDimension() {
+        return mazeDimension;
+    }
+
+    /**
      * Добавить двусторонний проход из комнаты в комнаты
      *
      * @param cell      комната откуда
      * @param neighbors комнаты куда
      */
     public void addPass(Cell cell, Set<Cell> neighbors) {
-        passes.computeIfAbsent(cell, k -> new HashSet<>()).addAll(neighbors);
+        validateCell(cell);
+        neighbors.forEach(this::validateCell);
 
-        for (Cell neighbor : neighbors) {
-            passes.computeIfAbsent(neighbor, k -> new HashSet<>()).add(cell);
+        passes.computeIfAbsent(cell, k -> new HashSet<>()).addAll(neighbors);
+        neighbors.forEach(neighbor -> passes.computeIfAbsent(neighbor, k -> new HashSet<>()).add(cell));
+    }
+
+    private void validateCell(@NotNull Cell cell) {
+        if (cell.coordinates().size() != mazeDimension.size()) {
+            throw new IllegalArgumentException("Cell dimension mismatch");
         }
     }
 
@@ -67,7 +83,7 @@ public class Maze {
      * @return набор комнат, в которые можно попасть
      */
     public Set<Cell> getAvailableNeighbors(Cell cell) {
-        return passes.getOrDefault(cell, Set.of());
+        return Set.copyOf(passes.getOrDefault(cell, Set.of()));
     }
 
     /**
@@ -105,10 +121,16 @@ public class Maze {
     }
 
     /**
-     * Получить случайную комнату в пределах лабиринта
+     * Получить случайную комнату в пределах лабиринта.
      *
-     * @param random интерфейс Random для случайности
-     * @return случайная комната
+     * <p>Ответственность за корректную работу генератора случайных чисел (например,
+     * потокобезопасность, криптографическая стойкость и т.д.) лежит на вызывающей стороне.
+     * Если метод вызывается из нескольких потоков, рекомендуется использовать
+     * {@link java.util.concurrent.ThreadLocalRandom#current()} или другой потокобезопасный
+     * генератор.</p>
+     *
+     * @param random интерфейс Random для генерации случайных чисел
+     * @return случайная комната в пределах лабиринта
      */
     public Cell getRandomCell(@NotNull Random random) {
         final List<Integer> coords = new ArrayList<>();
