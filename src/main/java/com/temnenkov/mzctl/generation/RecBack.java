@@ -5,6 +5,7 @@ import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -63,7 +64,7 @@ public class RecBack {
     private void generateMazeFrom(@NotNull Cell currentCell) {
         visited.add(currentCell);
 
-        final List<Cell> unvisitedNeighbors = getUnvisitedNeighbors(currentCell);
+        final List<Cell> unvisitedNeighbors = new ArrayList<>(getUnvisitedNeighbors(currentCell));
         Collections.shuffle(unvisitedNeighbors, random);
 
         for (Cell neighbor : unvisitedNeighbors) {
