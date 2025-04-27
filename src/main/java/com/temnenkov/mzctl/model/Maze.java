@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,6 +73,18 @@ public class Maze implements Iterable<Cell> {
      */
     public @NotNull MazeDim getMazeDimension() {
         return mazeDimension;
+    }
+
+    @Transient
+    public MazeLinker getLinker() {
+        return new MazeLinker();
+    }
+
+    public class MazeLinker {
+        public MazeLinker link(@NotNull Cell from, @NotNull Cell to) {
+            addPass(from ,Set.of(to));
+            return this;
+        }
     }
 
     /**

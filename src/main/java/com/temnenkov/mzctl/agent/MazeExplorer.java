@@ -79,7 +79,11 @@ public class MazeExplorer {
         return isConnected() && isAcyclic();
     }
 
-// Дополнительные проверки (опционально)
+    public long deadEndCount() {
+        return maze.stream()
+                .filter(c -> maze.getAvailableNeighbors(c).size() == 1)
+                .count();
+    }
 
     private void dfs(@NotNull Cell current, @NotNull Set<Cell> visited) {
         visited.add(current);
