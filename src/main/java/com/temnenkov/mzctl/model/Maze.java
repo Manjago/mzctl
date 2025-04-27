@@ -8,8 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -19,7 +21,7 @@ import java.util.stream.Stream;
  * Многомерный лабиринт
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class Maze {
+public class Maze implements Iterable<Cell> {
     private final @NotNull MazeDim mazeDimension;
     private final @NotNull Map<Cell, Set<Cell>> passes;
 
@@ -161,6 +163,55 @@ public class Maze {
         }
         return new Cell(coords);
     }
+
+    @Override
+    public @NotNull Iterator<Cell> iterator() {
+        return new MazeCellIterator();
+    }
+
+    private class MazeCellIterator implements Iterator<Cell> {
+
+        private boolean hasNext = true;
+        private final int[] currentCoords;
+
+        private MazeCellIterator() {
+            this.currentCoords = new int[mazeDimension.size()];
+        }
+
+        @Override
+        public boolean hasNext() {
+            return hasNext;
+        }
+
+        @Override
+        public @NotNull Cell next() {
+            if (!hasNext) {
+                throw new NoSuchElementException();
+            }
+
+            final Cell currentCell = Cell.of(currentCoords);
+
+            advanceCoordinates();
+
+            return currentCell;
+        }
+
+        private void advanceCoordinates() {
+            for (int dim = mazeDimension.size() - 1; dim >= 0; dim--) {
+                currentCoords[dim]++;
+                if (currentCoords[dim] < mazeDimension.dimSize(dim)) {
+                    // нет переполнения, можно остановиться
+                    return;
+                } else {
+                    // переполнение, сбрасываем текущую координату и переходим на следующий разряд
+                    currentCoords[dim] = 0;
+                }
+            }
+            // если мы дошли сюда, значит, прошли все координаты
+            hasNext = false;
+        }
+    }
+
 
     @Override
     public boolean equals(Object o) {

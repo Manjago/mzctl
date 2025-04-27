@@ -20,10 +20,11 @@ class MazeExplorerTest {
 
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
 
-        assertFalse(mazeExplorer.isConnected());
-        assertFalse(mazeExplorer.isConnected(Cell.of(0, 0)));
-        assertFalse(mazeExplorer.isConnected(Cell.of(99, 99)));
-        assertFalse(mazeExplorer.isConnected(Cell.of(50, 50)));        assertTrue(mazeExplorer.isConnected());
+        assertTrue(mazeExplorer.isConnected());
+        assertTrue(mazeExplorer.isConnected(Cell.of(0, 0)));
+        assertTrue(mazeExplorer.isConnected(Cell.of(1, 0)));
+        assertTrue(mazeExplorer.isConnected(Cell.of(0, 1)));
+        assertTrue(mazeExplorer.isConnected(Cell.of(1, 1)));
     }
 
     @Test

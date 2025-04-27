@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -82,5 +83,51 @@ class MazeTest {
     void totalCellCountTwoDimensions() {
         final Maze maze = Maze.of(3, 3);
         assertEquals(9, maze.totalCellCount());
+    }
+
+    @Test
+    void testLoop() {
+        Maze maze = Maze.of(2, 3);
+
+        final List<Cell> expected = List.of(
+                Cell.of(0, 0),
+                Cell.of(0, 1),
+                Cell.of(0, 2),
+                Cell.of(1, 0),
+                Cell.of(1, 1),
+                Cell.of(1, 2)
+                );
+
+        final List<Cell> actual = new ArrayList<>();
+
+        for (Cell cell : maze) {
+            actual.add(cell);
+        }
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testLoopThreeDimensions() {
+        Maze maze = Maze.of(2, 2, 2);
+
+        final List<Cell> expected = List.of(
+                Cell.of(0, 0, 0),
+                Cell.of(0, 0, 1),
+                Cell.of(0, 1, 0),
+                Cell.of(0, 1, 1),
+                Cell.of(1, 0, 0),
+                Cell.of(1, 0, 1),
+                Cell.of(1, 1, 0),
+                Cell.of(1, 1, 1)
+        );
+
+        final List<Cell> actual = new ArrayList<>();
+
+        for (Cell cell : maze) {
+            actual.add(cell);
+        }
+
+        assertEquals(expected, actual);
     }
 }
