@@ -65,4 +65,22 @@ class MazeTest {
 
         assertEquals(maze, loadedMaze);
     }
+
+    @Test
+    void totalCellCount() {
+        final Maze maze = Maze.of(1, 2, 3, 4);
+        assertEquals(24, maze.totalCellCount());
+    }
+
+    @Test
+    void totalCellCountOneDimension() {
+        final Maze maze = Maze.of(5);
+        assertEquals(5, maze.totalCellCount());
+    }
+
+    @Test
+    void totalCellCountTwoDimensions() {
+        final Maze maze = Maze.of(3, 3);
+        assertEquals(9, maze.totalCellCount());
+    }
 }

@@ -48,6 +48,16 @@ public class Maze {
     }
 
     /**
+     * Удобный метод для задания по явному перечислению dimensions
+     *
+     * @param dimensions измерения
+     * @return проинициализированный массив без проходов
+     */
+    public static Maze of(int... dimensions) {
+        return new Maze(MazeDim.of(dimensions));
+    }
+
+    /**
      * Получить размерность лабиринта
      *
      * @return размерность лабиринта
@@ -95,6 +105,18 @@ public class Maze {
     public Stream<Cell> getAllNeighbors(Cell cell) {
         return IntStream.range(0, mazeDimension.size()).boxed().flatMap(i -> Stream.of(cell.minusOne(i),
                 cell.plusOne(i)).filter(pretender -> isValid(pretender, i)));
+    }
+
+    /**
+     * Общее количество комнат в лабиринте
+     * @return число - общее количество комнат в лабиринте
+     */
+    public int totalCellCount() {
+        int result = 1;
+        for(int i= 0; i<mazeDimension.size() ; i++) {
+             result *= mazeDimension.dimSize(i);
+        }
+        return result;
     }
 
     /**
