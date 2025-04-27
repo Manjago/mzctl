@@ -1,4 +1,4 @@
-package com.temnenkov.mzctl.util;
+package com.temnenkov.mzctl.visualization;
 
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
