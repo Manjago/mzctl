@@ -168,6 +168,7 @@ class MazeExplorerTest {
         assertEquals(0L, mazeExplorer.deadEndCount());
 
         assertEquals(4, mazeExplorer.diameter());
+        assertEquals(2.0, mazeExplorer.averagePathLength(), 1e-4);
     }
 
     /*
@@ -199,6 +200,7 @@ class MazeExplorerTest {
         assertEquals(3L, mazeExplorer.deadEndCount());
 
         assertEquals(6, mazeExplorer.diameter());
+        assertEquals(2.8333, mazeExplorer.averagePathLength(), 1e-4);
     }
 
     /*
@@ -228,6 +230,16 @@ class MazeExplorerTest {
             assertTrue(mazeExplorer.isPerfect());
             assertEquals(5L, mazeExplorer.deadEndCount());
             assertEquals(18, mazeExplorer.diameter());
+            assertEquals(6.8867, mazeExplorer.averagePathLength(), 1e-4);
         }
+    }
+
+    @Test
+    void testAveragePathLengthSingleCell() {
+        Maze maze = Maze.of(1); // лабиринт с одной комнатой
+        MazeExplorer explorer = new MazeExplorer(maze, testRandom);
+        double avgPathLength = explorer.averagePathLength();
+
+        assertEquals(0.0, avgPathLength);
     }
 }

@@ -59,4 +59,8 @@ public class MazeExplorer {
     public int diameter() {
         return new DiameterAnalyzer(maze, random).diameter();
     }
+
+    public double averagePathLength() {
+        return new AveragePathLengthAnalyzer(maze).averagePathLength();
+    }
 }
