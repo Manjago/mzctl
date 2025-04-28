@@ -67,4 +67,8 @@ public class MazeExplorer {
     public long intersectionCount() {
         return new IntersectionAnalyzer(maze).intersectionCount();
     }
+
+    public double randomnessScore() {
+        return new RandomnessAnalyzer(maze).randomnessScore();
+    }
 }
