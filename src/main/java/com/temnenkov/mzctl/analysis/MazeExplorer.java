@@ -71,4 +71,9 @@ public class MazeExplorer {
     public double randomnessScore() {
         return new RandomnessAnalyzer(maze).randomnessScore();
     }
+
+    public double balanceScore() {
+        return new BalanceAnalyzer(maze).balanceScore();
+    }
+
 }

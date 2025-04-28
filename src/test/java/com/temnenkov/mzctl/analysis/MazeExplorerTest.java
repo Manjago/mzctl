@@ -171,6 +171,7 @@ class MazeExplorerTest {
         assertEquals(2.0, mazeExplorer.averagePathLength(), 1e-4);
         assertEquals(5L, mazeExplorer.intersectionCount());
         assertEquals(0.5555, mazeExplorer.randomnessScore(), 1e-4);
+        assertEquals(0.0, mazeExplorer.balanceScore(), 1e-4);
     }
 
     /*
@@ -205,6 +206,7 @@ class MazeExplorerTest {
         assertEquals(2.8333, mazeExplorer.averagePathLength(), 1e-4);
         assertEquals(1L, mazeExplorer.intersectionCount());
         assertEquals(0.4444, mazeExplorer.randomnessScore(), 1e-4);
+        assertEquals(0.5, mazeExplorer.balanceScore(), 1e-4);
     }
 
     /*
@@ -237,6 +239,51 @@ class MazeExplorerTest {
             assertEquals(6.8867, mazeExplorer.averagePathLength(), 1e-4);
             assertEquals(3L, mazeExplorer.intersectionCount());
             assertEquals(0.32, mazeExplorer.randomnessScore(), 1e-4);
+            assertEquals(0.75, mazeExplorer.balanceScore(), 1e-4);
+        }
+    }
+
+    /*
+    +---+---+---+---+---+---+---+---+---+---+
+    |                               |   |   |
+    +   +---+---+---+---+---+   +---+   +   +
+    |           |           |       |   |   |
+    +---+---+   +   +---+   +---+   +   +   +
+    |       |   |   |       |   |       |   |
+    +---+   +   +   +---+   +   +---+---+   +
+    |       |   |       |           |       |
+    +   +---+   +---+   +---+---+   +   +   +
+    |       |       |       |   |   |   |   |
+    +---+   +---+   +   +   +   +   +---+   +
+    |           |   |   |   |   |       |   |
+    +   +---+---+   +---+   +   +---+   +   +
+    |   |           |       |       |   |   |
+    +   +   +---+---+   +---+---+   +   +   +
+    |   |               |           |   |   |
+    +   +---+---+---+---+   +   +---+   +   +
+    |               |       |           |   |
+    +   +---+---+---+   +---+---+---+---+   +
+    |                                       |
+    +---+---+---+---+---+---+---+---+---+---+
+     */
+    @Test
+    void testMaze10to10() throws IOException {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("maze-10-10.mzpack")) {
+            assertNotNull(is, "Resource maze-10-10.mzpack not found");
+            final Maze maze = SerializationHelper.mazeFromMessagePack(is.readAllBytes());
+            assertNotNull(maze);
+
+            final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
+
+            assertTrue(mazeExplorer.isConnected());
+            assertTrue(mazeExplorer.isAcyclic());
+            assertTrue(mazeExplorer.isPerfect());
+            assertEquals(11L, mazeExplorer.deadEndCount());
+            assertEquals(70, mazeExplorer.diameter());
+            assertEquals(25.2804, mazeExplorer.averagePathLength(), 1e-4);
+            assertEquals(9L, mazeExplorer.intersectionCount());
+            assertEquals(0.2, mazeExplorer.randomnessScore(), 1e-4);
+            assertEquals(0.9, mazeExplorer.balanceScore(), 1e-4);
         }
     }
 
@@ -250,6 +297,7 @@ class MazeExplorerTest {
         assertEquals(0.0, mazeExplorer.averagePathLength(), 1e-4);
         assertEquals(0L, mazeExplorer.intersectionCount());
         assertEquals(0.0, mazeExplorer.randomnessScore(), 1e-4);
+        assertEquals(1.0, mazeExplorer.balanceScore(), 1e-4);
     }
 
 }
