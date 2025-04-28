@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RecBackTest {
 
     @Test
-    void generateMazeAndShowAsAscii() throws IOException {
+    void generateMazeAndShowAsAscii() {
         //given
         final Random random = new SecureRandom();
         final RecBack recBack = new RecBack(MazeDim.of(4, 4), random);
@@ -36,7 +36,7 @@ class RecBackTest {
     void generateMazeAndShowAsImage() throws IOException {
         //given
         final Random random = new SecureRandom();
-        final RecBack recBack = new RecBack(MazeDim.of(50, 50), random);
+        final RecBack recBack = new RecBack(MazeDim.of(100, 100), random);
         //when
         final Maze maze = recBack.generateMaze();
         //then
