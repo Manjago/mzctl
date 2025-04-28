@@ -20,7 +20,7 @@ class RecBackTest {
     void generateMazeAndShowAsAscii() {
         //given
         final Random random = new SecureRandom();
-        final RecBack recBack = new RecBack(MazeDim.of(4, 4), random);
+        final RecBack recBack = new RecBack(MazeDim.of(5, 5), random);
         //when
         final Maze maze = recBack.generateMaze();
         //then

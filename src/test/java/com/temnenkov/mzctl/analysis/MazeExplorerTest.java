@@ -2,16 +2,28 @@ package com.temnenkov.mzctl.analysis;
 
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
+import com.temnenkov.mzctl.model.serialize.SerializationHelper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MazeExplorerTest {
+
+    private Random testRandom;
+
+    @BeforeEach
+    void setUp() {
+        testRandom = new Random(1L);
+    }
 
     @Test
     void isConnected() {
@@ -19,7 +31,7 @@ class MazeExplorerTest {
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(1, 0), Cell.of(0, 1)));
         maze.addPass(Cell.of(0, 1), Set.of(Cell.of(1, 1)));
 
-        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
 
         assertTrue(mazeExplorer.isConnected());
         assertTrue(mazeExplorer.isConnected(Cell.of(0, 0)));
@@ -33,7 +45,7 @@ class MazeExplorerTest {
         final Maze maze = Maze.of(2, 2);
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(1, 0), Cell.of(0, 1)));
 
-        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
 
         assertFalse(mazeExplorer.isConnected());
         assertFalse(mazeExplorer.isConnected(Cell.of(0, 0)));
@@ -45,7 +57,7 @@ class MazeExplorerTest {
     @Test
     void withoutPassesNotConnected() {
         final Maze maze = Maze.of(100, 100);
-        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
 
         assertFalse(mazeExplorer.isConnected());
         for (int i = 0; i < 100; ++i) {
@@ -66,7 +78,7 @@ class MazeExplorerTest {
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
         maze.addPass(Cell.of(1, 1), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
 
-        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
         assertFalse(mazeExplorer.isAcyclic());
         assertTrue(mazeExplorer.isConnected());
         assertFalse(mazeExplorer.isPerfect());
@@ -82,7 +94,7 @@ class MazeExplorerTest {
         final Maze maze = Maze.of(2, 2);
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
 
-        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
         assertTrue(mazeExplorer.isAcyclic());
         assertFalse(mazeExplorer.isConnected());
         assertFalse(mazeExplorer.isPerfect());
@@ -99,7 +111,7 @@ class MazeExplorerTest {
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
         maze.addPass(Cell.of(1, 0), Set.of(Cell.of(1, 1)));
 
-        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
         assertTrue(mazeExplorer.isAcyclic());
         assertTrue(mazeExplorer.isConnected());
         assertTrue(mazeExplorer.isPerfect());
@@ -117,7 +129,7 @@ class MazeExplorerTest {
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1)));
         maze.addPass(Cell.of(1, 0), Set.of(Cell.of(1, 1)));
 
-        MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
         assertFalse(mazeExplorer.isConnected());
         assertTrue(mazeExplorer.isAcyclic()); // нет циклов в каждой отдельной компоненте
         assertFalse(mazeExplorer.isPerfect()); // не connected, значит не perfect
@@ -148,12 +160,14 @@ class MazeExplorerTest {
                 .link(Cell.of(1, 2), Cell.of(2, 2))
         ;
 
-        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
 
         assertTrue(mazeExplorer.isConnected());
         assertFalse(mazeExplorer.isAcyclic());
         assertFalse(mazeExplorer.isPerfect());
         assertEquals(0L, mazeExplorer.deadEndCount());
+
+        assertEquals(4, mazeExplorer.diameter());
     }
 
     /*
@@ -177,12 +191,43 @@ class MazeExplorerTest {
                 .link(Cell.of(1, 0), Cell.of(2, 0))
         ;
 
-        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new Random(1L));
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
 
         assertTrue(mazeExplorer.isConnected());
         assertTrue(mazeExplorer.isAcyclic());
         assertTrue(mazeExplorer.isPerfect());
         assertEquals(3L, mazeExplorer.deadEndCount());
+
+        assertEquals(6, mazeExplorer.diameter());
     }
 
+    /*
+    +---+---+---+---+---+
+    |           |       |
+    +---+---+   +   +   +
+    |       |       |   |
+    +   +---+   +---+   +
+    |   |       |       |
+    +   +---+---+   +   +
+    |       |       |   |
+    +---+   +   +---+   +
+    |           |       |
+    +---+---+---+---+---+
+     */
+    @Test
+    void testMaze5to5() throws IOException {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("maze-5-5.mzpack")) {
+            assertNotNull(is, "Resource maze-5-5.mzpack not found");
+            final Maze maze = SerializationHelper.mazeFromMessagePack(is.readAllBytes());
+            assertNotNull(maze);
+
+            final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
+
+            assertTrue(mazeExplorer.isConnected());
+            assertTrue(mazeExplorer.isAcyclic());
+            assertTrue(mazeExplorer.isPerfect());
+            assertEquals(5L, mazeExplorer.deadEndCount());
+            assertEquals(18, mazeExplorer.diameter());
+        }
+    }
 }

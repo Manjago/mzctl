@@ -55,4 +55,8 @@ public class MazeExplorer {
     public long deadEndCount() {
         return new DeadEndAnalyzer(maze).deadEndCount();
     }
+
+    public int diameter() {
+        return new DiameterAnalyzer(maze, random).diameter();
+    }
 }
