@@ -1,4 +1,4 @@
-package com.temnenkov.mzctl.agent;
+package com.temnenkov.mzctl.analysis;
 
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;

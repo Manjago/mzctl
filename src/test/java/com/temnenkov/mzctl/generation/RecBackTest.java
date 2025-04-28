@@ -1,6 +1,6 @@
 package com.temnenkov.mzctl.generation;
 
-import com.temnenkov.mzctl.agent.MazeExplorer;
+import com.temnenkov.mzctl.analysis.MazeExplorer;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
 import com.temnenkov.mzctl.visualization.MazeAsciiVisualizer;
