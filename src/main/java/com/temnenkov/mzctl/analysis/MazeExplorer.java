@@ -76,4 +76,7 @@ public class MazeExplorer {
         return new BalanceAnalyzer(maze).balanceScore();
     }
 
+    public double symmetryScore() {
+        return new SymmetryAnalyzer(maze).symmetryScore();
+    }
 }

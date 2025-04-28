@@ -14,6 +14,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MazeExplorerTest {
@@ -172,6 +173,7 @@ class MazeExplorerTest {
         assertEquals(5L, mazeExplorer.intersectionCount());
         assertEquals(0.5555, mazeExplorer.randomnessScore(), 1e-4);
         assertEquals(0.0, mazeExplorer.balanceScore(), 1e-4);
+        assertEquals(1.0, mazeExplorer.symmetryScore(), 1e-4);
     }
 
     /*
@@ -207,6 +209,7 @@ class MazeExplorerTest {
         assertEquals(1L, mazeExplorer.intersectionCount());
         assertEquals(0.4444, mazeExplorer.randomnessScore(), 1e-4);
         assertEquals(0.5, mazeExplorer.balanceScore(), 1e-4);
+        assertEquals(0.75, mazeExplorer.symmetryScore(), 1e-4);
     }
 
     /*
@@ -240,6 +243,7 @@ class MazeExplorerTest {
             assertEquals(3L, mazeExplorer.intersectionCount());
             assertEquals(0.32, mazeExplorer.randomnessScore(), 1e-4);
             assertEquals(0.75, mazeExplorer.balanceScore(), 1e-4);
+            assertEquals(0.4583, mazeExplorer.symmetryScore(), 1e-4);
         }
     }
 
@@ -284,6 +288,7 @@ class MazeExplorerTest {
             assertEquals(9L, mazeExplorer.intersectionCount());
             assertEquals(0.2, mazeExplorer.randomnessScore(), 1e-4);
             assertEquals(0.9, mazeExplorer.balanceScore(), 1e-4);
+            assertEquals(0.6162, mazeExplorer.symmetryScore(), 1e-4);
         }
     }
 
@@ -298,6 +303,8 @@ class MazeExplorerTest {
         assertEquals(0L, mazeExplorer.intersectionCount());
         assertEquals(0.0, mazeExplorer.randomnessScore(), 1e-4);
         assertEquals(1.0, mazeExplorer.balanceScore(), 1e-4);
+        final IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, mazeExplorer::symmetryScore);
+        assertTrue(thrown.getMessage().contains("Only 2-dimensional mazes supported"));
     }
 
 }
