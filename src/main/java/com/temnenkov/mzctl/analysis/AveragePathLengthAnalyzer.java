@@ -15,7 +15,7 @@ public class AveragePathLengthAnalyzer {
     public AveragePathLengthAnalyzer(Maze maze) {
         this.maze = maze;
     }
-    AveragePathLengthAnalyzer
+
     public double averagePathLength() {
         final int cellCount = maze.totalCellCount();
 

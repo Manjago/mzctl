@@ -63,4 +63,8 @@ public class MazeExplorer {
     public double averagePathLength() {
         return new AveragePathLengthAnalyzer(maze).averagePathLength();
     }
+
+    public long intersectionCount() {
+        return new IntersectionAnalyzer(maze).intersectionCount();
+    }
 }
