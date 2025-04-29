@@ -20,9 +20,9 @@ class RecBackTest {
     void generateMazeAndShowAsAscii() {
         //given
         final Random random = new SecureRandom();
-        final RecBack recBack = new RecBack(MazeDim.of(5, 5), random);
+        final RecursiveBacktracker recursiveBacktracker = new RecursiveBacktracker(MazeDim.of(5, 5), random);
         //when
-        final Maze maze = recBack.generateMaze();
+        final Maze maze = recursiveBacktracker.generateMaze();
         //then
         assertNotNull(maze);
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
@@ -36,9 +36,9 @@ class RecBackTest {
     void generateMazeAndShowAsImage() throws IOException {
         //given
         final Random random = new SecureRandom();
-        final RecBack recBack = new RecBack(MazeDim.of(100, 100), random);
+        final RecursiveBacktracker recursiveBacktracker = new RecursiveBacktracker(MazeDim.of(100, 100), random);
         //when
-        final Maze maze = recBack.generateMaze();
+        final Maze maze = recursiveBacktracker.generateMaze();
         //then
         assertNotNull(maze);
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);

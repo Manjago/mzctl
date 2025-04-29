@@ -22,7 +22,7 @@ import java.util.Set;
  * <p>Выбор генератора случайных чисел (например, {@link java.util.Random}, {@link java.security.SecureRandom},
  * {@link java.util.concurrent.ThreadLocalRandom}) полностью лежит на вызывающей стороне.</p>
  */
-public class RecBack {
+public class RecursiveBacktracker {
 
     private final @NotNull Random random;
     private final @NotNull Set<Cell> visited = new HashSet<>();
@@ -36,7 +36,7 @@ public class RecBack {
      * @param random  генератор случайных чисел, ответственность за корректность и потокобезопасность
      *                которого лежит на вызывающей стороне
      */
-    public RecBack(@NotNull MazeDim mazeDim, @NotNull Random random) {
+    public RecursiveBacktracker(@NotNull MazeDim mazeDim, @NotNull Random random) {
         if (mazeDim.size() == 0) {
             throw new IllegalArgumentException("Maze dimension must not be empty");
         }
