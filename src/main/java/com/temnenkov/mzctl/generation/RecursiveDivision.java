@@ -4,18 +4,25 @@ import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
 import com.temnenkov.mzctl.model.MazeFactory;
+import com.temnenkov.mzctl.model.Slice;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 
 public class RecursiveDivision {
 
     private final @NotNull Maze maze;
+    private final @NotNull Random random;
     private boolean generated = false;
 
-    public RecursiveDivision(@NotNull MazeDim mazeDim) {
-        this.maze = MazeFactory.createNotConnectedMaze(mazeDim);
+    public RecursiveDivision(@NotNull MazeDim mazeDim, @NotNull Random random) {
+        this.maze = MazeFactory.createFullConnectedMaze(mazeDim);
+        this.random = random;
     }
 
     @NotNull
@@ -34,18 +41,47 @@ public class RecursiveDivision {
         while(!queue.isEmpty()) {
             final Slice slice = queue.remove();
 
+            final Wall wall = createRandomWallInSlice(slice);
+            if (wall == null) {
+                continue;
+            }
+
+
         }
 
         return maze;
     }
 
-    private static class Slice {
-        private final Cell first;
-        private final Cell last;
+    private void buildWall(@NotNull Slice slice, @NotNull Wall wall ) {
 
-        private Slice(Cell first, Cell last) {
-            this.first = first;
-            this.last = last;
+    }
+
+    @Nullable
+    private Wall createRandomWallInSlice(@NotNull Slice slice) {
+        final List<Wall> pretenders = new ArrayList<>();
+        for(int dimensionNum =0; dimensionNum< slice.first.size(); ++dimensionNum ) {
+            final int topCoord = slice.first.coord(dimensionNum);
+            final int lastCoord = slice.last.coord(dimensionNum);
+            if (lastCoord - topCoord > 0) {
+                int cutIndex = topCoord + random.nextInt(lastCoord - topCoord);
+                pretenders.add(new Wall(dimensionNum, cutIndex));
+            }
+        }
+
+        if (pretenders.isEmpty()) {
+            return null;
+        } else {
+           return pretenders.get(random.nextInt(pretenders.size()));
+        }
+    }
+
+    private static class Wall {
+        final int dimensionNum;
+        final int dimensionValue;
+
+        private Wall(int dimensionNum, int dimensionValue) {
+            this.dimensionNum = dimensionNum;
+            this.dimensionValue = dimensionValue;
         }
     }
 

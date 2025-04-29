@@ -83,12 +83,19 @@ public class Maze implements Iterable<Cell> {
      * @param cell      комната откуда
      * @param neighbors комнаты куда
      */
-    public void addPass(Cell cell, Set<Cell> neighbors) {
+    public void addPass(@NotNull Cell cell, @NotNull Set<Cell> neighbors) {
         validateCell(cell);
         neighbors.forEach(this::validateCell);
 
         passes.computeIfAbsent(cell, k -> new HashSet<>()).addAll(neighbors);
         neighbors.forEach(neighbor -> passes.computeIfAbsent(neighbor, k -> new HashSet<>()).add(cell));
+    }
+
+    public void removePass(@NotNull Cell from, @NotNull Cell to) {
+        validateCell(from);
+        validateCell(to);
+        passes.computeIfAbsent(from, k -> new HashSet<>()).remove(to);
+        passes.computeIfAbsent(to, k -> new HashSet<>()).remove(from);
     }
 
     private void validateCell(@NotNull Cell cell) {

@@ -1,6 +1,7 @@
 package com.temnenkov.mzctl.model;
 
 import com.temnenkov.mzctl.model.serialize.SerializationHelper;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -119,7 +120,7 @@ class MazeTest {
         assertMazeCells(maze, expected);
     }
 
-    private void assertMazeCells(Maze maze, List<Cell> expected) {
+    private void assertMazeCells(@NotNull Maze maze, List<Cell> expected) {
         // проверка итератора
         List<Cell> fromIterator = new ArrayList<>();
         for (Cell cell : maze) {

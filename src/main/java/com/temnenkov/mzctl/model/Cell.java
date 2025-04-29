@@ -87,4 +87,8 @@ public record Cell(@NotNull List<Integer> coordinates) {
         }
         return coordinates.get(dimension);
     }
+
+    public int size() {
+        return coordinates.size();
+    }
 }
