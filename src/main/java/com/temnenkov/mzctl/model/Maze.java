@@ -37,7 +37,7 @@ public class Maze implements Iterable<Cell> {
      * @param passes        допустимые переходы из комнаты в комнату
      */
     @JsonCreator
-    public Maze(@JsonProperty("mazeDimension") @NotNull MazeDim mazeDimension,
+    Maze(@JsonProperty("mazeDimension") @NotNull MazeDim mazeDimension,
             @JsonProperty("passes") @NotNull Map<Cell, Set<Cell>> passes) {
         this.mazeDimension = mazeDimension;
         this.passes = new HashMap<>();
@@ -50,20 +50,10 @@ public class Maze implements Iterable<Cell> {
      *
      * @param mazeDimension список измерений
      */
-    public Maze(@NotNull MazeDim mazeDimension) {
+    Maze(@NotNull MazeDim mazeDimension) {
         this.mazeDimension = mazeDimension;
         this.passes = new HashMap<>();
         this.totalCellCount = calculateTotalCellCount();
-    }
-
-    /**
-     * Удобный метод для задания по явному перечислению dimensions
-     *
-     * @param dimensions измерения
-     * @return проинициализированный массив без проходов
-     */
-    public static Maze of(int... dimensions) {
-        return new Maze(MazeDim.of(dimensions));
     }
 
     /**

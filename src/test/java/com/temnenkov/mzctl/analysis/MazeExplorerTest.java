@@ -2,6 +2,7 @@ package com.temnenkov.mzctl.analysis;
 
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
+import com.temnenkov.mzctl.model.MazeFactory;
 import com.temnenkov.mzctl.model.serialize.SerializationHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class MazeExplorerTest {
 
     @Test
     void isConnected() {
-        final Maze maze = Maze.of(2, 2);
+        final Maze maze = MazeFactory.createNotConnectedMaze(2, 2);
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(1, 0), Cell.of(0, 1)));
         maze.addPass(Cell.of(0, 1), Set.of(Cell.of(1, 1)));
 
@@ -43,7 +44,7 @@ class MazeExplorerTest {
 
     @Test
     void notConnected() {
-        final Maze maze = Maze.of(2, 2);
+        final Maze maze = MazeFactory.createNotConnectedMaze(2, 2);
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(1, 0), Cell.of(0, 1)));
 
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
@@ -57,7 +58,7 @@ class MazeExplorerTest {
 
     @Test
     void withoutPassesNotConnected() {
-        final Maze maze = Maze.of(100, 100);
+        final Maze maze = MazeFactory.createNotConnectedMaze(100, 100);
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
 
         assertFalse(mazeExplorer.isConnected());
@@ -75,9 +76,7 @@ class MazeExplorerTest {
      */
     @Test
     void hasLoop() {
-        final Maze maze = Maze.of(2, 2);
-        maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
-        maze.addPass(Cell.of(1, 1), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
+        final Maze maze = MazeFactory.createFullConnectedMaze(2, 2);
 
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
         assertFalse(mazeExplorer.isAcyclic());
@@ -92,7 +91,7 @@ class MazeExplorerTest {
     */
     @Test
     void noLoop() {
-        final Maze maze = Maze.of(2, 2);
+        final Maze maze = MazeFactory.createNotConnectedMaze(2, 2);
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
 
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
@@ -108,7 +107,7 @@ class MazeExplorerTest {
     */
     @Test
     void perfectNoLoop() {
-        final Maze maze = Maze.of(2, 2);
+        final Maze maze = MazeFactory.createNotConnectedMaze(2, 2);
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1), Cell.of(1, 0)));
         maze.addPass(Cell.of(1, 0), Set.of(Cell.of(1, 1)));
 
@@ -125,7 +124,7 @@ class MazeExplorerTest {
      */
     @Test
     void disconnectedMaze() {
-        final Maze maze = Maze.of(2, 2);
+        final Maze maze = MazeFactory.createNotConnectedMaze(2, 2);
         // два отдельных прохода, не связанных друг с другом
         maze.addPass(Cell.of(0, 0), Set.of(Cell.of(0, 1)));
         maze.addPass(Cell.of(1, 0), Set.of(Cell.of(1, 1)));
@@ -145,22 +144,7 @@ class MazeExplorerTest {
      */
     @Test
     void testFullConnectedMaze() {
-        final Maze maze = Maze.of(3, 3);
-        maze.getLinker()
-                .link(Cell.of(0, 0), Cell.of(0, 1))
-                .link(Cell.of(0, 1), Cell.of(0, 2))
-                .link(Cell.of(1, 0), Cell.of(1, 1))
-                .link(Cell.of(1, 1), Cell.of(1, 2))
-                .link(Cell.of(2, 0), Cell.of(2, 1))
-                .link(Cell.of(2, 1), Cell.of(2, 2))
-                .link(Cell.of(0, 0), Cell.of(1, 0))
-                .link(Cell.of(0, 1), Cell.of(1, 1))
-                .link(Cell.of(0, 2), Cell.of(1, 2))
-                .link(Cell.of(1, 0), Cell.of(2, 0))
-                .link(Cell.of(1, 1), Cell.of(2, 1))
-                .link(Cell.of(1, 2), Cell.of(2, 2))
-        ;
-
+        final Maze maze = MazeFactory.createFullConnectedMaze(3, 3);
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
 
         assertTrue(mazeExplorer.isConnected());
@@ -185,7 +169,7 @@ class MazeExplorerTest {
      */
     @Test
     void testShapeEMaze() {
-        final Maze maze = Maze.of(3, 3);
+        final Maze maze = MazeFactory.createNotConnectedMaze(3, 3);
         maze.getLinker()
                 .link(Cell.of(0, 0), Cell.of(0, 1))
                 .link(Cell.of(0, 1), Cell.of(0, 2))
@@ -294,7 +278,7 @@ class MazeExplorerTest {
 
     @Test
     void testAveragePathLengthSingleCell() {
-        Maze maze = Maze.of(1); // лабиринт с одной комнатой
+        Maze maze = MazeFactory.createNotConnectedMaze(1); // лабиринт с одной комнатой
         MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
 
         assertEquals(0L, mazeExplorer.deadEndCount());

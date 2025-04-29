@@ -69,25 +69,25 @@ class MazeTest {
 
     @Test
     void totalCellCount() {
-        final Maze maze = Maze.of(1, 2, 3, 4);
+        final Maze maze = MazeFactory.createNotConnectedMaze(1, 2, 3, 4);
         assertEquals(24, maze.totalCellCount());
     }
 
     @Test
     void totalCellCountOneDimension() {
-        final Maze maze = Maze.of(5);
+        final Maze maze = MazeFactory.createNotConnectedMaze(5);
         assertEquals(5, maze.totalCellCount());
     }
 
     @Test
     void totalCellCountTwoDimensions() {
-        final Maze maze = Maze.of(3, 3);
+        final Maze maze = MazeFactory.createNotConnectedMaze(3, 3);
         assertEquals(9, maze.totalCellCount());
     }
 
     @Test
     void testLoop() {
-        final Maze maze = Maze.of(2, 3);
+        final Maze maze = MazeFactory.createNotConnectedMaze(2, 3);
 
         final List<Cell> expected = List.of(
                 Cell.of(0, 0),
@@ -103,7 +103,7 @@ class MazeTest {
 
     @Test
     void testLoopThreeDimensions() {
-        final Maze maze = Maze.of(2, 2, 2);
+        final Maze maze = MazeFactory.createNotConnectedMaze(2, 2, 2);
 
         final List<Cell> expected = List.of(
                 Cell.of(0, 0, 0),

@@ -3,6 +3,7 @@ package com.temnenkov.mzctl.generation;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
+import com.temnenkov.mzctl.model.MazeFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
@@ -40,7 +41,7 @@ public class RecursiveBacktracker {
         if (mazeDim.size() == 0) {
             throw new IllegalArgumentException("Maze dimension must not be empty");
         }
-        maze = new Maze(mazeDim);
+        maze = MazeFactory.createNotConnectedMaze(mazeDim);
         this.random = random;
     }
 
