@@ -17,31 +17,39 @@ public class Slice implements Iterable<Cell> {
 
     public Slice(@NotNull Cell first, @NotNull Cell last) {
         if (first.size() != last.size()) {
-            throw new IllegalArgumentException("First and last cells must be the same");
+            throw new IllegalArgumentException("First and last cells must have the same dimensions");
         }
-        if (!notGreaterThen(first, last)) {
-            throw new IllegalArgumentException("Last cells must be not greater than the last");
+        if (!isFirstNotGreaterThanLast(first, last)) {
+            throw new IllegalArgumentException("Each coordinate of the first cell must not be greater than the corresponding coordinate of the last cell");
         }
         this.first = first;
         this.last = last;
         this.totalCellCount = calculateTotalCellCount();
     }
 
-    private boolean notGreaterThen(@NotNull Cell first, @NotNull Cell last) {
+    private boolean isFirstNotGreaterThanLast(@NotNull Cell first, @NotNull Cell last) {
         for(int i=0; i < first.size(); ++i) {
-            final int firstCoord = first.coord(i);
-            final int lastCoord = last.coord(i);
-            if (firstCoord > lastCoord) {
+            if (first.coord(i) > last.coord(i)) {
                 return false;
             }
         }
         return true;
     }
 
+    /**
+     * Возвращает общее количество ячеек в данном срезе.
+     *
+     * @return число ячеек
+     */
     public int getTotalCellCount() {
         return totalCellCount;
     }
 
+    /**
+     * Создает поток (stream) из всех ячеек, входящих в текущий срез.
+     *
+     * @return поток ячеек
+     */
     public Stream<Cell> stream() {
         return StreamSupport.stream(
                 Spliterators.spliterator(
@@ -92,14 +100,14 @@ public class Slice implements Iterable<Cell> {
             for (int dim = first.size() - 1; dim >= 0; dim--) {
                 currentCoords[dim]++;
                 if (currentCoords[dim] <= last.coord(dim)) {
-                    // нет переполнения, можно остановиться
+                    /// Успешно увеличили текущую координату, выходим из цикла
                     return;
                 } else {
-                    // переполнение, сбрасываем текущую координату и переходим на следующий разряд
+                    // Текущая координата превысила допустимую, сбрасываем её и переходим к следующей координате
                     currentCoords[dim] = first.coord(dim);
                 }
             }
-            // если мы дошли сюда, значит, прошли все координаты
+            // Если мы здесь, значит, прошли все возможные координаты
             hasNext = false;
         }
     }
@@ -112,4 +120,19 @@ public class Slice implements Iterable<Cell> {
         return result;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Slice cells = (Slice) o;
+        return first.equals(cells.first) && last.equals(cells.last);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = first.hashCode();
+        result = 31 * result + last.hashCode();
+        return result;
+    }
 }
