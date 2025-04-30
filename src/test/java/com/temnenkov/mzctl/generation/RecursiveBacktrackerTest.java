@@ -14,7 +14,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class RecBackTest {
+class RecursiveBacktrackerTest {
 
     @Test
     void generateMazeAndShowAsAscii() {
@@ -27,7 +27,6 @@ class RecBackTest {
         assertNotNull(maze);
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
         assertTrue(mazeExplorer.isPerfect());
-        System.out.println("deadEnds: " + mazeExplorer.deadEndCount());
 
         new MazeAsciiVisualizer(maze).printMaze();
     }

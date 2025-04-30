@@ -58,6 +58,12 @@ public record Cell(@NotNull List<Integer> coordinates) {
         return plus(dimension, +1);
     }
 
+    public @NotNull Cell withNewDimensionValue(int dimensionNum, int dimensionValue) {
+        final List<Integer> modifiedCoordinates = new ArrayList<>(coordinates);
+        modifiedCoordinates.set(dimensionNum, dimensionValue);
+        return new Cell(modifiedCoordinates);
+    }
+
     /**
      * Смещаемся на inc по измерению dimension
      *
