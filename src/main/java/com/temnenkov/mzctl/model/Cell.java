@@ -59,7 +59,7 @@ public record Cell(@NotNull List<Integer> coordinates) {
     }
 
     public @NotNull Cell withNewDimensionValue(int dimensionNum, int dimensionValue) {
-        final List<Integer> modifiedCoordinates = new ArrayList<>(coordinates);
+        final List<Integer> modifiedCoordinates = getCoordinates();
         modifiedCoordinates.set(dimensionNum, dimensionValue);
         return new Cell(modifiedCoordinates);
     }
@@ -73,9 +73,7 @@ public record Cell(@NotNull List<Integer> coordinates) {
      */
     @Contract("_, _ -> new")
     public @NotNull Cell plus(int dimension, int inc) {
-        if (dimension < 0 || dimension >= coordinates.size()) {
-            throw new IndexOutOfBoundsException("Invalid dimension index: " + dimension);
-        }
+        checkDimensionIndex(dimension);
         final List<Integer> newCoordinates = new ArrayList<>(coordinates);
         newCoordinates.set(dimension, coordinates.get(dimension) + inc);
         return new Cell(newCoordinates);
@@ -88,13 +86,22 @@ public record Cell(@NotNull List<Integer> coordinates) {
      * @return координата по измерению dimension
      */
     public int coord(int dimension) {
-        if (dimension < 0 || dimension >= coordinates.size()) {
-            throw new IndexOutOfBoundsException("Invalid dimension index: " + dimension);
-        }
+        checkDimensionIndex(dimension);
         return coordinates.get(dimension);
     }
 
     public int size() {
         return coordinates.size();
+    }
+
+    @Contract(value = " -> new", pure = true)
+    public @NotNull List<Integer> getCoordinates() {
+        return new ArrayList<>(coordinates);
+    }
+
+    private void checkDimensionIndex(int dimension) {
+        if (dimension < 0 || dimension >= coordinates.size()) {
+            throw new IndexOutOfBoundsException("Invalid dimension index: " + dimension);
+        }
     }
 }
