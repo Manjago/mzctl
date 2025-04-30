@@ -26,6 +26,11 @@ public class RecursiveDivision {
         this.random = random;
     }
 
+    /**
+     * Генерирует лабиринт с помощью алгоритма Recursive Division.
+     *
+     * @return сгенерированный лабиринт
+     */
     @NotNull
     public Maze generateMaze() {
         if (generated) {
@@ -51,6 +56,13 @@ public class RecursiveDivision {
         return maze;
     }
 
+    /**
+     * Строит стену в выбранном срезе и разбивает его на два новых среза.
+     *
+     * @param slice исходный срез
+     * @param wall параметры стены
+     * @return список новых срезов, полученных после разделения исходного
+     */
     private @NotNull List<Slice> buildWall(@NotNull Slice slice, @NotNull Wall wall ) {
         //получаем все клетки из стены
         final List<Cell> wallCells = slice.stream().filter(cell -> cell.coord(wall.dimensionNum) == wall.dimensionValue)
@@ -82,8 +94,8 @@ public class RecursiveDivision {
             final int topCoord = slice.first.coord(dimensionNum);
             final int lastCoord = slice.last.coord(dimensionNum);
             if (lastCoord - topCoord > 0) {
-                int cutIndex = topCoord + random.nextInt(lastCoord - topCoord);
-                pretenders.add(new Wall(dimensionNum, cutIndex));
+                final int wallPosition = topCoord + random.nextInt(lastCoord - topCoord);
+                pretenders.add(new Wall(dimensionNum, wallPosition));
             }
         }
 
@@ -94,14 +106,6 @@ public class RecursiveDivision {
         }
     }
 
-    private static class Wall {
-        final int dimensionNum;
-        final int dimensionValue;
-
-        private Wall(int dimensionNum, int dimensionValue) {
-            this.dimensionNum = dimensionNum;
-            this.dimensionValue = dimensionValue;
-        }
-    }
+    private record Wall(int dimensionNum, int dimensionValue) {}
 
 }
