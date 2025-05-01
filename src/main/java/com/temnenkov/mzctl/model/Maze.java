@@ -91,6 +91,16 @@ public class Maze implements Iterable<Cell> {
         neighbors.forEach(neighbor -> passes.computeIfAbsent(neighbor, k -> new HashSet<>()).add(cell));
     }
 
+    /**
+     * Добавить двусторонний проход из комнаты в комнату
+     *
+     * @param cell      комната откуда
+     * @param neighbor  комната куда
+     */
+    public void addPass(@NotNull Cell cell, @NotNull Cell neighbor) {
+        addPass(cell, Set.of(neighbor));
+    }
+
     public void removePass(@NotNull Cell from, @NotNull Cell to) {
         validateCell(from);
         validateCell(to);
@@ -148,7 +158,7 @@ public class Maze implements Iterable<Cell> {
      * @param dimension измерение
      * @return true, если комната в пределах лабиринта, false - в противном случае
      */
-    private boolean isValid(@NotNull Cell cell, int dimension) {
+    public boolean isValid(@NotNull Cell cell, int dimension) {
         final int coord = cell.coord(dimension);
         return coord >= 0 && coord < mazeDimension.dimSize(dimension);
     }
