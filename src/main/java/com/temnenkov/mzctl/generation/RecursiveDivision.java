@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
@@ -39,9 +40,10 @@ public class RecursiveDivision  implements MazeGenerator {
         }
         generated = true;
 
+        final int[] dimensions = maze.getMazeDimension().dimensions().stream().mapToInt(Integer::intValue).toArray();
 
-        final Cell top = new Cell(maze.getMazeDimension().dimensions().stream().map(i -> 0).toList());
-        final Cell bottom = new Cell(maze.getMazeDimension().dimensions().stream().map(i -> i-1).toList());
+        final Cell top = new Cell(new int[dimensions.length]);
+        final Cell bottom = new Cell(Arrays.stream(dimensions).map(i -> i - 1).toArray());
         final Queue<Slice> queue = new ArrayDeque<>();
         queue.add(new Slice(top, bottom));
 

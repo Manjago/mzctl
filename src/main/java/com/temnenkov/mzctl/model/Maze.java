@@ -6,11 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.beans.Transient;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -109,7 +107,7 @@ public class Maze implements Iterable<Cell> {
     }
 
     private void validateCell(@NotNull Cell cell) {
-        if (cell.coordinates().size() != mazeDimension.size()) {
+        if (cell.getCoordinates().length != mazeDimension.size()) {
             throw new IllegalArgumentException("Cell dimension mismatch");
         }
     }
@@ -187,9 +185,9 @@ public class Maze implements Iterable<Cell> {
      * @return случайная комната в пределах лабиринта
      */
     public Cell getRandomCell(@NotNull Random random) {
-        final List<Integer> coords = new ArrayList<>();
+        final int[] coords = new int[mazeDimension.size()];
         for (int i = 0; i < mazeDimension.size(); ++i) {
-            coords.add(random.nextInt(mazeDimension.dimSize(i)));
+            coords[i] = random.nextInt(mazeDimension.dimSize(i));
         }
         return new Cell(coords);
     }

@@ -1,7 +1,6 @@
 package com.temnenkov.mzctl.model.serialize;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.KeyDeserializer;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public final class SerializationHelper {
@@ -29,7 +27,7 @@ public final class SerializationHelper {
     public static byte[] mazeToMessagePack(@NotNull Maze maze) {
         try {
             return MESSAGE_PACK_MAPPER.writeValueAsBytes(maze);
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             throw new MazeSerializationException("Cannot serialize maze " + maze, e);
         }
     }
@@ -92,7 +90,9 @@ public final class SerializationHelper {
     private static class CellKeyDeserializer extends KeyDeserializer {
         @Override
         public @NotNull Cell deserializeKey(@NotNull String key, DeserializationContext ctxt) {
-            List<Integer> coordinates = Arrays.stream(key.split(",")).map(Integer::parseInt).toList();
+            int[] coordinates = Arrays.stream(key.split(","))
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
             return new Cell(coordinates);
         }
     }
@@ -102,9 +102,10 @@ public final class SerializationHelper {
         public void serialize(@NotNull Cell cell,
                 @NotNull JsonGenerator jsonGenerator,
                 SerializerProvider serializerProvider) throws IOException {
-            String key = cell.coordinates().stream().map(Object::toString).collect(Collectors.joining(","));
+            String key = Arrays.stream(cell.getCoordinates())
+                    .mapToObj(Integer::toString)
+                    .collect(Collectors.joining(","));
             jsonGenerator.writeFieldName(key);
         }
     }
 }
-

@@ -20,9 +20,9 @@ class MazeTest {
     @Test
     void testAddPassAndCanPass() {
         Maze maze = new Maze(new MazeDim(List.of(3, 3)));
-        Cell cellA = new Cell(List.of(0, 0));
-        Cell cellB = new Cell(List.of(0, 1));
-        Cell cellC = new Cell(List.of(1, 1));
+        Cell cellA = Cell.of(0, 0);
+        Cell cellB = Cell.of(0, 1);
+        Cell cellC = Cell.of(1, 1);
 
         maze.addPass(cellA, Set.of(cellB));
 
@@ -34,8 +34,8 @@ class MazeTest {
     @Test
     void testMessagePackSerialization() {
         Maze maze = new Maze(new MazeDim(List.of(3, 3)));
-        Cell cellA = new Cell(List.of(0, 0));
-        Cell cellB = new Cell(List.of(0, 1));
+        Cell cellA = Cell.of(0, 0);
+        Cell cellB = Cell.of(0, 1);
         maze.addPass(cellA, Set.of(cellB));
 
         byte[] bytes = SerializationHelper.mazeToMessagePack(maze);
@@ -52,9 +52,9 @@ class MazeTest {
 
     @Test
     void testMazeSaveAndLoad(@TempDir Path tempDir) {
-        Maze maze = new Maze(new MazeDim(List.of(3, 3)));;
-        Cell cellA = new Cell(List.of(0, 0));
-        Cell cellB = new Cell(List.of(0, 1));
+        Maze maze = new Maze(new MazeDim(List.of(3, 3)));
+        Cell cellA = Cell.of(0, 0);
+        Cell cellB = Cell.of(0, 1);
         maze.addPass(cellA, Set.of(cellB));
 
         final Path file = tempDir.resolve("test.mzpack");

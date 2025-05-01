@@ -1,107 +1,90 @@
 package com.temnenkov.mzctl.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
- * Ячейка (комната) в лабиринте. Лабиринт может быть многомерным, соответственно, храним список координат
- *
- * @param coordinates список координат по каждому измерению
+ * Ячейка (комната) в лабиринте. Лабиринт может быть многомерным, соответственно, храним массив координат.
  */
-public record Cell(@NotNull List<Integer> coordinates) {
+@SuppressWarnings("java:S6206")
+public final class Cell {
+    private final int[] coordinates;
 
-    /**
-     * Инициализируем прямо списком (при инициализации копируем ради иммутабельности)
-     *
-     * @param coordinates список, структура такая же, как во внутреннем представлении
-     */
-    public Cell(@NotNull List<Integer> coordinates) {
-        if (coordinates.isEmpty()) {
-            throw new IllegalArgumentException("Coordinates list must not be empty");
+    @JsonCreator
+    public Cell(@JsonProperty("coordinates") int[] coordinates) {
+        if (coordinates.length == 0) {
+            throw new IllegalArgumentException("Coordinates array must not be empty");
         }
-        this.coordinates = List.copyOf(coordinates);
+        this.coordinates = coordinates.clone();
     }
 
-    /**
-     * Удобный метод для задания по явному перечислению координат
-     *
-     * @param coords координат
-     * @return проинициализированная ячейка (комната)
-     */
     public static @NotNull Cell of(int... coords) {
-        return new Cell(Arrays.stream(coords).boxed().toList());
+        return new Cell(coords);
     }
 
-    /**
-     * Смещаемся на 1 "назад" по измерению dimension
-     *
-     * @param dimension номер измерения
-     * @return ячейка с новыми координатами (внимание, она может выходить за границы лабиринта!)
-     */
     @Contract("_ -> new")
     public @NotNull Cell minusOne(int dimension) {
         return plus(dimension, -1);
     }
 
-    /**
-     * Смещаемся на 1 "вперед" по измерению dimension
-     *
-     * @param dimension номер измерения
-     * @return ячейка с новыми координатами (внимание, она может выходить за границы лабиринта!)
-     */
     @Contract("_ -> new")
     public @NotNull Cell plusOne(int dimension) {
         return plus(dimension, +1);
     }
 
     public @NotNull Cell withNewDimensionValue(int dimensionNum, int dimensionValue) {
-        final List<Integer> modifiedCoordinates = getCoordinates();
-        modifiedCoordinates.set(dimensionNum, dimensionValue);
+        checkDimensionIndex(dimensionNum);
+        final int[] modifiedCoordinates = coordinates.clone();
+        modifiedCoordinates[dimensionNum] = dimensionValue;
         return new Cell(modifiedCoordinates);
     }
 
-    /**
-     * Смещаемся на inc по измерению dimension
-     *
-     * @param dimension номер измерения
-     * @param inc       на сколько смещаемся (число со знаком)
-     * @return ячейка с новыми координатами (внимание, она может выходить за границы лабиринта!)
-     */
     @Contract("_, _ -> new")
     public @NotNull Cell plus(int dimension, int inc) {
         checkDimensionIndex(dimension);
-        final List<Integer> newCoordinates = new ArrayList<>(coordinates);
-        newCoordinates.set(dimension, coordinates.get(dimension) + inc);
+        final int[] newCoordinates = coordinates.clone();
+        newCoordinates[dimension] += inc;
         return new Cell(newCoordinates);
     }
 
-    /**
-     * Получить координату по измерению dimension
-     *
-     * @param dimension номер измерения
-     * @return координата по измерению dimension
-     */
     public int coord(int dimension) {
         checkDimensionIndex(dimension);
-        return coordinates.get(dimension);
+        return coordinates[dimension];
     }
 
     public int size() {
-        return coordinates.size();
+        return coordinates.length;
     }
 
     @Contract(value = " -> new", pure = true)
-    public @NotNull List<Integer> getCoordinates() {
-        return new ArrayList<>(coordinates);
+    public int[] getCoordinates() {
+        return coordinates.clone(); // возвращаем копию для иммутабельности
     }
 
     private void checkDimensionIndex(int dimension) {
-        if (dimension < 0 || dimension >= coordinates.size()) {
+        if (dimension < 0 || dimension >= coordinates.length) {
             throw new IndexOutOfBoundsException("Invalid dimension index: " + dimension);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cell cell)) return false;
+        return Arrays.equals(coordinates, cell.coordinates);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(coordinates);
+    }
+
+    @Override
+    public String toString() {
+        return "Cell" + Arrays.toString(coordinates);
     }
 }
