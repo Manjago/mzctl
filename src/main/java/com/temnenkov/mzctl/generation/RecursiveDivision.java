@@ -15,7 +15,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 
-public class RecursiveDivision {
+public class RecursiveDivision  implements MazeGenerator {
 
     private final @NotNull Maze maze;
     private final @NotNull Random random;
@@ -31,6 +31,7 @@ public class RecursiveDivision {
      *
      * @return сгенерированный лабиринт
      */
+    @Override
     @NotNull
     public Maze generateMaze() {
         if (generated) {

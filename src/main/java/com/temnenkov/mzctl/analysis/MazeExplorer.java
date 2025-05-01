@@ -79,4 +79,35 @@ public class MazeExplorer {
     public double symmetryScore() {
         return new SymmetryAnalyzer(maze).symmetryScore();
     }
+
+    /**
+     * Возвращает текстовый отчет с основными характеристиками лабиринта.
+     *
+     * @return строка отчета
+     */
+    public String report() {
+        return """
+        Maze exploration:
+        Connected: %s
+        Acyclic: %s
+        Perfect: %s
+        Dead End Count: %d
+        Diameter: %d
+        Average Path Length: %.2f
+        Intersection Count: %d
+        Randomness Score: %.2f
+        Symmetry Score: %.2f
+        """.formatted(
+                    isConnected(),
+                    isAcyclic(),
+                    isPerfect(),
+                    deadEndCount(),
+                    diameter(),
+                    averagePathLength(),
+                    intersectionCount(),
+                    randomnessScore(),
+                    symmetryScore()
+            );
+        }
 }
+

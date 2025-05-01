@@ -23,7 +23,7 @@ import java.util.Set;
  * <p>Выбор генератора случайных чисел (например, {@link java.util.Random}, {@link java.security.SecureRandom},
  * {@link java.util.concurrent.ThreadLocalRandom}) полностью лежит на вызывающей стороне.</p>
  */
-public class RecursiveBacktracker {
+public class RecursiveBacktracker implements MazeGenerator {
 
     private final @NotNull Random random;
     private final @NotNull Set<Cell> visited = new HashSet<>();
@@ -51,6 +51,7 @@ public class RecursiveBacktracker {
      * @return сгенерированный лабиринт
      * @throws IllegalStateException при повторном вызове метода
      */
+    @Override
     @NotNull
     public Maze generateMaze() {
         if (generated) {
