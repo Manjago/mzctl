@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled
@@ -108,11 +107,11 @@ class MazeGenerationStatTest {
             final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
             final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
             final Maze maze = mazeGenerator.generateMaze();
-            assertNotNull(maze);
             final long genDurationMs = genWatch.elapsed();
 
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
             final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
+            assertTrue(mazeExplorer.isPerfect());
             final String report = mazeExplorer.report();
             final long exploreDurationMs = exploreWatch.elapsed();
 

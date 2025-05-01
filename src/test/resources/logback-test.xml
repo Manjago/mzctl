@@ -5,6 +5,8 @@
         </encoder>
     </appender>
 
+    <logger name="com.temnenkov.mzctl.analysis" level="TRACE"/>
+
     <root level="debug">
         <appender-ref ref="CONSOLE"/>
     </root>

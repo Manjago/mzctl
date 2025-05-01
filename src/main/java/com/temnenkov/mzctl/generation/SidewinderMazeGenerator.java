@@ -44,9 +44,8 @@ public class SidewinderMazeGenerator implements MazeGenerator {
         return maze;
     }
 
-    private void carveSidewinderLine(Maze maze, int @NotNull [] baseCoordinates, int @NotNull [] dimensionLengths) {
+    private void carveSidewinderLine(Maze maze, int[] baseCoordinates, int @NotNull [] dimensionLengths) {
         final int lengthMain = dimensionLengths[MAIN_DIM];
-        final int positionAdditional = baseCoordinates[ADDITIONAL_DIM];
         final List<Cell> runSet = new ArrayList<>();
 
         for (int posMain = 0; posMain < lengthMain; posMain++) {
@@ -54,16 +53,28 @@ public class SidewinderMazeGenerator implements MazeGenerator {
             final Cell current = new Cell(baseCoordinates.clone());
             runSet.add(current);
 
-            final boolean carveForward = posMain < lengthMain - 1 &&
-                    (positionAdditional == 0 || random.nextBoolean());
+            final boolean carveForward = posMain < lengthMain - 1 && random.nextBoolean();
 
             if (carveForward) {
                 final Cell neighbor = current.plusOne(MAIN_DIM);
                 maze.addPass(current, neighbor);
-            } else if (positionAdditional > 0) {
-                final Cell chosenCell = runSet.get(random.nextInt(runSet.size()));
-                final Cell neighbor = chosenCell.minusOne(ADDITIONAL_DIM);
-                maze.addPass(chosenCell, neighbor);
+            } else {
+                boolean connected = false;
+                // Перебираем все дополнительные измерения и гарантированно соединяем с предыдущими слоями
+                for (int dim = 1; dim < dimensionLengths.length; dim++) {
+                    if (baseCoordinates[dim] > 0) {
+                        final Cell chosenCell = runSet.get(random.nextInt(runSet.size()));
+                        final Cell neighbor = chosenCell.minusOne(dim);
+                        maze.addPass(chosenCell, neighbor);
+                        connected = true;
+                        break; // соединяем хотя бы по одному измерению и выходим
+                    }
+                }
+                if (!connected && posMain < lengthMain - 1) {
+                    // если нет предыдущих слоев, соединяем вперед по основному измерению
+                    final Cell neighbor = current.plusOne(MAIN_DIM);
+                    maze.addPass(current, neighbor);
+                }
                 runSet.clear();
             }
         }
