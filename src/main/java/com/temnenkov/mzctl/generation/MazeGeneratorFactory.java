@@ -37,6 +37,7 @@ public class MazeGeneratorFactory {
         return switch (algo) {
             case RECURSIVE_BACKTRACKER -> new RecursiveBacktracker(mazeDim, random);
             case RECURSIVE_DIVISION -> new RecursiveDivision(mazeDim, random);
+            case BINARY_TREE -> new BinaryTreeMazeGenerator(mazeDim, random);
         };
     }
 
@@ -44,6 +45,6 @@ public class MazeGeneratorFactory {
      * Перечисление поддерживаемых алгоритмов генерации лабиринтов.
      */
     public enum Algo {
-        RECURSIVE_BACKTRACKER, RECURSIVE_DIVISION
+        RECURSIVE_BACKTRACKER, RECURSIVE_DIVISION, BINARY_TREE
     }
 }

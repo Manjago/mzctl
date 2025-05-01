@@ -3,6 +3,7 @@ package com.temnenkov.mzctl.generation;
 import com.temnenkov.mzctl.analysis.MazeExplorer;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
+import com.temnenkov.mzctl.util.SimpleStopWatch;
 import com.temnenkov.mzctl.visualization.MazeAsciiVisualizer;
 import com.temnenkov.mzctl.visualization.MazeImageVisualizer;
 import org.junit.jupiter.api.Disabled;
@@ -29,11 +30,26 @@ class MazeGenerationStatTest {
     void testSmall2D() throws IOException {
         final MazeDim mazeDim = MazeDim.of(5, 5);
         for(MazeGeneratorFactory.Algo algo : MazeGeneratorFactory.Algo.values()) {
+            System.out.println("Testing algorithm: " + algo);
+
             final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
+            final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
             final Maze maze = mazeGenerator.generateMaze();
+            final long genDurationMs = genWatch.elapsed();
+
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+            final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
             assertTrue(mazeExplorer.isPerfect());
-            System.out.println("For algo " + algo + " generated maze:\n" + mazeExplorer.report());
+            final String report = mazeExplorer.report();
+            final long exploreDurationMs = exploreWatch.elapsed();
+
+            System.out.printf("""
+                    Algorithm: %s
+                    Generation time: %d ms
+                    Exploration time: %d ms
+                    %s
+                    %n""", algo, genDurationMs, exploreDurationMs, report);
+
             new MazeAsciiVisualizer(maze).printMaze();
             new MazeImageVisualizer(maze).saveMazeImage("target/"+algo+"-small2D.png");
         }
@@ -51,11 +67,26 @@ class MazeGenerationStatTest {
     void testBig2D() throws IOException {
         final MazeDim mazeDim = MazeDim.of(50, 50);
         for(MazeGeneratorFactory.Algo algo : MazeGeneratorFactory.Algo.values()) {
+            System.out.println("Testing algorithm: " + algo);
+
             final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
+            final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
             final Maze maze = mazeGenerator.generateMaze();
+            final long genDurationMs = genWatch.elapsed();
+
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+            final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
             assertTrue(mazeExplorer.isPerfect());
-            System.out.println("For algo " + algo + " generated maze:\n" + mazeExplorer.report());
+            final String report = mazeExplorer.report();
+            final long exploreDurationMs = exploreWatch.elapsed();
+
+            System.out.printf("""
+                    Algorithm: %s
+                    Generation time: %d ms
+                    Exploration time: %d ms
+                    %s
+                    %n""", algo, genDurationMs, exploreDurationMs, report);
+
             // в ASCII не выводим, очень большой, неудобно смотреть
             new MazeImageVisualizer(maze).saveMazeImage("target/"+algo+"-big2D.png");
         }
@@ -71,11 +102,26 @@ class MazeGenerationStatTest {
     void testSmall3D() {
         final MazeDim mazeDim = MazeDim.of(5, 5, 5);
         for(MazeGeneratorFactory.Algo algo : MazeGeneratorFactory.Algo.values()) {
+            System.out.println("Testing algorithm: " + algo);
+
             final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
+            final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
             final Maze maze = mazeGenerator.generateMaze();
+            final long genDurationMs = genWatch.elapsed();
+
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+            final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
             assertTrue(mazeExplorer.isPerfect());
-            System.out.println("For algo " + algo + " generated maze:\n" + mazeExplorer.report());
+            final String report = mazeExplorer.report();
+            final long exploreDurationMs = exploreWatch.elapsed();
+
+            System.out.printf("""
+                    Algorithm: %s
+                    Generation time: %d ms
+                    Exploration time: %d ms
+                    %s
+                    %n""", algo, genDurationMs, exploreDurationMs, report);
+
             // в ASCII не выводим, не умеем рисовать 3D
             // в PNG не выводим, не умеем рисовать 3D
         }
@@ -90,11 +136,26 @@ class MazeGenerationStatTest {
     void testBig3D() {
         final MazeDim mazeDim = MazeDim.of(20, 20, 20);
         for(MazeGeneratorFactory.Algo algo : MazeGeneratorFactory.Algo.values()) {
+            System.out.println("Testing algorithm: " + algo);
+
             final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
+            final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
             final Maze maze = mazeGenerator.generateMaze();
+            final long genDurationMs = genWatch.elapsed();
+
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+            final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
             assertTrue(mazeExplorer.isPerfect());
-            System.out.println("For algo " + algo + " generated maze:\n" + mazeExplorer.report());
+            final String report = mazeExplorer.report();
+            final long exploreDurationMs = exploreWatch.elapsed();
+
+            System.out.printf("""
+                    Algorithm: %s
+                    Generation time: %d ms
+                    Exploration time: %d ms
+                    %s
+                    %n""", algo, genDurationMs, exploreDurationMs, report);
+
             // в ASCII не выводим, не умеем рисовать 3D
             // в PNG не выводим, не умеем рисовать 3D
         }
@@ -110,11 +171,26 @@ class MazeGenerationStatTest {
     void testNonSquare2D() throws IOException {
         final MazeDim mazeDim = MazeDim.of(50, 10);
         for(MazeGeneratorFactory.Algo algo : MazeGeneratorFactory.Algo.values()) {
+            System.out.println("Testing algorithm: " + algo);
+
             final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
+            final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
             final Maze maze = mazeGenerator.generateMaze();
+            final long genDurationMs = genWatch.elapsed();
+
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+            final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
             assertTrue(mazeExplorer.isPerfect());
-            System.out.println("For algo " + algo + " generated maze:\n" + mazeExplorer.report());
+            final String report = mazeExplorer.report();
+            final long exploreDurationMs = exploreWatch.elapsed();
+
+            System.out.printf("""
+                    Algorithm: %s
+                    Generation time: %d ms
+                    Exploration time: %d ms
+                    %s
+                    %n""", algo, genDurationMs, exploreDurationMs, report);
+
             new MazeAsciiVisualizer(maze).printMaze();
             new MazeImageVisualizer(maze).saveMazeImage("target/"+algo+"-nonSquare2D.png");
         }
@@ -130,11 +206,26 @@ class MazeGenerationStatTest {
     void testTooNonSquare2D() throws IOException {
         final MazeDim mazeDim = MazeDim.of(5, 100);
         for(MazeGeneratorFactory.Algo algo : MazeGeneratorFactory.Algo.values()) {
+            System.out.println("Testing algorithm: " + algo);
+
             final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
+            final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
             final Maze maze = mazeGenerator.generateMaze();
+            final long genDurationMs = genWatch.elapsed();
+
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+            final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
             assertTrue(mazeExplorer.isPerfect());
-            System.out.println("For algo " + algo + " generated maze:\n" + mazeExplorer.report());
+            final String report = mazeExplorer.report();
+            final long exploreDurationMs = exploreWatch.elapsed();
+
+            System.out.printf("""
+                    Algorithm: %s
+                    Generation time: %d ms
+                    Exploration time: %d ms
+                    %s
+                    %n""", algo, genDurationMs, exploreDurationMs, report);
+
             // ASCII будет смотреться плохо
             new MazeImageVisualizer(maze).saveMazeImage("target/"+algo+"-tooNonSquare2D.png");
         }
@@ -150,18 +241,33 @@ class MazeGenerationStatTest {
     void testVeryNonSquare2D() throws IOException {
         final MazeDim mazeDim = MazeDim.of(3, 200);
         for(MazeGeneratorFactory.Algo algo : MazeGeneratorFactory.Algo.values()) {
+            System.out.println("Testing algorithm: " + algo);
+
             final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
+            final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
             final Maze maze = mazeGenerator.generateMaze();
+            final long genDurationMs = genWatch.elapsed();
+
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+            final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
             assertTrue(mazeExplorer.isPerfect());
-            System.out.println("For algo " + algo + " generated maze:\n" + mazeExplorer.report());
+            final String report = mazeExplorer.report();
+            final long exploreDurationMs = exploreWatch.elapsed();
+
+            System.out.printf("""
+                    Algorithm: %s
+                    Generation time: %d ms
+                    Exploration time: %d ms
+                    %s
+                    %n""", algo, genDurationMs, exploreDurationMs, report);
+
             // ASCII будет смотреться плохо
             new MazeImageVisualizer(maze).saveMazeImage("target/"+algo+"-veryNonSquare2D.png");
         }
     }
 
     /*
-   6. Четырехмерный лабиринт (для интереса):
+   6. Маленький четырехмерный лабиринт (для интереса):
     - Размерность: 4D
     - Размер: 4x4x4x4 (маленький, но уже интересный случай)
     - Цель: Проверка того, как алгоритмы справляются с высокой размерностью. Полезно, если твои алгоритмы поддерживают произвольную размерность.
@@ -170,11 +276,26 @@ class MazeGenerationStatTest {
     void testSmall4D() {
         final MazeDim mazeDim = MazeDim.of(4 ,4 ,4, 4);
         for(MazeGeneratorFactory.Algo algo : MazeGeneratorFactory.Algo.values()) {
+            System.out.println("Testing algorithm: " + algo);
+
             final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
+            final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
             final Maze maze = mazeGenerator.generateMaze();
+            final long genDurationMs = genWatch.elapsed();
+
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+            final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
             assertTrue(mazeExplorer.isPerfect());
-            System.out.println("For algo " + algo + " generated maze:\n" + mazeExplorer.report());
+            final String report = mazeExplorer.report();
+            final long exploreDurationMs = exploreWatch.elapsed();
+
+            System.out.printf("""
+                    Algorithm: %s
+                    Generation time: %d ms
+                    Exploration time: %d ms
+                    %s
+                    %n""", algo, genDurationMs, exploreDurationMs, report);
+
             // не умеем 4D рисовать в ASCII
             // не умеем 4D рисовать в PNG
         }
@@ -190,14 +311,28 @@ class MazeGenerationStatTest {
     void testMedium4D() {
         final MazeDim mazeDim = MazeDim.of(10, 10, 10, 10);
         for(MazeGeneratorFactory.Algo algo : MazeGeneratorFactory.Algo.values()) {
+            System.out.println("Testing algorithm: " + algo);
+
             final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
+            final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
             final Maze maze = mazeGenerator.generateMaze();
+            final long genDurationMs = genWatch.elapsed();
+
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+            final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
             assertTrue(mazeExplorer.isPerfect());
-            System.out.println("For algo " + algo + " generated maze:\n" + mazeExplorer.report());
+            final String report = mazeExplorer.report();
+            final long exploreDurationMs = exploreWatch.elapsed();
+
+            System.out.printf("""
+                    Algorithm: %s
+                    Generation time: %d ms
+                    Exploration time: %d ms
+                    %s
+                    %n""", algo, genDurationMs, exploreDurationMs, report);
+
             // не умеем 4D рисовать в ASCII
             // не умеем 4D рисовать в PNG
         }
     }
-
 }
