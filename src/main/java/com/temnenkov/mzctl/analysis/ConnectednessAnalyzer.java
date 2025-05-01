@@ -47,12 +47,16 @@ public class ConnectednessAnalyzer {
         visited.add(startCell);
 
         int steps = 0;
+        long totalNeighborsCount = 0; // новая переменная для подсчета общего числа соседей
 
         while (!queue.isEmpty()) {
             Cell current = queue.poll();
             steps++;
 
-            for (Cell neighbor : maze.getAvailableNeighbors(current)) {
+            final Set<Cell> neighbors = maze.getAvailableNeighbors(current);
+            totalNeighborsCount += neighbors.size(); // суммируем количество соседей
+
+            for (Cell neighbor : neighbors) {
                 if (visited.add(neighbor)) {
                     queue.add(neighbor);
                 }
@@ -60,12 +64,13 @@ public class ConnectednessAnalyzer {
         }
 
         final boolean connected = visited.size() == maze.totalCellCount();
+        final double averageNeighbors = steps != 0 ? (double) totalNeighborsCount / steps : -1d;
+        final String averageNeighborsStr = steps != 0 ? String.format("%.4f", averageNeighbors) : "N/A";
 
         if (logger.isTraceEnabled()) {
-            logger.trace("Maze connectivity check completed: connected={}, total steps={}, visited cells={}/{}",
-                    connected, steps, visited.size(), maze.totalCellCount());
+            logger.trace("Maze connectivity check completed: connected={}, total steps={}, visited cells={}/{}, average neighbors per cell={}",
+                    connected, steps, visited.size(), maze.totalCellCount(), averageNeighborsStr);
         }
         return connected;
     }
-
 }
