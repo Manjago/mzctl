@@ -9,6 +9,8 @@ import java.util.Random;
 public class MazeExplorer {
     private final Maze maze;
     private final Random random;
+    private Boolean isConnectedCache = null;
+    private Boolean isAcyclicCache = null;
 
     public MazeExplorer(Maze maze, Random random) {
         this.maze = maze;
@@ -21,7 +23,10 @@ public class MazeExplorer {
      * @return true если connected, false - в противном случае
      */
     public boolean isConnected() {
-        return new ConnectednessAnalyzer(maze, random).isConnected();
+        if (isConnectedCache == null) {
+            isConnectedCache = new ConnectednessAnalyzer(maze, random).isConnected();
+        }
+        return isConnectedCache;
     }
 
     /**
@@ -40,7 +45,10 @@ public class MazeExplorer {
      * @return true, если лабиринт не содержит циклов, false в противном случае
      */
     public boolean isAcyclic() {
-        return new AcyclicityAnalyzer(maze).isAcyclic();
+        if (isAcyclicCache == null) {
+            isAcyclicCache = new AcyclicityAnalyzer(maze).isAcyclic();
+        }
+        return isAcyclicCache;
     }
 
     /**
@@ -49,7 +57,19 @@ public class MazeExplorer {
      * @return true, если лабиринт perfect, false в противном случае
      */
     public boolean isPerfect() {
-        return isConnected() && isAcyclic();
+        return isPerfect(isConnected(), isAcyclic());
+    }
+
+    /**
+     * Проверка, что лабиринт perfect (connected + acyclic).
+     * Использует уже вычисленные значения connected и acyclic.
+     *
+     * @param isConnected уже вычисленное значение connected
+     * @param isAcyclic уже вычисленное значение acyclic
+     * @return true, если лабиринт perfect, false в противном случае
+     */
+    public boolean isPerfect(boolean isConnected, boolean isAcyclic) {
+        return isConnected && isAcyclic;
     }
 
     public long deadEndCount() {
@@ -86,28 +106,29 @@ public class MazeExplorer {
      * @return строка отчета
      */
     public String report() {
+        final boolean acyclic = isAcyclic();
+        final boolean connected = isConnected();
         return """
-        Maze exploration:
-        Connected: %s
-        Acyclic: %s
-        Perfect: %s
-        Dead End Count: %d
-        Diameter: %d
-        Average Path Length: %.2f
-        Intersection Count: %d
-        Randomness Score: %.2f
-        Symmetry Score: %.2f
-        """.formatted(
-                    isConnected(),
-                    isAcyclic(),
-                    isPerfect(),
-                    deadEndCount(),
-                    diameter(),
-                    averagePathLength(),
-                    intersectionCount(),
-                    randomnessScore(),
-                    symmetryScore()
-            );
-        }
+    Maze exploration:
+    Connected: %s
+    Acyclic: %s
+    Perfect: %s
+    Dead End Count: %d
+    Diameter: %d
+    Average Path Length: %.2f
+    Intersection Count: %d
+    Randomness Score: %.2f
+    Symmetry Score: %s
+    """.formatted(connected,
+                acyclic,
+                isPerfect(connected, acyclic),
+                deadEndCount(),
+                diameter(),
+                averagePathLength(),
+                intersectionCount(),
+                randomnessScore(),
+                maze.getMazeDimension().size() == 2 ? String.format("%.2f", symmetryScore()) : "N/A"
+        );
+    }
 }
 

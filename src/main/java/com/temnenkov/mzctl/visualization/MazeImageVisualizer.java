@@ -2,6 +2,7 @@ package com.temnenkov.mzctl.visualization;
 
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -17,7 +18,7 @@ public class MazeImageVisualizer {
     private final int width;
     private final int height;
 
-    public MazeImageVisualizer(Maze maze, int cellSize, int wallSize) {
+    public MazeImageVisualizer(@NotNull Maze maze, int cellSize, int wallSize) {
         if (maze.getMazeDimension().size() != 2) {
             throw new IllegalArgumentException("Only 2-dimensional mazes supported");
         }
@@ -26,6 +27,10 @@ public class MazeImageVisualizer {
         this.wallSize = wallSize;
         this.height = maze.getMazeDimension().dimSize(0);
         this.width = maze.getMazeDimension().dimSize(1);
+    }
+
+    public MazeImageVisualizer(Maze maze) {
+        this(maze, 20, 10);
     }
 
     public void saveMazeImage(String filename) throws IOException {

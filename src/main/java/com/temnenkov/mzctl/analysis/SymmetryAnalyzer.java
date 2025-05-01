@@ -2,13 +2,14 @@ package com.temnenkov.mzctl.analysis;
 
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
+import org.jetbrains.annotations.NotNull;
 
 public class SymmetryAnalyzer {
     private final Maze maze;
     private final int height;
     private final int width;
 
-    public SymmetryAnalyzer(Maze maze) {
+    public SymmetryAnalyzer(@NotNull Maze maze) {
         if (maze.getMazeDimension().size() != 2) {
             throw new IllegalArgumentException("Only 2-dimensional mazes supported");
         }
