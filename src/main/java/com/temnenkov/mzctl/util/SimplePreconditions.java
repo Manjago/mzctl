@@ -9,10 +9,11 @@ public final class SimplePreconditions {
         throw new UnsupportedOperationException("Do not instantiate by reflection!");
     }
 
-    @Contract(value = "null, _ -> fail; !null, _ -> param1", pure = true)
-    public static <T> @NotNull T checkNotNull(@Nullable T reference, @NotNull String message) {
+    @Contract(value = "null, _, _ -> fail; !null, _, _ -> param1", pure = true)
+    public static <T> @NotNull T checkNotNull(@Nullable T reference, @NotNull String paramName, @NotNull String methodName) {
         if (reference == null) {
-            throw new NullPointerException(message);
+            throw new IllegalArgumentException("Argument for @NotNull parameter '"
+                    + paramName + "' of " + methodName + " must not be null");
         }
         return reference;
     }

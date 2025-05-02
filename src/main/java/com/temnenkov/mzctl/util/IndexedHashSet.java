@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class IndexedHashSet<T> {
+    private static final String ELEMENT_CANNOT_BE_NULL = "element cannot be null";
     private final List<T> elements;
     private final Map<T, Integer> indexes;
 
@@ -23,7 +24,7 @@ public class IndexedHashSet<T> {
      * Если элемент уже присутствует, возвращает false.
      */
     public boolean add(@NotNull T element) {
-        SimplePreconditions.checkNotNull(element, "element cannot be null");
+        SimplePreconditions.checkNotNull(element, "element", "add");
         if (contains(element)) {
             return false;
         }
@@ -37,7 +38,7 @@ public class IndexedHashSet<T> {
      * Если элемент отсутствует, возвращает false.
      */
     public boolean remove(@NotNull T element) {
-        SimplePreconditions.checkNotNull(element, "element cannot be null");
+        SimplePreconditions.checkNotNull(element, "element", "remove");
         final Integer index = indexes.get(element);
         if (index == null) {
             return false;
@@ -64,7 +65,7 @@ public class IndexedHashSet<T> {
      * Проверяет, содержится ли элемент в множестве.
      */
     public boolean contains(@NotNull T element) {
-        SimplePreconditions.checkNotNull(element, "element cannot be null");
+        SimplePreconditions.checkNotNull(element, "element", "contains");
         return indexes.containsKey(element);
     }
 
