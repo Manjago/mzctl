@@ -41,6 +41,7 @@ public class MazeGeneratorFactory {
             case SIDEWINDER -> new SidewinderMazeGenerator(mazeDim, random);
             case RANDOMIZED_PRIM -> new RandomizedPrimMazeGenerator(mazeDim, random);
             case RANDOMIZED_KRUSKAL -> new RandomizedKruskalMazeGenerator(mazeDim, random);
+            case HUNT_AND_KILL -> new HuntAndKillMazeGenerator(mazeDim, random);
         };
     }
 
@@ -48,6 +49,6 @@ public class MazeGeneratorFactory {
      * Перечисление поддерживаемых алгоритмов генерации лабиринтов.
      */
     public enum Algo {
-        RECURSIVE_BACKTRACKER, RECURSIVE_DIVISION, BINARY_TREE, SIDEWINDER, RANDOMIZED_PRIM, RANDOMIZED_KRUSKAL
+        RECURSIVE_BACKTRACKER, RECURSIVE_DIVISION, BINARY_TREE, SIDEWINDER, RANDOMIZED_PRIM, RANDOMIZED_KRUSKAL, HUNT_AND_KILL
     }
 }
