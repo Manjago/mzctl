@@ -10,10 +10,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Множество, поддерживающее доступ по индексу, быстрое удаление и добавление элементов,
+ * а также случайный доступ. Порядок элементов сохраняется.
+ *
+ * @param <T> тип элементов множества
+ */
 public class IndexedHashSet<T> implements Iterable<T> {
+
     private final List<T> elements;
     private final Map<T, Integer> indexes;
 
+    /**
+     * Создает пустое множество.
+     */
     public IndexedHashSet() {
         this.elements = new ArrayList<>();
         this.indexes = new HashMap<>();
@@ -22,6 +32,9 @@ public class IndexedHashSet<T> implements Iterable<T> {
     /**
      * Добавляет элемент в множество.
      * Если элемент уже присутствует, возвращает false.
+     *
+     * @param element добавляемый элемент
+     * @return true, если элемент был добавлен, false, если уже присутствует
      */
     public boolean add(@NotNull T element) {
         SimplePreconditions.checkNotNull(element, "element", "add");
@@ -33,6 +46,13 @@ public class IndexedHashSet<T> implements Iterable<T> {
         return true;
     }
 
+    /**
+     * Удаляет элемент из множества.
+     * Если элемент отсутствует, возвращает false.
+     *
+     * @param element удаляемый элемент
+     * @return true, если элемент был удален, false, если отсутствовал
+     */
     public boolean remove(@NotNull T element) {
         SimplePreconditions.checkNotNull(element, "element", "remove");
         final Integer index = indexes.get(element);
@@ -59,6 +79,9 @@ public class IndexedHashSet<T> implements Iterable<T> {
 
     /**
      * Проверяет, содержится ли элемент в множестве.
+     *
+     * @param element проверяемый элемент
+     * @return true, если элемент содержится в множестве
      */
     public boolean contains(@NotNull T element) {
         SimplePreconditions.checkNotNull(element, "element", "contains");
@@ -67,6 +90,10 @@ public class IndexedHashSet<T> implements Iterable<T> {
 
     /**
      * Возвращает случайный элемент из множества.
+     *
+     * @param random генератор случайных чисел
+     * @return случайный элемент из множества
+     * @throws IllegalStateException если множество пусто
      */
     public T getRandom(@NotNull Random random) {
         SimplePreconditions.checkState(!elements.isEmpty(), "IndexedHashSet is empty");
@@ -75,6 +102,8 @@ public class IndexedHashSet<T> implements Iterable<T> {
 
     /**
      * Возвращает количество элементов в множестве.
+     *
+     * @return количество элементов
      */
     public int size() {
         return elements.size();
@@ -82,13 +111,15 @@ public class IndexedHashSet<T> implements Iterable<T> {
 
     /**
      * Проверяет, пусто ли множество.
+     *
+     * @return true, если множество пусто
      */
     public boolean isEmpty() {
         return elements.isEmpty();
     }
 
     /**
-     * Очищает множество.
+     * Очищает множество, удаляя все элементы.
      */
     public void clear() {
         elements.clear();
@@ -96,27 +127,47 @@ public class IndexedHashSet<T> implements Iterable<T> {
     }
 
     /**
-     * Возвращает немодифицируемый список элементов.
+     * Возвращает немодифицируемый список элементов множества.
      * Полезно для перебора элементов.
+     *
+     * @return немодифицируемый список элементов
      */
     public List<T> asList() {
         return Collections.unmodifiableList(elements);
     }
 
+    /**
+     * Перемешивает элементы множества в случайном порядке.
+     *
+     * @param random генератор случайных чисел
+     */
     public void shuffle(@NotNull Random random) {
         SimplePreconditions.checkNotNull(random, "random", "shuffle");
         Collections.shuffle(elements, random);
+        // пересоздаем индексы после shuffle
         for (int i = 0; i < elements.size(); i++) {
             indexes.put(elements.get(i), i);
         }
     }
 
+    /**
+     * Возвращает итератор по элементам множества.
+     * Порядок перебора соответствует текущему порядку элементов.
+     *
+     * @return итератор по элементам множества
+     */
     @NotNull
     @Override
     public Iterator<T> iterator() {
         return asList().iterator();
     }
 
+    /**
+     * Проверяет внутреннюю консистентность структуры данных.
+     * Полезно для отладки и тестирования.
+     *
+     * @return true, если структура данных внутренне консистентна
+     */
     boolean isInternallyConsistent() {
         if (elements.size() != indexes.size()) {
             return false;
