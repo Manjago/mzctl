@@ -18,7 +18,7 @@ public final class ShortestPathHelper {
 
     /**
      * Вычисляет кратчайшее расстояние (количество шагов) между двумя ячейками в лабиринте.
-     * Использует Breadth-First Search (BFS).
+     * Использует алгоритм Breadth-First Search (BFS).
      *
      * @param maze  лабиринт, в котором вычисляется расстояние
      * @param start начальная ячейка
@@ -47,6 +47,6 @@ public final class ShortestPathHelper {
                 }
             }
         }
-        return -1; // должно быть недостижимо в connected maze
+        return -1; // Недостижимый путь (лабиринт несвязный)
     }
 }

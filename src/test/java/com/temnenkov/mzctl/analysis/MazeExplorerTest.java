@@ -291,4 +291,19 @@ class MazeExplorerTest {
         assertTrue(thrown.getMessage().contains("Only 2-dimensional mazes supported"));
     }
 
+    @Test
+    void testTwoCellMaze() {
+        Maze maze = MazeFactory.createFullConnectedMaze(2); // лабиринт с двумя комнатами
+        MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
+
+        assertEquals(2L, mazeExplorer.deadEndCount());
+        assertEquals(1, mazeExplorer.diameter());
+        assertEquals(1.0, mazeExplorer.averagePathLength(), 1e-4);
+        assertEquals(0L, mazeExplorer.intersectionCount());
+        assertEquals(1.0, mazeExplorer.randomnessScore(), 1e-4);
+        assertEquals(0.0, mazeExplorer.balanceScore(), 1e-4);
+        final IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, mazeExplorer::symmetryScore);
+        assertTrue(thrown.getMessage().contains("Only 2-dimensional mazes supported"));
+    }
+
 }
