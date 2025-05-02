@@ -23,6 +23,7 @@ public class IndexedHashSet<T> {
      * Если элемент уже присутствует, возвращает false.
      */
     public boolean add(@NotNull T element) {
+        SimplePreconditions.checkNotNull(element, "element cannot be null");
         if (contains(element)) {
             return false;
         }
@@ -35,7 +36,8 @@ public class IndexedHashSet<T> {
      * Удаляет элемент из множества.
      * Если элемент отсутствует, возвращает false.
      */
-    public boolean remove(T element) {
+    public boolean remove(@NotNull T element) {
+        SimplePreconditions.checkNotNull(element, "element cannot be null");
         final Integer index = indexes.get(element);
         if (index == null) {
             return false;
@@ -61,7 +63,8 @@ public class IndexedHashSet<T> {
     /**
      * Проверяет, содержится ли элемент в множестве.
      */
-    public boolean contains(T element) {
+    public boolean contains(@NotNull T element) {
+        SimplePreconditions.checkNotNull(element, "element cannot be null");
         return indexes.containsKey(element);
     }
 
