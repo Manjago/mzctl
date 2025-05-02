@@ -3,12 +3,16 @@ package com.temnenkov.mzctl.util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -146,5 +150,58 @@ class IndexedHashSetTest {
         assertTrue(indexedSet.isInternallyConsistent());
         indexedSet.remove("three");
         assertTrue(indexedSet.isInternallyConsistent());
+    }
+
+    @Test
+    void testShuffle() {
+        List<String> initialElements = List.of("one", "two", "three", "four", "five");
+        initialElements.forEach(indexedSet::add);
+
+        List<String> beforeShuffle = new ArrayList<>(indexedSet.asList());
+
+        indexedSet.shuffle(random);
+        List<String> afterShuffle = indexedSet.asList();
+
+        assertEquals(new HashSet<>(beforeShuffle), new HashSet<>(afterShuffle),
+                "После shuffle элементы должны остаться теми же");
+
+        // Проверим, что порядок элементов действительно изменился (с некоторой вероятностью)
+        assertNotEquals(beforeShuffle, afterShuffle,
+                "После shuffle порядок элементов должен измениться (с некоторой вероятностью)");
+
+        // Проверим внутреннюю консистентность после shuffle
+        assertTrue(indexedSet.isInternallyConsistent(), "Структура должна быть консистентной после shuffle");
+    }
+
+    @Test
+    void testIterator() {
+        indexedSet.add("one");
+        indexedSet.add("two");
+        indexedSet.add("three");
+
+        Set<String> elementsFromIterator = new HashSet<>();
+        for (String s : indexedSet) {
+            elementsFromIterator.add(s);
+        }
+
+        assertEquals(Set.of("one", "two", "three"), elementsFromIterator,
+                "Итератор должен вернуть все добавленные элементы");
+    }
+
+    @Test
+    void testShuffleEmptySet() {
+        assertDoesNotThrow(() -> indexedSet.shuffle(random),
+                "Shuffle пустого множества не должен бросать исключений");
+        assertTrue(indexedSet.isEmpty(), "Множество должно остаться пустым после shuffle");
+        assertTrue(indexedSet.isInternallyConsistent(), "Пустое множество консистентно после shuffle");
+    }
+
+    @Test
+    void testIteratorEmptySet() {
+        int count = 0;
+        for (String s : indexedSet) {
+            count++;
+        }
+        assertEquals(0, count, "Итератор пустого множества не должен возвращать элементов");
     }
 }
