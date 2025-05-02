@@ -356,7 +356,7 @@ class MazeGenerationStatTest {
             final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
             final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
             assertTrue(mazeExplorer.isPerfect());
-            final String report = mazeExplorer.report();
+            final String report = mazeExplorer.report(10);
             final long exploreDurationMs = exploreWatch.elapsed();
 
             System.out.printf("""
