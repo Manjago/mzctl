@@ -2,59 +2,65 @@ package com.temnenkov.mzctl.analysis;
 
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.List;
+import java.util.Random;
 
 public class AveragePathLengthAnalyzer {
-    private final Maze maze;
 
-    public AveragePathLengthAnalyzer(Maze maze) {
+    private static final int SAMPLE_SIZE = 1000; // размер случайной выборки пар ячеек
+    private static final int FULL_ENUMERATION_THRESHOLD = 10_000; // порог количества пар
+
+    private final Maze maze;
+    private final Random random;
+
+    public AveragePathLengthAnalyzer(Maze maze, Random random) {
         this.maze = maze;
+        this.random = random;
     }
 
     public double averagePathLength() {
-        final int cellCount = maze.totalCellCount();
+        int totalCells = maze.totalCellCount();
+        long totalPairs = ((long) totalCells * (totalCells - 1)) / 2;
 
-        if (cellCount <= 1) {
-            return 0.0; // вырожденный случай, нет путей между комнатами
+        if (totalPairs < FULL_ENUMERATION_THRESHOLD) {
+            // Полный перебор
+            return averagePathLengthFullEnumeration();
+        } else {
+            // Случайная выборка
+            return averagePathLengthRandomSample(SAMPLE_SIZE);
         }
-
-        long totalDistance = 0;
-
-        // Запускаем BFS из каждой комнаты
-        for (Cell cell : maze) {
-            totalDistance += bfsTotalDistance(cell);
-        }
-
-        // Количество пар комнат = N * (N - 1)
-        return (double) totalDistance / (cellCount * (cellCount - 1));
     }
 
-    // BFS из одной комнаты, сумма расстояний до всех остальных
-    private long bfsTotalDistance(@NotNull Cell start) {
-        final Queue<Cell> queue = new ArrayDeque<>();
-        final Map<Cell, Integer> distances = new HashMap<>();
-        queue.add(start);
-        distances.put(start, 0);
+    private double averagePathLengthFullEnumeration() {
+        List<Cell> cells = maze.stream().toList();
+        long totalLength = 0;
+        long pairsCounted = 0;
 
-        long total = 0;
-
-        while (!queue.isEmpty()) {
-            final Cell current = queue.poll();
-            int currentDist = distances.get(current);
-            total += currentDist;
-
-            for (Cell neighbor : maze.getAvailableNeighbors(current)) {
-                if (!distances.containsKey(neighbor)) {
-                    distances.put(neighbor, currentDist + 1);
-                    queue.add(neighbor);
-                }
+        for (int i = 0; i < cells.size(); i++) {
+            for (int j = i + 1; j < cells.size(); j++) {
+                int pathLength = ShortestPathHelper.shortestDistance(maze, cells.get(i), cells.get(j));
+                totalLength += pathLength;
+                pairsCounted++;
             }
         }
-        return total;
+        return pairsCounted > 0 ? (double) totalLength / pairsCounted : 0.0;
     }
+
+    private double averagePathLengthRandomSample(int sampleSize) {
+        List<Cell> cells = maze.stream().toList();
+        long totalLength = 0;
+
+        for (int i = 0; i < sampleSize; i++) {
+            Cell start = cells.get(random.nextInt(cells.size()));
+            Cell end = cells.get(random.nextInt(cells.size()));
+            if (start.equals(end)) {
+                i--;
+                continue; // пропускаем повторные ячейки
+            }
+            totalLength += ShortestPathHelper.shortestDistance(maze, start, end);
+        }
+        return sampleSize > 0 ? (double) totalLength / sampleSize : 0.0;
+    }
+
 }

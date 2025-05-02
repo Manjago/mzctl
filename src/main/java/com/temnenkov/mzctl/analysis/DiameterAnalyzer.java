@@ -5,9 +5,7 @@ import com.temnenkov.mzctl.model.Maze;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
@@ -31,7 +29,7 @@ public class DiameterAnalyzer {
         Cell farthestB = bfsFarthestCell(farthestA);
 
         // возвращаем расстояние между farthestA и farthestB
-        return bfsDistance(farthestA, farthestB);
+        return ShortestPathHelper.shortestDistance(maze, farthestA, farthestB);
     }
 
     // вспомогательный метод: BFS и поиск самой удалённой клетки от start
@@ -57,25 +55,4 @@ public class DiameterAnalyzer {
         return farthest;
     }
 
-    // вспомогательный метод: BFS и поиск расстояния между двумя точками
-    private int bfsDistance(@NotNull Cell start, @NotNull Cell end) {
-        final Queue<Cell> queue = new ArrayDeque<>();
-        final Map<Cell, Integer> distances = new HashMap<>();
-        queue.add(start);
-        distances.put(start, 0);
-
-        while (!queue.isEmpty()) {
-            final Cell current = queue.poll();
-            if (current.equals(end)) {
-                return distances.get(current);
-            }
-            for (Cell neighbor : maze.getAvailableNeighbors(current)) {
-                if (!distances.containsKey(neighbor)) {
-                    distances.put(neighbor, distances.get(current) + 1);
-                    queue.add(neighbor);
-                }
-            }
-        }
-        return -1; // должно быть недостижимо в connected maze
-    }
 }

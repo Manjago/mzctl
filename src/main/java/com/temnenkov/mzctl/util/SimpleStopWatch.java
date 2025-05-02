@@ -10,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 public class SimpleStopWatch {
     private final long startTime = System.nanoTime();
 
+    private SimpleStopWatch() {
+    }
+
     /**
      * Создает и запускает новый секундомер.
      *

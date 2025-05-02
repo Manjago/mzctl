@@ -2,11 +2,16 @@ package com.temnenkov.mzctl.analysis;
 
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
+import com.temnenkov.mzctl.util.SimpleStopWatch;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
 public class MazeExplorer {
+    private static final Logger logger = LoggerFactory.getLogger(MazeExplorer.class);
+
     private final Maze maze;
     private final Random random;
     private Boolean isConnectedCache = null;
@@ -24,7 +29,11 @@ public class MazeExplorer {
      */
     public boolean isConnected() {
         if (isConnectedCache == null) {
+            final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
             isConnectedCache = new ConnectednessAnalyzer(maze, random).isConnected();
+            final long elapsedMs = stopWatch.elapsed();
+            logger.trace("Connectedness check elapsed time: {} ms", elapsedMs);
+
         }
         return isConnectedCache;
     }
@@ -46,7 +55,10 @@ public class MazeExplorer {
      */
     public boolean isAcyclic() {
         if (isAcyclicCache == null) {
+            final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
             isAcyclicCache = new AcyclicityAnalyzer(maze).isAcyclic();
+            final long elapsedMs = stopWatch.elapsed();
+            logger.trace("Acyclic check elapsed time: {} ms", elapsedMs);
         }
         return isAcyclicCache;
     }
@@ -73,31 +85,59 @@ public class MazeExplorer {
     }
 
     public long deadEndCount() {
-        return new DeadEndAnalyzer(maze).deadEndCount();
+        final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
+        long result = new DeadEndAnalyzer(maze).deadEndCount();
+        final long elapsedMs = stopWatch.elapsed();
+        logger.trace("DeadEnd check elapsed time: {} ms", elapsedMs);
+        return result;
     }
 
     public int diameter() {
-        return new DiameterAnalyzer(maze, random).diameter();
+        final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
+        final int result = new DiameterAnalyzer(maze, random).diameter();
+        final long elapsedMs = stopWatch.elapsed();
+        logger.trace("Diameter check elapsed time: {} ms", elapsedMs);
+        return result;
     }
 
     public double averagePathLength() {
-        return new AveragePathLengthAnalyzer(maze).averagePathLength();
+        final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
+        final double result = new AveragePathLengthAnalyzer(maze, random).averagePathLength();
+        final long elapsedMs = stopWatch.elapsed();
+        logger.trace("AveragePathLength check elapsed time: {} ms", elapsedMs);
+        return result;
     }
 
     public long intersectionCount() {
-        return new IntersectionAnalyzer(maze).intersectionCount();
+        final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
+        final long result = new IntersectionAnalyzer(maze).intersectionCount();
+        final long elapsedMs = stopWatch.elapsed();
+        logger.trace("IntersectionCount check elapsed time: {} ms", elapsedMs);
+        return result;
     }
 
     public double randomnessScore() {
-        return new RandomnessAnalyzer(maze).randomnessScore();
+        final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
+        final double result = new RandomnessAnalyzer(maze).randomnessScore();
+        final long elapsedMs = stopWatch.elapsed();
+        logger.trace("RandomnessScore check elapsed time: {} ms", elapsedMs);
+        return result;
     }
 
     public double balanceScore() {
-        return new BalanceAnalyzer(maze).balanceScore();
+        final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
+        final double result = new BalanceAnalyzer(maze).balanceScore();
+        final long elapsedMs = stopWatch.elapsed();
+        logger.trace("BalanceScore check elapsed time: {} ms", elapsedMs);
+        return result;
     }
 
     public double symmetryScore() {
-        return new SymmetryAnalyzer(maze).symmetryScore();
+        final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
+        final double result = new SymmetryAnalyzer(maze).symmetryScore();
+        final long elapsedMs = stopWatch.elapsed();
+        logger.trace("SymmetryScore check elapsed time: {} ms", elapsedMs);
+        return result;
     }
 
     /**
