@@ -5,11 +5,10 @@ import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
 import com.temnenkov.mzctl.model.MazeFactory;
 import com.temnenkov.mzctl.util.DisjointSet;
+import com.temnenkov.mzctl.util.IndexedHashSet;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 public class RandomizedKruskalMazeGenerator implements MazeGenerator {
@@ -33,10 +32,10 @@ public class RandomizedKruskalMazeGenerator implements MazeGenerator {
         final DisjointSet<Cell> disjointSet = new DisjointSet<>();
         maze.forEach(disjointSet::makeSet);
 
-        List<Wall> walls = getAllWalls();
-        Collections.shuffle(walls, random);
+        final IndexedHashSet<Wall> walls = getAllWalls();
+        walls.shuffle(random);  // теперь просто вызываем shuffle
 
-        for (Wall wall : walls) {
+        for (Wall wall : walls) { // теперь просто перебираем элементы набора
             Cell cell1 = wall.cell1();
             Cell cell2 = wall.cell2();
 
@@ -49,14 +48,23 @@ public class RandomizedKruskalMazeGenerator implements MazeGenerator {
         return maze;
     }
 
-    private @NotNull List<Wall> getAllWalls() {
-        List<Wall> walls = new ArrayList<>();
+    private @NotNull IndexedHashSet<Wall> getAllWalls() {
+        final IndexedHashSet<Wall> walls = new IndexedHashSet<>();
 
         maze.forEach(cell -> maze.getAllNeighbors(cell)
-                .forEach(neighbor -> walls.add(new Wall(cell, neighbor))));
+                .forEach(neighbor -> walls.add(createWall(cell, neighbor))));
 
         return walls;
     }
 
     private record Wall(Cell cell1, Cell cell2) {}
+
+    @Contract("_, _ -> new")
+    private @NotNull Wall createWall(@NotNull Cell cell1, @NotNull Cell cell2) {
+        if (cell1.hashCode() <= cell2.hashCode()) {
+            return new Wall(cell1, cell2);
+        } else {
+            return new Wall(cell2, cell1);
+        }
+    }
 }
