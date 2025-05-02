@@ -5,12 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class IndexedHashSet<T> {
-    private static final String ELEMENT_CANNOT_BE_NULL = "element cannot be null";
+public class IndexedHashSet<T> implements Iterable<T> {
     private final List<T> elements;
     private final Map<T, Integer> indexes;
 
@@ -33,10 +33,6 @@ public class IndexedHashSet<T> {
         return true;
     }
 
-    /**
-     * Удаляет элемент из множества.
-     * Если элемент отсутствует, возвращает false.
-     */
     public boolean remove(@NotNull T element) {
         SimplePreconditions.checkNotNull(element, "element", "remove");
         final Integer index = indexes.get(element);
@@ -105,6 +101,20 @@ public class IndexedHashSet<T> {
      */
     public List<T> asList() {
         return Collections.unmodifiableList(elements);
+    }
+
+    public void shuffle(@NotNull Random random) {
+        SimplePreconditions.checkNotNull(random, "random", "shuffle");
+        Collections.shuffle(elements, random);
+        for (int i = 0; i < elements.size(); i++) {
+            indexes.put(elements.get(i), i);
+        }
+    }
+
+    @NotNull
+    @Override
+    public Iterator<T> iterator() {
+        return asList().iterator();
     }
 
     boolean isInternallyConsistent() {
