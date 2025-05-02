@@ -136,4 +136,15 @@ class IndexedHashSetTest {
     void testGetRandomFromEmptyThrowsException() {
         assertThrows(IllegalStateException.class, () -> indexedSet.getRandom(random));
     }
+
+    @Test
+    void testRemoveLast() {
+        indexedSet.add("one");
+        indexedSet.add("two");
+        indexedSet.add("three");
+        indexedSet.remove("two");
+        assertTrue(indexedSet.isInternallyConsistent());
+        indexedSet.remove("three");
+        assertTrue(indexedSet.isInternallyConsistent());
+    }
 }

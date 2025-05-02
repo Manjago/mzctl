@@ -106,4 +106,18 @@ public class IndexedHashSet<T> {
     public List<T> asList() {
         return Collections.unmodifiableList(elements);
     }
+
+    boolean isInternallyConsistent() {
+        if (elements.size() != indexes.size()) {
+            return false;
+        }
+        for (int i = 0; i < elements.size(); i++) {
+            T element = elements.get(i);
+            final Integer index = indexes.get(element);
+            if (index == null || index != i) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
