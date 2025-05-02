@@ -2,6 +2,10 @@ package com.temnenkov.mzctl.analysis;
 
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
+import com.temnenkov.mzctl.util.SimpleStopWatch;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +13,8 @@ import java.util.Random;
 import java.util.Set;
 
 public class AveragePathLengthAnalyzer {
+
+    private static final Logger log = LoggerFactory.getLogger(AveragePathLengthAnalyzer.class);
 
     /**
      * Размер выборки для случайного анализа.
@@ -34,23 +40,30 @@ public class AveragePathLengthAnalyzer {
         final int totalCells = maze.totalCellCount();
         final long totalPairs = ((long) totalCells * (totalCells - 1)) / 2;
 
-        if (totalPairs < FULL_ENUMERATION_THRESHOLD) {
-            // Полный перебор для небольших лабиринтов
-            return averagePathLengthFullEnumeration();
-        } else {
-            // Случайная выборка для больших лабиринтов
-            return averagePathLengthRandomSample();
-        }
-    }
-
-    private double averagePathLengthFullEnumeration() {
-        List<Cell> cells = maze.stream().toList();
-
-        if (cells.size() < 2) {
-            // Вырожденный случай: нет пар ячеек
+        final List<Cell> allMazeCells = maze.stream().toList();
+        if (allMazeCells.size() < 2) {
+            log.trace("Degenerate case: less than two cells, returning 0.0");
             return 0.0;
         }
 
+        if (totalPairs < FULL_ENUMERATION_THRESHOLD) {
+            log.trace("Performing full enumeration analysis. Total pairs: {}", totalPairs);
+            final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
+            double result = averagePathLengthFullEnumeration(allMazeCells);
+            final long elapsedMs = stopWatch.elapsed();
+            log.trace("Full enumeration completed in {} ms", elapsedMs);
+            return result;
+        } else {
+            log.trace("Performing random sample analysis. Max possible pairs: {}, Sample size: {}", totalPairs, SAMPLE_SIZE);
+            final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
+            double result = averagePathLengthRandomSample(allMazeCells);
+            final long elapsedMs = stopWatch.elapsed();
+            log.trace("Random sampling completed in {} ms", elapsedMs);
+            return result;
+        }
+    }
+
+    private double averagePathLengthFullEnumeration(@NotNull List<Cell> cells) {
         long totalLength = 0;
         long pairsCounted = 0;
 
@@ -65,18 +78,16 @@ public class AveragePathLengthAnalyzer {
             }
         }
 
+        log.trace("Full enumeration analyzed {} pairs", pairsCounted);
+        if (pairsCounted == 0) {
+            // Это состояние невозможно при текущей логике. Если возникло, значит ошибка в коде.
+            throw new IllegalStateException("Unexpected state: pairsCounted is zero");
+        }
         return (double) totalLength / pairsCounted;
     }
 
-    private double averagePathLengthRandomSample() {
-        final List<Cell> cells = maze.stream().toList();
+    private double averagePathLengthRandomSample(@NotNull List<Cell> cells) {
 
-        if (cells.size() < 2) {
-            // Вырожденный случай: нет пар ячеек
-            return 0.0;
-        }
-
-        // Максимальное возможное количество уникальных пар
         final long maxPossiblePairs = ((long) cells.size() * (cells.size() - 1)) / 2;
         final int actualSampleSize = (int) Math.min(SAMPLE_SIZE, maxPossiblePairs);
 
@@ -85,14 +96,14 @@ public class AveragePathLengthAnalyzer {
         final Set<CellPair> uniquePairs = new HashSet<>();
 
         while (validSamples < actualSampleSize) {
-            Cell start = cells.get(random.nextInt(cells.size()));
-            Cell end = cells.get(random.nextInt(cells.size()));
+            final Cell start = cells.get(random.nextInt(cells.size()));
+            final Cell end = cells.get(random.nextInt(cells.size()));
 
             if (start.equals(end)) {
-                continue; // Пропускаем одинаковые ячейки
+                continue;
             }
 
-            CellPair pair = new CellPair(start, end);
+            final CellPair pair = new CellPair(start, end);
             if (uniquePairs.contains(pair)) {
                 continue;
             }
@@ -107,17 +118,17 @@ public class AveragePathLengthAnalyzer {
             validSamples++;
         }
 
+        log.trace("Random sampling analyzed {} unique pairs", validSamples);
+
         if (validSamples == 0) {
-            // Это состояние невозможно при текущей логике. Если возникло, значит ошибка в коде.
             throw new IllegalStateException("Unexpected state: validSamples is zero after sampling.");
         }
+
         return (double) totalLength / validSamples;
     }
 
-
     private record CellPair(Cell first, Cell second) {
         public CellPair {
-            // Сортируем ячейки, чтобы пара (A,B) и (B,A) была одинаковой
             if (first.hashCode() > second.hashCode()) {
                 Cell tmp = first;
                 first = second;
