@@ -77,11 +77,15 @@ public class AveragePathLengthAnalyzer {
             return 0.0;
         }
 
+        // Максимальное возможное количество уникальных пар
+        final long maxPossiblePairs = ((long) cells.size() * (cells.size() - 1)) / 2;
+        final int actualSampleSize = (int) Math.min(SAMPLE_SIZE, maxPossiblePairs);
+
         long totalLength = 0;
         int validSamples = 0;
         final Set<String> uniquePairs = new HashSet<>();
 
-        while (validSamples < SAMPLE_SIZE) {
+        while (validSamples < actualSampleSize) {
             Cell start = cells.get(random.nextInt(cells.size()));
             Cell end = cells.get(random.nextInt(cells.size()));
 
