@@ -30,7 +30,7 @@ public class RandomizedPrimMazeGenerator implements MazeGenerator {
     private final Set<Cell> visited = new HashSet<>();
     private final IndexedHashSet<Wall> walls = new IndexedHashSet<>();
 
-    public RandomizedPrimMazeGenerator(@NotNull Random random, @NotNull MazeDim mazeDim) {
+    public RandomizedPrimMazeGenerator(@NotNull MazeDim mazeDim, @NotNull Random random) {
         this.random = random;
         this.maze = MazeFactory.createNotConnectedMaze(mazeDim);
     }
