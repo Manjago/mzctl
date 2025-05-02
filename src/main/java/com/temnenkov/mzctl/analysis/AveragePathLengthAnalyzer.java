@@ -2,7 +2,6 @@ package com.temnenkov.mzctl.analysis;
 
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -83,7 +82,7 @@ public class AveragePathLengthAnalyzer {
 
         long totalLength = 0;
         int validSamples = 0;
-        final Set<String> uniquePairs = new HashSet<>();
+        final Set<CellPair> uniquePairs = new HashSet<>();
 
         while (validSamples < actualSampleSize) {
             Cell start = cells.get(random.nextInt(cells.size()));
@@ -93,12 +92,11 @@ public class AveragePathLengthAnalyzer {
                 continue; // Пропускаем одинаковые ячейки
             }
 
-            final String pairKey = generatePairKey(start, end);
-            if (uniquePairs.contains(pairKey)) {
-                continue; // Пропускаем уже рассмотренные пары
+            CellPair pair = new CellPair(start, end);
+            if (uniquePairs.contains(pair)) {
+                continue;
             }
-
-            uniquePairs.add(pairKey);
+            uniquePairs.add(pair);
 
             final int pathLength = ShortestPathHelper.shortestDistance(maze, start, end);
             if (pathLength < 0) {
@@ -109,15 +107,22 @@ public class AveragePathLengthAnalyzer {
             validSamples++;
         }
 
+        if (validSamples == 0) {
+            // Это состояние невозможно при текущей логике. Если возникло, значит ошибка в коде.
+            throw new IllegalStateException("Unexpected state: validSamples is zero after sampling.");
+        }
         return (double) totalLength / validSamples;
     }
 
-    /**
-     * Генерирует уникальный ключ для пары ячеек, порядок не имеет значения.
-     */
-    private @NotNull String generatePairKey(@NotNull Cell a, @NotNull Cell b) {
-        return a.hashCode() < b.hashCode()
-                ? a + "-" + b
-                : b + "-" + a;
+
+    private record CellPair(Cell first, Cell second) {
+        public CellPair {
+            // Сортируем ячейки, чтобы пара (A,B) и (B,A) была одинаковой
+            if (first.hashCode() > second.hashCode()) {
+                Cell tmp = first;
+                first = second;
+                second = tmp;
+            }
+        }
     }
 }
