@@ -23,4 +23,11 @@ public final class SimplePreconditions {
             throw new IllegalStateException(message);
         }
     }
+
+    public static <T> @NotNull T checkContains(@Nullable T reference, @NotNull String paramName, @NotNull String methodName, @NotNull Object key) {
+        if (reference == null) {
+            throw new IllegalArgumentException("Element '" + key + "' not found for parameter '" + paramName + "' of " + methodName);
+        }
+        return reference;
+    }
 }
