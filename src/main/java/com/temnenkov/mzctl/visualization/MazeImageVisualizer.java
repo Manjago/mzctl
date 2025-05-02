@@ -76,7 +76,9 @@ public class MazeImageVisualizer {
             }
         }
 
+        // Явно дорисовываем последний пиксель в правом нижнем углу
+        g.fillRect(imgWidth - wallSize, imgHeight - wallSize, wallSize, wallSize);
+
         g.dispose();
         ImageIO.write(image, "png", new File(filename));
-    }
-}
+    }}
