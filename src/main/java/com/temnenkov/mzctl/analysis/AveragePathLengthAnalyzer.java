@@ -17,10 +17,9 @@ public class AveragePathLengthAnalyzer {
     private static final Logger log = LoggerFactory.getLogger(AveragePathLengthAnalyzer.class);
 
     /**
-     * Размер выборки для случайного анализа.
-     * Значение выбрано эмпирически, обеспечивает приемлемую точность.
+     * Размер выборки для случайного анализа по умолчанию.
      */
-    private static final int SAMPLE_SIZE = 1000;
+    private static final int DEFAULT_SAMPLE_SIZE = 1000;
 
     /**
      * Максимальное количество пар, при котором используется полный перебор.
@@ -30,10 +29,16 @@ public class AveragePathLengthAnalyzer {
 
     private final Maze maze;
     private final Random random;
+    private final int sampleSize;
 
     public AveragePathLengthAnalyzer(Maze maze, Random random) {
+        this(maze, random, DEFAULT_SAMPLE_SIZE);
+    }
+
+    public AveragePathLengthAnalyzer(Maze maze, Random random, int sampleSize) {
         this.maze = maze;
         this.random = random;
+        this.sampleSize = sampleSize;
     }
 
     public double averagePathLength() {
@@ -54,7 +59,7 @@ public class AveragePathLengthAnalyzer {
             log.trace("Full enumeration completed in {} ms", elapsedMs);
             return result;
         } else {
-            log.trace("Performing random sample analysis. Max possible pairs: {}, Sample size: {}", totalPairs, SAMPLE_SIZE);
+            log.trace("Performing random sample analysis. Max possible pairs: {}, Sample size: {}", totalPairs, sampleSize);
             final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
             double result = averagePathLengthRandomSample(allMazeCells);
             final long elapsedMs = stopWatch.elapsed();
@@ -87,9 +92,8 @@ public class AveragePathLengthAnalyzer {
     }
 
     private double averagePathLengthRandomSample(@NotNull List<Cell> cells) {
-
         final long maxPossiblePairs = ((long) cells.size() * (cells.size() - 1)) / 2;
-        final int actualSampleSize = (int) Math.min(SAMPLE_SIZE, maxPossiblePairs);
+        final int actualSampleSize = (int) Math.min(sampleSize, maxPossiblePairs);
 
         long totalLength = 0;
         int validSamples = 0;
@@ -118,15 +122,12 @@ public class AveragePathLengthAnalyzer {
             validSamples++;
         }
 
-        log.trace("Random sampling analyzed {} unique pairs", validSamples);
-
         if (validSamples == 0) {
             throw new IllegalStateException("Unexpected state: validSamples is zero after sampling.");
         }
 
         return (double) totalLength / validSamples;
     }
-
     private record CellPair(Cell first, Cell second) {
         public CellPair {
             if (first.hashCode() > second.hashCode()) {

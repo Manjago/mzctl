@@ -12,6 +12,8 @@ import java.util.Random;
 public class MazeExplorer {
     private static final Logger logger = LoggerFactory.getLogger(MazeExplorer.class);
 
+    private static final int DEFAULT_SAMPLE_SIZE = 1000;
+
     private final Maze maze;
     private final Random random;
     private Boolean isConnectedCache = null;
@@ -100,6 +102,14 @@ public class MazeExplorer {
         return result;
     }
 
+    public double averagePathLength(int sampleSize) {
+        final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
+        final double result = new AveragePathLengthAnalyzer(maze, random, sampleSize).averagePathLength();
+        final long elapsedMs = stopWatch.elapsed();
+        logger.trace("AveragePathLength check elapsed time: {} ms", elapsedMs);
+        return result;
+    }
+
     public double averagePathLength() {
         final SimpleStopWatch stopWatch = SimpleStopWatch.createStarted();
         final double result = new AveragePathLengthAnalyzer(maze, random).averagePathLength();
@@ -146,6 +156,17 @@ public class MazeExplorer {
      * @return строка отчета
      */
     public String report() {
+        return report(DEFAULT_SAMPLE_SIZE);
+    }
+
+    /**
+     * Возвращает текстовый отчет с основными характеристиками лабиринта.
+     * Позволяет явно указать количество выборок для анализа средней длины пути.
+     *
+     * @param sampleSize количество выборок для анализа средней длины пути
+     * @return строка отчета
+     */
+    public String report(int sampleSize) {
         final boolean acyclic = isAcyclic();
         final boolean connected = isConnected();
         return """
@@ -164,7 +185,7 @@ public class MazeExplorer {
                 isPerfect(connected, acyclic),
                 deadEndCount(),
                 diameter(),
-                averagePathLength(),
+                averagePathLength(sampleSize),
                 intersectionCount(),
                 randomnessScore(),
                 maze.getMazeDimension().size() == 2 ? String.format("%.2f", symmetryScore()) : "N/A"

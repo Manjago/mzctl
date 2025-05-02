@@ -335,4 +335,39 @@ class MazeGenerationStatTest {
             // не умеем 4D рисовать в PNG
         }
     }
+
+    /*
+   7. Большой четырехмерный лабиринт (для интереса):
+    - Размерность: 4D
+    - Размер: 50x50x50x50
+    - Цель: Проверка того, как алгоритмы справляются с высокой размерностью. Полезно, если твои алгоритмы поддерживают произвольную размерность.
+    */
+    @Test
+    void testBig4D() {
+        final MazeDim mazeDim = MazeDim.of(50, 50, 50, 50);
+        for(MazeGeneratorFactory.Algo algo : MazeGeneratorFactory.Algo.values()) {
+            System.out.println("Testing algorithm: " + algo);
+
+            final MazeGenerator mazeGenerator = mazeGeneratorFactory.create(algo, mazeDim);
+            final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
+            final Maze maze = mazeGenerator.generateMaze();
+            final long genDurationMs = genWatch.elapsed();
+
+            final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+            final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
+            assertTrue(mazeExplorer.isPerfect());
+            final String report = mazeExplorer.report();
+            final long exploreDurationMs = exploreWatch.elapsed();
+
+            System.out.printf("""
+                    Algorithm: %s
+                    Generation time: %d ms
+                    Exploration time: %d ms
+                    %s
+                    %n""", algo, genDurationMs, exploreDurationMs, report);
+
+            // не умеем 4D рисовать в ASCII
+            // не умеем 4D рисовать в PNG
+        }
+    }
 }
