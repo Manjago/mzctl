@@ -47,38 +47,49 @@ public class MazeImageVisualizer {
         // стены
         g.setColor(Color.BLACK);
 
-        for (int y = 0; y < height; y++) {
+        // Рисуем горизонтальные стены (включая верхнюю и нижнюю границы лабиринта)
+        for (int y = 0; y <= height; y++) {
             for (int x = 0; x < width; x++) {
-                int pixelX = x * (cellSize + wallSize) + wallSize;
-                int pixelY = y * (cellSize + wallSize) + wallSize;
+                boolean drawWall;
 
-                Cell current = Cell.of(y, x);
-
-                // верхняя стена (рисуем всегда, если верхняя граница)
-                if (y == 0 || !maze.canPass(current, Cell.of(y - 1, x))) {
-                    g.fillRect(pixelX - wallSize, pixelY - wallSize, cellSize + wallSize, wallSize);
+                if (y == 0 || y == height) {
+                    drawWall = true; // Верхняя и нижняя границы всегда рисуются
+                } else {
+                    Cell current = Cell.of(y - 1, x);
+                    Cell below = Cell.of(y, x);
+                    drawWall = !maze.canPass(current, below);
                 }
 
-                // левая стена (рисуем всегда, если левая граница)
-                if (x == 0 || !maze.canPass(current, Cell.of(y, x - 1))) {
-                    g.fillRect(pixelX - wallSize, pixelY - wallSize, wallSize, cellSize + wallSize);
-                }
-
-                // правая стена (рисуем всегда, если правая граница)
-                if (x == width - 1 || !maze.canPass(current, Cell.of(y, x + 1))) {
-                    g.fillRect(pixelX + cellSize, pixelY - wallSize, wallSize, cellSize + wallSize);
-                }
-
-                // нижняя стена (рисуем всегда, если нижняя граница)
-                if (y == height - 1 || !maze.canPass(current, Cell.of(y + 1, x))) {
-                    g.fillRect(pixelX - wallSize, pixelY + cellSize, cellSize + wallSize, wallSize);
+                if (drawWall) {
+                    int wallX = x * (cellSize + wallSize);
+                    int wallY = y * (cellSize + wallSize);
+                    g.fillRect(wallX, wallY, cellSize + 2 * wallSize, wallSize);
                 }
             }
         }
 
-        // Явно дорисовываем последний пиксель в правом нижнем углу
-        g.fillRect(imgWidth - wallSize, imgHeight - wallSize, wallSize, wallSize);
+        // Рисуем вертикальные стены (включая левую и правую границы лабиринта)
+        for (int x = 0; x <= width; x++) {
+            for (int y = 0; y < height; y++) {
+                boolean drawWall;
+
+                if (x == 0 || x == width) {
+                    drawWall = true; // Левая и правая границы всегда рисуются
+                } else {
+                    Cell current = Cell.of(y, x - 1);
+                    Cell right = Cell.of(y, x);
+                    drawWall = !maze.canPass(current, right);
+                }
+
+                if (drawWall) {
+                    int wallX = x * (cellSize + wallSize);
+                    int wallY = y * (cellSize + wallSize);
+                    g.fillRect(wallX, wallY, wallSize, cellSize + 2 * wallSize);
+                }
+            }
+        }
 
         g.dispose();
         ImageIO.write(image, "png", new File(filename));
-    }}
+    }
+}
