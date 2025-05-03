@@ -100,6 +100,16 @@ public class IndexedHashSet<T> implements Iterable<T> {
         return elements.get(random.nextInt(elements.size()));
     }
 
+    public T getLast() {
+        SimplePreconditions.checkState(!elements.isEmpty(), "IndexedHashSet is empty");
+        return elements.getLast();
+    }
+
+    public T getFirst() {
+        SimplePreconditions.checkState(!elements.isEmpty(), "IndexedHashSet is empty");
+        return elements.getFirst();
+    }
+
     /**
      * Возвращает количество элементов в множестве.
      *
