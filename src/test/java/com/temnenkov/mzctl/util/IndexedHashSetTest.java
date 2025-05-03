@@ -126,6 +126,7 @@ class IndexedHashSetTest {
     void testAddNullThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> indexedSet.add(null));
     }
+
     @Test
     void testRemoveNullThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> indexedSet.remove(null));
@@ -203,5 +204,33 @@ class IndexedHashSetTest {
             count++;
         }
         assertEquals(0, count, "Итератор пустого множества не должен возвращать элементов");
+    }
+
+    @Test
+    void testGetFirst() {
+        indexedSet.add("one");
+        indexedSet.add("two");
+        indexedSet.add("three");
+        assertEquals("one", indexedSet.getFirst(), "getFirst должен вернуть первый добавленный элемент");
+    }
+
+    @Test
+    void testGetLast() {
+        indexedSet.add("one");
+        indexedSet.add("two");
+        indexedSet.add("three");
+        assertEquals("three", indexedSet.getLast(), "getLast должен вернуть последний добавленный элемент");
+    }
+
+    @Test
+    void testGetFirstOnEmptyThrowsException() {
+        assertThrows(IllegalStateException.class, () -> indexedSet.getFirst(),
+                "getFirst на пустом множестве должен бросить исключение");
+    }
+
+    @Test
+    void testGetLastOnEmptyThrowsException() {
+        assertThrows(IllegalStateException.class, () -> indexedSet.getLast(),
+                "getLast на пустом множестве должен бросить исключение");
     }
 }

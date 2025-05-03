@@ -66,7 +66,7 @@ public class IndexedHashSet<T> implements Iterable<T> {
         Collections.swap(elements, index, lastIndex);
 
         // Удаляем последний элемент (ранее он был удаляемым)
-        elements.remove(lastIndex);
+        elements.removeLast();
         indexes.remove(element);
 
         // Обновляем индекс перемещенного элемента, если это не тот же элемент
@@ -100,11 +100,23 @@ public class IndexedHashSet<T> implements Iterable<T> {
         return elements.get(random.nextInt(elements.size()));
     }
 
+    /**
+     * Возвращает последний элемент множества.
+     *
+     * @return последний элемент множества
+     * @throws IllegalStateException если множество пусто
+     */
     public T getLast() {
         SimplePreconditions.checkState(!elements.isEmpty(), "IndexedHashSet is empty");
         return elements.getLast();
     }
 
+    /**
+     * Возвращает первый элемент множества.
+     *
+     * @return первый элемент множества
+     * @throws IllegalStateException если множество пусто
+     */
     public T getFirst() {
         SimplePreconditions.checkState(!elements.isEmpty(), "IndexedHashSet is empty");
         return elements.getFirst();
