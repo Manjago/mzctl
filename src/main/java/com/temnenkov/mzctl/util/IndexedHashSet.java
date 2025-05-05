@@ -3,6 +3,7 @@ package com.temnenkov.mzctl.util;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.Random;
  */
 public class IndexedHashSet<T> implements Iterable<T> {
 
+    private static final String CTOR = ".ctor";
     private final List<T> elements;
     private final Map<T, Integer> indexes;
 
@@ -27,6 +29,25 @@ public class IndexedHashSet<T> implements Iterable<T> {
     public IndexedHashSet() {
         this.elements = new ArrayList<>();
         this.indexes = new HashMap<>();
+    }
+
+    /**
+     * Создает множество по данным из переданной коллекции.
+     * Если в коллекции есть повторяющиеся элементы, они добавляются один раз.
+     *
+     * @param initialData коллекция элементов для инициализации множества
+     */
+    public IndexedHashSet(@NotNull Collection<T> initialData) {
+        SimplePreconditions.checkNotNull(initialData, "initialData", CTOR);
+        this.elements = new ArrayList<>(initialData.size());
+        this.indexes = HashMap.newHashMap(initialData.size());
+        for (T element : initialData) {
+            SimplePreconditions.checkNotNull(element, "element in initialData", CTOR);
+            if (!indexes.containsKey(element)) { // исключаем повторяющиеся элементы
+                indexes.put(element, elements.size());
+                elements.add(element);
+            }
+        }
     }
 
     /**

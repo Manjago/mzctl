@@ -244,4 +244,36 @@ class IndexedHashSetTest {
         assertEquals("two", indexedSet.getFirst());
         assertEquals("three", indexedSet.getLast());
     }
+
+    @Test
+    void testConstructorWithInitialData() {
+        // Проверяем создание множества из списка элементов
+        List<String> initialData = List.of("one", "two", "three", "two", "four", "one");
+        IndexedHashSet<String> set = new IndexedHashSet<>(initialData);
+
+        // Проверяем, что множество содержит только уникальные элементы
+        assertEquals(4, set.size(), "Множество должно содержать только уникальные элементы");
+        assertTrue(set.contains("one"));
+        assertTrue(set.contains("two"));
+        assertTrue(set.contains("three"));
+        assertTrue(set.contains("four"));
+
+        // Проверяем порядок элементов (должен сохраняться по первому вхождению)
+        List<String> expectedOrder = List.of("one", "two", "three", "four");
+        assertEquals(expectedOrder, set.asList(), "Элементы должны сохранять порядок первого появления");
+
+        // Проверяем внутреннюю консистентность после инициализации
+        assertTrue(set.isInternallyConsistent(), "Структура должна быть консистентной после инициализации");
+
+        // Проверка на null
+        assertThrows(IllegalArgumentException.class, () -> new IndexedHashSet<>(null),
+                "Конструктор должен бросать исключение при передаче null");
+
+        // Проверка на null-элементы внутри коллекции
+        List<String> dataWithNull = new ArrayList<>();
+        dataWithNull.add("one");
+        dataWithNull.add(null);
+        assertThrows(IllegalArgumentException.class, () -> new IndexedHashSet<>(dataWithNull),
+                "Конструктор должен бросать исключение при передаче коллекции с null-элементами");
+    }
 }
