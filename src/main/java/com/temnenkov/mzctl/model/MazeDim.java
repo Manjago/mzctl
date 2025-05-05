@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Размерность массива
@@ -67,6 +68,10 @@ public record MazeDim(@NotNull List<Integer> lenData) {
      */
     public List<Integer> dimensions() {
         return lenData;
+    }
+
+    public String display() {
+        return lenData.stream().map(String::valueOf).collect(Collectors.joining("x"));
     }
 
 }

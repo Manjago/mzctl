@@ -42,6 +42,7 @@ public class MazeGeneratorFactory {
             case RANDOMIZED_PRIM -> new RandomizedPrimMazeGenerator(mazeDim, random);
             case RANDOMIZED_KRUSKAL -> new RandomizedKruskalMazeGenerator(mazeDim, random);
             case HUNT_AND_KILL -> new HuntAndKillMazeGenerator(mazeDim, random);
+            case ALDOUS_BRODER -> new AldousBroderMazeGenerator(mazeDim, random);
         };
     }
 
@@ -69,7 +70,8 @@ public class MazeGeneratorFactory {
             SIDEWINDER,
             RANDOMIZED_PRIM,
             RANDOMIZED_KRUSKAL,
-            HUNT_AND_KILL
+            HUNT_AND_KILL,
+            ALDOUS_BRODER
         }
 }
 
