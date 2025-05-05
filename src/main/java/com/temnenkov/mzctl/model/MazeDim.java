@@ -1,6 +1,8 @@
 package com.temnenkov.mzctl.model;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,8 +68,9 @@ public record MazeDim(@NotNull List<Integer> lenData) {
      *
      * @return список размеров
      */
-    public List<Integer> dimensions() {
-        return lenData;
+    @Contract(pure = true)
+    public @NotNull @Unmodifiable List<Integer> dimensions() {
+        return List.copyOf(lenData);
     }
 
     public String display() {
