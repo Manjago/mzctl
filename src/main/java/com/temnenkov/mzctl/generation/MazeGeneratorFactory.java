@@ -11,8 +11,8 @@ import java.util.Random;
  * Фабрика для создания генераторов лабиринтов.
  */
 public class MazeGeneratorFactory {
-    private static final Logger logger = LoggerFactory.getLogger(MazeGeneratorFactory.class);
-    private final Random random;
+        private static final Logger logger = LoggerFactory.getLogger(MazeGeneratorFactory.class);
+        private final Random random;
 
     /**
      * Создает фабрику с заданным генератором случайных чисел.
@@ -45,10 +45,31 @@ public class MazeGeneratorFactory {
         };
     }
 
-    /**
-     * Перечисление поддерживаемых алгоритмов генерации лабиринтов.
-     */
-    public enum Algo {
-        RECURSIVE_BACKTRACKER, RECURSIVE_DIVISION, BINARY_TREE, SIDEWINDER, RANDOMIZED_PRIM, RANDOMIZED_KRUSKAL, HUNT_AND_KILL
-    }
+        /**
+         * Создает генератор лабиринтов Growing Tree с заданной стратегией и mixedProbability.
+         *
+         * @param mazeDim          размерность лабиринта
+         * @param strategy         стратегия Growing Tree
+         * @param mixedProbability вероятность для MIXED стратегии
+         * @return генератор лабиринтов Growing Tree
+         */
+        @NotNull
+        public MazeGenerator createGrowingTree(@NotNull MazeDim mazeDim,
+                @NotNull GrowingTreeMazeGenerator.Strategy strategy,
+                double mixedProbability) {
+            logger.info("Creating Growing Tree maze generator: strategy={}, mixedProbability={}, mazeDim={}",
+                    strategy, mixedProbability, mazeDim);
+            return new GrowingTreeMazeGenerator(mazeDim, random, strategy, mixedProbability);
+        }
+
+        public enum Algo {
+            RECURSIVE_BACKTRACKER,
+            RECURSIVE_DIVISION,
+            BINARY_TREE,
+            SIDEWINDER,
+            RANDOMIZED_PRIM,
+            RANDOMIZED_KRUSKAL,
+            HUNT_AND_KILL
+        }
 }
+
