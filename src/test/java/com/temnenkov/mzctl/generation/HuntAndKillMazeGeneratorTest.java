@@ -19,14 +19,14 @@ class HuntAndKillMazeGeneratorTest {
     void generateMaze2d20to20AndShow() throws IOException {
         //given
         final Random random = new SecureRandom();
-        final HuntAndKillMazeGenerator randomizedKruskalMazeGenerator = new HuntAndKillMazeGenerator(MazeDim.of(20, 20), random);
+        final HuntAndKillMazeGenerator huntAndKillMazeGenerator = new HuntAndKillMazeGenerator(MazeDim.of(20, 20), random);
         //when
-        final Maze maze = randomizedKruskalMazeGenerator.generateMaze();
+        final Maze maze = huntAndKillMazeGenerator.generateMaze();
         //then
         assertNotNull(maze);
 
         new MazeAsciiVisualizer(maze).printMaze();
-        new MazeImageVisualizer(maze).saveMazeImage("target/randomized-kruskal-2.png");
+        new MazeImageVisualizer(maze).saveMazeImage("target/hunt-and-kill-2.png");
 
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
         assertTrue(mazeExplorer.isConnected());
@@ -45,7 +45,7 @@ class HuntAndKillMazeGeneratorTest {
         assertNotNull(maze);
 
         new MazeAsciiVisualizer(maze).printMaze();
-        new MazeImageVisualizer(maze, 20, 2).saveMazeImage("target/randomized-kruskal-1.png");
+        new MazeImageVisualizer(maze, 20, 2).saveMazeImage("target/hunt-and-kill-1.png");
 
         final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
         assertTrue(mazeExplorer.isConnected());
