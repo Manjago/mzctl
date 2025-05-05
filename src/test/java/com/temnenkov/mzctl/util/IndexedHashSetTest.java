@@ -233,4 +233,15 @@ class IndexedHashSetTest {
         assertThrows(IllegalStateException.class, () -> indexedSet.getLast(),
                 "getLast на пустом множестве должен бросить исключение");
     }
+
+    @Test
+    void testSameOrderAfterRemove() {
+        indexedSet.add("one");
+        indexedSet.add("two");
+        indexedSet.add("three");
+        indexedSet.remove("one");
+        System.out.println(indexedSet);
+        assertEquals("two", indexedSet.getFirst());
+        assertEquals("three", indexedSet.getLast());
+    }
 }

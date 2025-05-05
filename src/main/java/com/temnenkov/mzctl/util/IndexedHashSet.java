@@ -60,18 +60,12 @@ public class IndexedHashSet<T> implements Iterable<T> {
             return false;
         }
 
-        // Меняем местами удаляемый элемент и последний элемент списка
-        int lastIndex = elements.size() - 1;
-        final T lastElement = elements.get(lastIndex);
-        Collections.swap(elements, index, lastIndex);
-
-        // Удаляем последний элемент (ранее он был удаляемым)
-        elements.removeLast();
+        elements.remove((int)index); // удаляем элемент по индексу, сохраняя порядок
         indexes.remove(element);
 
-        // Обновляем индекс перемещенного элемента, если это не тот же элемент
-        if (index < elements.size()) {
-            indexes.put(lastElement, index);
+        // обновляем индексы элементов, следующих за удалённым
+        for (int i = index; i < elements.size(); i++) {
+            indexes.put(elements.get(i), i);
         }
 
         return true;
@@ -202,5 +196,10 @@ public class IndexedHashSet<T> implements Iterable<T> {
             }
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "IndexedHashSet{" + "elements=" + elements + ", indexes=" + indexes + '}';
     }
 }
