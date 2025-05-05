@@ -4,9 +4,9 @@ import com.temnenkov.mzctl.analysis.MazeExplorer;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
 import com.temnenkov.mzctl.util.SimpleStopWatch;
-import com.temnenkov.mzctl.visualization.MazeAsciiVisualizer;
 import com.temnenkov.mzctl.visualization.MazeImageVisualizer;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -19,7 +19,14 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class GrowingTreeMazeGeneratorTest {
+class GrowingTreeMazeGeneratorFactoryTest {
+
+    private MazeGeneratorFactory mazeGeneratorFactory;
+
+    @BeforeEach
+    void setUp() {
+        mazeGeneratorFactory = new MazeGeneratorFactory(new Random(42L));
+    }
 
     static @NotNull Stream<Arguments> mazeGenerationStrategies() {
         return Stream.of(
@@ -38,9 +45,8 @@ class GrowingTreeMazeGeneratorTest {
         System.out.printf("Generating Maze strategy=%s, mixedProbability=%.2f%n", strategy, mixedProbability);
 
         // given
-        final Random random = new SecureRandom();
-        final GrowingTreeMazeGenerator generator = new GrowingTreeMazeGenerator(
-                MazeDim.of(20, 20), random, strategy, mixedProbability);
+        final MazeGenerator generator =
+        mazeGeneratorFactory.createGrowingTree(MazeDim.of(25, 25), strategy, mixedProbability);
 
         // when
         final SimpleStopWatch genWatch = SimpleStopWatch.createStarted();
@@ -50,11 +56,10 @@ class GrowingTreeMazeGeneratorTest {
         // then
         assertNotNull(maze);
 
-        new MazeAsciiVisualizer(maze).printMaze();
         new MazeImageVisualizer(maze).saveMazeImage(
-                String.format("target/growing-tree-20x20-%s-%.2f.png", strategy.name().toLowerCase(), mixedProbability));
+                String.format("target/growing-tree-25x25-%s-%.2f.png", strategy.name().toLowerCase(), mixedProbability));
 
-        final MazeExplorer mazeExplorer = new MazeExplorer(maze, random);
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, new SecureRandom());
         final SimpleStopWatch exploreWatch = SimpleStopWatch.createStarted();
         assertTrue(mazeExplorer.isConnected());
         assertTrue(mazeExplorer.isAcyclic());
