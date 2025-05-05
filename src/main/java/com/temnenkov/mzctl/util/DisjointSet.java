@@ -74,4 +74,14 @@ public class DisjointSet<T> {
         }
         return node.parent;
     }
+
+    /**
+     * Проверяет, содержится ли элемент в данном DisjointSet.
+     *
+     * @param data элемент для проверки
+     * @return true, если элемент уже есть; иначе false
+     */
+    public boolean contains(@NotNull T data) {
+        return map.containsKey(data);
+    }
 }

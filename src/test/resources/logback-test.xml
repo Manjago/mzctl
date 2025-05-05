@@ -6,6 +6,7 @@
     </appender>
 
     <logger name="com.temnenkov.mzctl.analysis" level="TRACE"/>
+    <logger name="com.temnenkov.mzctl.generation.EllerMazeGenerator" level="INFO"/>
 
     <root level="debug">
         <appender-ref ref="CONSOLE"/>

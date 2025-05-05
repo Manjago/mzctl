@@ -7,6 +7,8 @@ import com.temnenkov.mzctl.model.MazeFactory;
 import com.temnenkov.mzctl.util.DisjointSet;
 import com.temnenkov.mzctl.util.SimplePreconditions;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +20,7 @@ import java.util.Random;
 public class EllerMazeGenerator implements MazeGenerator {
 
     private static final String CTOR = ".ctor";
+    private static final Logger log = LoggerFactory.getLogger(EllerMazeGenerator.class);
 
     private final Maze maze;
     private final Random random;
@@ -43,26 +46,32 @@ public class EllerMazeGenerator implements MazeGenerator {
                     .filter(cell -> cell.getCoordinates()[0] == finalLayer)
                     .toList();
 
-            // Помещаем ячейки слоя в disjointSet
-            currentLayerCells.forEach(disjointSet::makeSet);
+            // Добавляем ячейки текущего слоя в disjointSet (если еще не добавлены)
+            currentLayerCells.forEach(cell -> {
+                if (!disjointSet.contains(cell)) {
+                    disjointSet.makeSet(cell);
+                }
+            });
 
-            // Соединяем соседние ячейки внутри слоя
+            // Горизонтальные соединения текущего слоя
             for (Cell cell : currentLayerCells) {
                 for (int dim = 1; dim < dims.size(); dim++) {
                     final Cell neighbor = cell.plusOne(dim);
-                    if (contains(neighbor) && !disjointSet.find(cell).equals(disjointSet.find(neighbor))
+                    if (contains(neighbor)
+                            && !disjointSet.find(cell).equals(disjointSet.find(neighbor))
                             && (layer == layers - 1 || random.nextBoolean())) {
                         maze.addPass(cell, neighbor);
                         disjointSet.union(cell, neighbor);
+                        log.trace("Горизонтальное соединение слоя {}: {} <-> {}", layer, cell, neighbor);
                     }
                 }
             }
 
             if (layer == layers - 1) {
-                break;
+                break; // последний слой, вертикальные соединения вниз не нужны
             }
 
-            // Вертикальные соединения (со следующим слоем)
+            // Вертикальные соединения вниз
             final Map<Cell, List<Cell>> sets = new HashMap<>();
             for (Cell cell : currentLayerCells) {
                 final Cell setId = disjointSet.find(cell);
@@ -71,30 +80,18 @@ public class EllerMazeGenerator implements MazeGenerator {
 
             for (List<Cell> setCells : sets.values()) {
                 Collections.shuffle(setCells, random);
-                final int connections = random.nextInt(setCells.size()) + 1; // хотя бы одно соединение вниз
+                int connections = 1 + random.nextInt(setCells.size()); // хотя бы одно соединение вниз
                 for (int i = 0; i < connections; i++) {
-                    final Cell cell = setCells.get(i);
-                    final Cell belowCell = cell.plusOne(0); // следующий слой по первой оси
+                    Cell cell = setCells.get(i);
+                    Cell belowCell = cell.plusOne(0);
                     if (contains(belowCell)) {
+                        if (!disjointSet.contains(belowCell)) {
+                            disjointSet.makeSet(belowCell);
+                        }
                         maze.addPass(cell, belowCell);
-                        disjointSet.makeSet(belowCell);
                         disjointSet.union(cell, belowCell);
+                        log.trace("Вертикальное соединение слоя {} вниз: {} <-> {}", layer, cell, belowCell);
                     }
-                }
-            }
-        }
-
-        // На последнем слое объединяем оставшиеся множества
-        final List<Cell> lastLayerCells = maze.stream()
-                .filter(cell -> cell.getCoordinates()[0] == layers - 1)
-                .toList();
-
-        for (Cell cell : lastLayerCells) {
-            for (int dim = 1; dim < dims.size(); dim++) {
-                final Cell neighbor = cell.plusOne(dim);
-                if (contains(neighbor) && !disjointSet.find(cell).equals(disjointSet.find(neighbor))) {
-                    maze.addPass(cell, neighbor);
-                    disjointSet.union(cell, neighbor);
                 }
             }
         }

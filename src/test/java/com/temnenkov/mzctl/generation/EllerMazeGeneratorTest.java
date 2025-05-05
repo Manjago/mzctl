@@ -8,7 +8,6 @@ import com.temnenkov.mzctl.visualization.MazeImageVisualizer;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,7 +17,7 @@ class EllerMazeGeneratorTest {
     @Test
     void generateMaze2d5to5AndShow() throws IOException {
         //given
-        final Random random = new SecureRandom();
+        final Random random = new Random(42);
         final EllerMazeGenerator ellerMazeGenerator = new EllerMazeGenerator(MazeDim.of(5, 5), random);
         //when
         final Maze maze = ellerMazeGenerator.generateMaze();
