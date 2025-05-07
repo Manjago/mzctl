@@ -2,6 +2,7 @@ package com.temnenkov.mzctl.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.temnenkov.mzctl.util.SimpleMath;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -151,15 +152,7 @@ public final class Cell implements Iterable<Cell> {
     }
 
     private int calculateTotalNeighboursAndMeCount() {
-        return pow(3, coordinates.length);
-    }
-
-    private int pow(int digit, int pow) {
-        int result = 1;
-        for(int i=0; i< pow; ++i) {
-            result *= digit;
-        }
-        return result;
+        return SimpleMath.pow(3, coordinates.length);
     }
 
     @Override
