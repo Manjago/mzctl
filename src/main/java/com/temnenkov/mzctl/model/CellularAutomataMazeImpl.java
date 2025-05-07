@@ -168,20 +168,15 @@ public class CellularAutomataMazeImpl implements CellularAutomataMaze {
      * @param cell текущая комната
      * @return все соседние клетки
      */
-    private Stream<Cell> getAllNeighbors(Cell cell) {
-        return IntStream.range(0, mazeDim.size()).boxed().flatMap(dimNum ->
-                Stream.of(
-                        cell.minusOne(dimNum),
-                        cell.plusOne(dimNum)
-                ).filter(pretender -> isValid(pretender, dimNum)));
+    private Stream<Cell> getAllNeighbors(@NotNull Cell cell) {
+        return cell.neighbors()
+                .filter(this::isValid);
     }
 
     private int calculateTotalCellCount() {
-        int result = 1;
-        for (int i = 0; i < mazeDim.size(); i++) {
-            result *= mazeDim.dimSize(i);
-        }
-        return result;
+        return IntStream.range(0, mazeDim.size())
+                .map(mazeDim::dimSize)
+                .reduce(1, (a, b) -> a * b);
     }
 
 }
