@@ -88,9 +88,10 @@ public class CellularAutomataMazeGenerator {
     private void simulationStep(@NotNull CellularAutomataMaze maze) {
         final CellularAutomataMaze nextMaze = new CellularAutomataMazeImpl(maze.getDimensions(), random);
 
+        final int totalNeighbors = (int) Math.pow(3, maze.getDimensions().size()) - 1;
+
         maze.stream().forEach(cell -> {
             final int wallCount = maze.countWallNeighbors(cell);
-            final int totalNeighbors = (int) Math.pow(3, maze.getDimensions().size()) - 1;
             double wallRatio = (double) wallCount / totalNeighbors;
 
             if (maze.isWall(cell)) {
