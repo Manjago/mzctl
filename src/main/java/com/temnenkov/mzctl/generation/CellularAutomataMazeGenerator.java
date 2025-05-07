@@ -70,11 +70,11 @@ public class CellularAutomataMazeGenerator {
     public CellularAutomataMaze generate(@NotNull MazeDim dim) {
         SimplePreconditions.checkNotNull(dim, "dim", "generate");
 
-        final CellularAutomataMaze maze = new CellularAutomataMazeImpl(dim, random)
+        CellularAutomataMaze maze = new CellularAutomataMazeImpl(dim, random)
                 .initialize(fillProbability);
 
         for (int i = 0; i < iterations; i++) {
-            simulationStep(maze);
+            maze = simulationStep(maze);
         }
 
         return maze;
@@ -84,15 +84,16 @@ public class CellularAutomataMazeGenerator {
      * Выполняет один шаг симуляции клеточного автомата.
      *
      * @param maze текущий лабиринт
+     * @return лабиринт на следующем шаге
      */
-    private void simulationStep(@NotNull CellularAutomataMaze maze) {
+    private @NotNull CellularAutomataMaze simulationStep(@NotNull CellularAutomataMaze maze) {
         final CellularAutomataMaze nextMaze = new CellularAutomataMazeImpl(maze.getDimensions(), random);
 
         final int totalNeighbors = (int) Math.pow(3, maze.getDimensions().size()) - 1;
 
         maze.stream().forEach(cell -> {
             final int wallCount = maze.countWallNeighbors(cell);
-            double wallRatio = (double) wallCount / totalNeighbors;
+            final double wallRatio = (double) wallCount / totalNeighbors;
 
             if (maze.isWall(cell)) {
                 nextMaze.setWall(wallRatio >= wallKeepThreshold, cell);
@@ -101,6 +102,6 @@ public class CellularAutomataMazeGenerator {
             }
         });
 
-        maze.stream().forEach(cell -> maze.setWall(nextMaze.isWall(cell), cell));
+        return nextMaze;
     }
 }
