@@ -148,6 +148,21 @@ public class CellularAutomataMazeImpl implements CellularAutomataMaze {
     }
 
     /**
+     * Не вышла ли комната cell за пределы лабиринта
+     *
+     * @param cell      комната
+     * @return true, если комната в пределах лабиринта, false - в противном случае
+     */
+    private boolean isValid(@NotNull Cell cell) {
+        for(int i=0; i< mazeDim.size(); i++) {
+            if (!isValid(cell, i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Получить все соседние клетки (с границами-стенами или без) для текущей комнаты cell
      *
      * @param cell текущая комната
