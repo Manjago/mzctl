@@ -32,7 +32,8 @@ class CellularAutomataMazeGeneratorTest {
         };
 
         final CellularAutomataMazeGenerator mazeGenerator = new CellularAutomataMazeGenerator(
-               0.75, 10, 0.5, 0.625, new Random(42L), visualizer);
+                0.48, 5, 0.50, 0.55, new Random(42L), visualizer);
+
         final CellularAutomataMaze maze = mazeGenerator.generate(MazeDim.of(10, 10));
         assertNotNull(maze);
 
