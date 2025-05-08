@@ -22,6 +22,12 @@ public class CellularAutomataMazeImpl implements CellularAutomataMaze {
     @NotNull
     private final Random random;
     private final Set<Cell> walls = new HashSet<>();
+
+    @Override
+    public int totalCells() {
+        return totalCellCount;
+    }
+
     private final int totalCellCount;
 
     public CellularAutomataMazeImpl(@NotNull MazeDim mazeDim, @NotNull Random random) {
@@ -153,7 +159,8 @@ public class CellularAutomataMazeImpl implements CellularAutomataMaze {
      * @param cell      комната
      * @return true, если комната в пределах лабиринта, false - в противном случае
      */
-    private boolean isValid(@NotNull Cell cell) {
+    @Override
+    public boolean isValid(@NotNull Cell cell) {
         for(int i=0; i< mazeDim.size(); i++) {
             if (!isValid(cell, i)) {
                 return false;

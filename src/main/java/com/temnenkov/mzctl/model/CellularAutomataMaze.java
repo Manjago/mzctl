@@ -1,5 +1,7 @@
 package com.temnenkov.mzctl.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.stream.Stream;
 
 public interface CellularAutomataMaze extends Iterable<Cell> {
@@ -39,7 +41,7 @@ public interface CellularAutomataMaze extends Iterable<Cell> {
      * Устанавливает состояние клетки.
      *
      * @param isWall true, если клетка должна стать стеной, иначе false
-     * @param cell клетка лабиринта
+     * @param cell   клетка лабиринта
      */
     void setWall(boolean isWall, Cell cell);
 
@@ -73,4 +75,19 @@ public interface CellularAutomataMaze extends Iterable<Cell> {
      * @return все комнаты лабиринта
      */
     Stream<Cell> stream();
+
+    /**
+     * Клетка в пределах лабиринта
+     *
+     * @param cell клетка, координаты - какие угодно
+     * @return true, если клетка в пределах лабиринта, false - если нет
+     */
+    boolean isValid(@NotNull Cell cell);
+
+    /**
+     * Общее количество клеток в лабиринте
+     *
+     * @return Общее количество клеток в лабиринте
+     */
+    int totalCells();
 }
