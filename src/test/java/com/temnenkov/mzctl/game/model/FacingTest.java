@@ -12,18 +12,18 @@ class FacingTest {
 
     @Test
     void testCreateFacing() {
-        Facing facing = Facing.of(0, 1);
-        assertArrayEquals(new int[]{0, 1}, facing.getDirections());
+        Facing facing = Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.POSITIVE);
+        assertArrayEquals(new Facing.AxisDirection[]{Facing.AxisDirection.ZERO, Facing.AxisDirection.POSITIVE}, facing.getDirections());
     }
 
     @Test
     void testCreateFacingWithZeroVector() {
-        assertThrows(IllegalArgumentException.class, () -> Facing.of(0, 0));
+        assertThrows(IllegalArgumentException.class, () -> Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.ZERO));
     }
 
     @Test
     void testMoveForward() {
-        Facing facing = Facing.of(0, 1);
+        Facing facing = Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.POSITIVE);
         Cell initialCell = Cell.of(2, 3);
         Cell resultCell = facing.moveForward(initialCell);
         assertEquals(Cell.of(2, 4), resultCell);
@@ -32,22 +32,22 @@ class FacingTest {
     @Test
     void testTurn() {
         // Начальное направление (смотрим вправо)
-        Facing facing = Facing.of(0, 1);
+        Facing facing = Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.POSITIVE);
 
         // Поворот на 90 градусов (в плоскости 0-1)
-        Facing turnedFacing = facing.turn(0, 1);
-        assertArrayEquals(new int[]{-1, 0}, turnedFacing.getDirections());
+        Facing turnedFacing = facing.turn(Facing.Dimension.X, Facing.Dimension.Y);
+        assertArrayEquals(new Facing.AxisDirection[]{Facing.AxisDirection.NEGATIVE, Facing.AxisDirection.ZERO}, turnedFacing.getDirections());
 
         // Еще один поворот на 90 градусов
-        Facing turnedAgainFacing = turnedFacing.turn(0, 1);
-        assertArrayEquals(new int[]{0, -1}, turnedAgainFacing.getDirections());
+        Facing turnedAgainFacing = turnedFacing.turn(Facing.Dimension.X, Facing.Dimension.Y);
+        assertArrayEquals(new Facing.AxisDirection[]{Facing.AxisDirection.ZERO, Facing.AxisDirection.NEGATIVE}, turnedAgainFacing.getDirections());
     }
 
     @Test
     void testFacingEquality() {
-        Facing facing1 = Facing.of(1, 0);
-        Facing facing2 = Facing.of(1, 0);
-        Facing facing3 = Facing.of(0, 1);
+        Facing facing1 = Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.NEGATIVE);
+        Facing facing2 = Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.NEGATIVE);
+        Facing facing3 = Facing.of(Facing.AxisDirection.NEGATIVE, Facing.AxisDirection.ZERO);
 
         assertEquals(facing1, facing2);
         assertNotEquals(facing1, facing3);
@@ -55,16 +55,16 @@ class FacingTest {
 
     @Test
     void testFacingHashCode() {
-        Facing facing1 = Facing.of(1, 0);
-        Facing facing2 = Facing.of(1, 0);
+        Facing facing1 = Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.NEGATIVE);
+        Facing facing2 = Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.NEGATIVE);
 
         assertEquals(facing1.hashCode(), facing2.hashCode());
     }
 
     @Test
     void testToString() {
-        Facing facing = Facing.of(1, 0);
-        assertEquals("Facing{direction=[1, 0]}", facing.toString());
+        Facing facing = Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.NEGATIVE);
+        assertEquals("Facing{direction=[ZERO, NEGATIVE]}", facing.toString());
     }
 
     @Test
@@ -74,7 +74,7 @@ class FacingTest {
 
     @Test
     void testFacingEqualsWithNullAndDifferentClass() {
-        Facing facing = Facing.of(1, 0);
+        Facing facing = Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.NEGATIVE);
 
         assertNotEquals(null, facing);
         // именно в таком порядке, чтобы проверить equals именно у Facing

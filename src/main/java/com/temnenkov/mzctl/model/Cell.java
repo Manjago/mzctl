@@ -35,6 +35,10 @@ public final class Cell implements Iterable<Cell> {
         return new Cell(coords);
     }
 
+    public static @NotNull Cell ofColumnAndRow(int column, int row) {
+        return  Cell.of(column, row);
+    }
+
     @Contract("_ -> new")
     public @NotNull Cell minusOne(int dimension) {
         return plus(dimension, -1);

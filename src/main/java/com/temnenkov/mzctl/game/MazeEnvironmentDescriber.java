@@ -55,7 +55,7 @@ public class MazeEnvironmentDescriber {
      */
     @Contract("_ -> new")
     private @NotNull Facing turnLeft(@NotNull Facing facing) {
-        return facing.turn(ROW_DIMENSION, COLUMN_DIMENSION); // для 2D лабиринта
+        return facing.turnLeft2D(); // для 2D лабиринта
     }
 
     /**
@@ -63,6 +63,6 @@ public class MazeEnvironmentDescriber {
      */
     @Contract("_ -> new")
     private @NotNull Facing turnRight(@NotNull Facing facing) {
-        return facing.turn(COLUMN_DIMENSION, ROW_DIMENSION); // для 2D лабиринта
+        return facing.turnRight2D(); // для 2D лабиринта
     }
 }

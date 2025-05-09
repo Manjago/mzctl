@@ -10,30 +10,127 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 public final class Facing {
-    private final int[] direction;
+    private final AxisDirection[] direction;
+
+    /**
+     * Перечисление для направлений вдоль оси.
+     */
+    public enum AxisDirection {
+        NEGATIVE(-1),
+        ZERO(0),
+        POSITIVE(1);
+
+        private final int value;
+
+        AxisDirection(int value) {
+            this.value = value;
+        }
+
+        public int value() {
+            return value;
+        }
+
+        @JsonCreator
+        public static AxisDirection fromValue(int value) {
+            return switch (value) {
+                case -1 -> NEGATIVE;
+                case 0 -> ZERO;
+                case 1 -> POSITIVE;
+                default -> throw new IllegalArgumentException("Invalid axis direction value: " + value);
+            };
+        }
+    }
+
+    /**
+     * Перечисление осей измерений.
+     */
+    public enum Dimension {
+        X(0),
+        Y(1),
+        Z(2),
+        W(3); // Можно добавлять по необходимости
+
+        private final int index;
+
+        Dimension(int index) {
+            this.index = index;
+        }
+
+        public int index() {
+            return index;
+        }
+    }
 
     @JsonCreator
-    public Facing(@JsonProperty("direction") int @NotNull [] direction) {
-        if (direction.length == 0) {
-            throw new IllegalArgumentException("Direction array must not be empty");
-        }
-        if (Arrays.stream(direction).allMatch(d -> d == 0)) {
-            throw new IllegalArgumentException("Direction vector cannot be zero");
-        }
+    public Facing(@JsonProperty("direction") AxisDirection @NotNull [] direction) {
+        SimplePreconditions.checkArgument(direction.length > 0, "Direction array must not be empty");
+        SimplePreconditions.checkArgument(Arrays.stream(direction).anyMatch(d -> d != AxisDirection.ZERO), "Direction vector cannot be zero");
         this.direction = direction.clone();
     }
 
-    public static @NotNull Facing of(int... coords) {
-        return new Facing(coords);
+    public static @NotNull Facing of(AxisDirection... directions) {
+        return new Facing(directions);
     }
 
     @Contract(value = " -> new", pure = true)
-    public int[] getDirections() {
+    public AxisDirection[] getDirections() {
         return direction.clone(); // возвращаем копию для иммутабельности
     }
 
     public int size() {
         return direction.length;
+    }
+
+    /**
+     * Двигает клетку вперед в текущем направлении.
+     *
+     * @param cell текущая клетка
+     * @return новая клетка после движения
+     */
+    public @NotNull Cell moveForward(@NotNull Cell cell) {
+        SimplePreconditions.checkState(cell.size() == this.size(), "Invalid cell size");
+        final int[] result = new int[cell.size()];
+        for (int i = 0; i < cell.size(); i++) {
+            result[i] = cell.coord(i) + direction[i].value();
+        }
+        return Cell.of(result);
+    }
+
+    /**
+     * Поворачивает направление взгляда в плоскости, заданной двумя измерениями.
+     *
+     * @param dimA первое измерение плоскости
+     * @param dimB второе измерение плоскости
+     * @return новое направление взгляда после поворота
+     */
+    @Contract("_, _ -> new")
+    public @NotNull Facing turn(Dimension dimA, Dimension dimB) {
+        validateDimensions(dimA, dimB);
+
+        final AxisDirection[] dir = getDirections();
+        AxisDirection temp = dir[dimA.index()];
+        dir[dimA.index()] = AxisDirection.fromValue(-dir[dimB.index()].value());
+        dir[dimB.index()] = temp;
+        return new Facing(dir);
+    }
+
+    /**
+     * Поворот налево в двумерном лабиринте.
+     */
+    public @NotNull Facing turnLeft2D() {
+        return turn(Dimension.X, Dimension.Y);
+    }
+
+    /**
+     * Поворот направо в двумерном лабиринте.
+     */
+    public @NotNull Facing turnRight2D() {
+        return turn(Dimension.Y, Dimension.X);
+    }
+
+    private void validateDimensions(@NotNull Dimension dimA, @NotNull Dimension dimB) {
+        SimplePreconditions.checkArgument(dimA != dimB, "Dimensions must be different");
+        SimplePreconditions.checkArgument(dimA.index() < size() && dimB.index() < size(), "Dimension indexes must be within direction size");
     }
 
     @Override
@@ -48,24 +145,6 @@ public final class Facing {
     @Override
     public int hashCode() {
         return Arrays.hashCode(direction);
-    }
-
-    public @NotNull Cell moveForward(@NotNull Cell cell) {
-        SimplePreconditions.checkState(cell.size() == this.size(), "Invalid cell size");
-        final int[] result = new int[cell.size()];
-        for (int i = 0; i < cell.size(); i++) {
-            result[i] = cell.coord(i) + direction[i];
-        }
-        return Cell.of(result);
-    }
-
-    @Contract("_, _ -> new")
-    public @NotNull Facing turn(int dimA, int dimB) {
-        final int[] dir = getDirections();
-        int temp = dir[dimA];
-        dir[dimA] = -dir[dimB];
-        dir[dimB] = temp;
-        return new Facing(dir);
     }
 
     @Override

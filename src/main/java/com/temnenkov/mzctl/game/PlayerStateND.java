@@ -27,7 +27,7 @@ public class PlayerStateND {
         position = facing.moveForward(position);
     }
 
-    public void turn(int dimA, int dimB) {
+    public void turn(Facing.Dimension dimA, Facing.Dimension dimB) {
         facing = facing.turn(dimA, dimB);
     }
 
