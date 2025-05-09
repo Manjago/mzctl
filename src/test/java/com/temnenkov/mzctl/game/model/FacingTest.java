@@ -66,4 +66,18 @@ class FacingTest {
         Facing facing = Facing.of(1, 0);
         assertEquals("Facing{direction=[1, 0]}", facing.toString());
     }
+
+    @Test
+    void testCreateFacingWithEmptyArray() {
+        assertThrows(IllegalArgumentException.class, Facing::of);
+    }
+
+    @Test
+    void testFacingEqualsWithNullAndDifferentClass() {
+        Facing facing = Facing.of(1, 0);
+
+        assertNotEquals(null, facing);
+        // именно в таком порядке, чтобы проверить equals именно у Facing
+        assertNotEquals(facing, "Some String");
+    }
 }
