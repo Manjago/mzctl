@@ -24,6 +24,12 @@ public final class SimplePreconditions {
         }
     }
 
+    public static void checkArgument(boolean condition, @NotNull String message) {
+        if (!condition) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
     public static <T> @NotNull T checkContains(@Nullable T reference, @NotNull String paramName, @NotNull String methodName, @NotNull Object key) {
         if (reference == null) {
             throw new IllegalArgumentException("Element '" + key + "' not found for parameter '" + paramName + "' of " + methodName);
