@@ -27,7 +27,6 @@ public final class Facing {
         return new Facing(coords);
     }
 
-
     @Contract(value = " -> new", pure = true)
     public int[] getDirections() {
         return direction.clone(); // возвращаем копию для иммутабельности
@@ -55,11 +54,10 @@ public final class Facing {
         SimplePreconditions.checkState(cell.size() == this.size(), "Invalid cell size");
         final int[] result = new int[cell.size()];
         for (int i = 0; i < cell.size(); i++) {
-            result[i] = cell.coord(i + direction[i]);
+            result[i] = cell.coord(i) + direction[i];
         }
         return Cell.of(result);
     }
-
 
     @Override
     public String toString() {
