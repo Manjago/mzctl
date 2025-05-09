@@ -25,11 +25,7 @@ public class PlayerStateND {
     }
 
     public void turn(int dimA, int dimB) {
-        int[] dir = facing.getDirections();
-        int temp = dir[dimA];
-        dir[dimA] = -dir[dimB];
-        dir[dimB] = temp;
-        facing = new Facing(dir);
+        facing = facing.turn(dimA, dimB);
     }
 
 }

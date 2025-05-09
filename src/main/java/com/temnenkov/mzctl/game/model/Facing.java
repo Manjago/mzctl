@@ -59,6 +59,15 @@ public final class Facing {
         return Cell.of(result);
     }
 
+    @Contract("_, _ -> new")
+    public @NotNull Facing turn(int dimA, int dimB) {
+        final int[] dir = getDirections();
+        int temp = dir[dimA];
+        dir[dimA] = -dir[dimB];
+        dir[dimB] = temp;
+        return new Facing(dir);
+    }
+
     @Override
     public String toString() {
         return "Facing{" + "direction=" + Arrays.toString(direction) + '}';
