@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class MazeEnvironmentDescriber {
 
+    private static final int ROW_DIMENSION = 0;
+    private static final int COLUMN_DIMENSION = 1;
+
     private final Maze maze;
 
     public MazeEnvironmentDescriber(Maze maze) {
@@ -34,9 +37,9 @@ public class MazeEnvironmentDescriber {
     /**
      * Описывает, что находится в направлении взгляда.
      */
-    private @NotNull String describeDirection(PlayerStateND player, Facing facing) {
-        Cell fromCell = player.getPosition();
-        Cell toCell = facing.moveForward(fromCell);
+    private @NotNull String describeDirection(@NotNull PlayerStateND player, @NotNull Facing facing) {
+        final Cell fromCell = player.getPosition();
+        final Cell toCell = facing.moveForward(fromCell);
 
         if (!maze.isValid(toCell)) {
             return "граница лабиринта";
@@ -52,7 +55,7 @@ public class MazeEnvironmentDescriber {
      */
     @Contract("_ -> new")
     private @NotNull Facing turnLeft(@NotNull Facing facing) {
-        return facing.turn(0, 1); // для 2D лабиринта
+        return facing.turn(ROW_DIMENSION, COLUMN_DIMENSION); // для 2D лабиринта
     }
 
     /**
@@ -60,6 +63,6 @@ public class MazeEnvironmentDescriber {
      */
     @Contract("_ -> new")
     private @NotNull Facing turnRight(@NotNull Facing facing) {
-        return facing.turn(1, 0); // для 2D лабиринта
+        return facing.turn(COLUMN_DIMENSION, ROW_DIMENSION); // для 2D лабиринта
     }
 }
