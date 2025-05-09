@@ -64,7 +64,7 @@ class FacingTest {
     @Test
     void testToString() {
         Facing facing = Facing.of(Facing.AxisDirection.ZERO, Facing.AxisDirection.NEGATIVE);
-        assertEquals("Facing{direction=[ZERO, NEGATIVE]}", facing.toString());
+        assertEquals("Facing[Y(-)]", facing.toString());
     }
 
     @Test

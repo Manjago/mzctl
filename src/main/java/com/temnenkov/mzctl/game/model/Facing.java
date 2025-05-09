@@ -62,14 +62,25 @@ public final class Facing {
     }
 
     @JsonCreator
-    public Facing(@JsonProperty("direction") AxisDirection @NotNull [] direction) {
+    private Facing(@JsonProperty("direction") AxisDirection @NotNull [] direction) {
         SimplePreconditions.checkArgument(direction.length > 0, "Direction array must not be empty");
         SimplePreconditions.checkArgument(Arrays.stream(direction).anyMatch(d -> d != AxisDirection.ZERO), "Direction vector cannot be zero");
         this.direction = direction.clone();
     }
 
-    public static @NotNull Facing of(AxisDirection... directions) {
+    @Contract("_ -> new")
+    public static @NotNull Facing of(AxisDirection @NotNull ... directions) {
+        SimplePreconditions.checkArgument(directions.length > 0, "Directions array must not be empty");
         return new Facing(directions);
+    }
+
+    @Contract("-> new")
+    public @NotNull Facing opposite() {
+        final AxisDirection[] oppositeDirections = new AxisDirection[direction.length];
+        for (int i = 0; i < direction.length; i++) {
+            oppositeDirections[i] = AxisDirection.fromValue(-direction[i].value());
+        }
+        return new Facing(oppositeDirections);
     }
 
     @Contract(value = " -> new", pure = true)
@@ -118,6 +129,7 @@ public final class Facing {
      * Поворот налево в двумерном лабиринте.
      */
     public @NotNull Facing turnLeft2D() {
+        SimplePreconditions.checkState(direction.length == 2, "Only 2D directions are supported");
         return turn(Dimension.X, Dimension.Y);
     }
 
@@ -125,6 +137,7 @@ public final class Facing {
      * Поворот направо в двумерном лабиринте.
      */
     public @NotNull Facing turnRight2D() {
+        SimplePreconditions.checkState(direction.length == 2, "Only 2D directions are supported");
         return turn(Dimension.Y, Dimension.X);
     }
 
@@ -149,6 +162,17 @@ public final class Facing {
 
     @Override
     public String toString() {
-        return "Facing{" + "direction=" + Arrays.toString(direction) + '}';
+        final StringBuilder sb = new StringBuilder("Facing[");
+        boolean first = true;
+        for (int i = 0; i < direction.length; i++) {
+            if (direction[i] != AxisDirection.ZERO) {
+                if (!first) sb.append(' ');
+                sb.append(Dimension.values()[i].name())
+                        .append(direction[i] == AxisDirection.POSITIVE ? "(+)" : "(-)");
+                first = false;
+            }
+        }
+        sb.append(']');
+        return sb.toString();
     }
 }
