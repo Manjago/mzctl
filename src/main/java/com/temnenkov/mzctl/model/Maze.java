@@ -162,6 +162,21 @@ public class Maze implements Iterable<Cell> {
     }
 
     /**
+     * Не вышла ли комната cell за пределы лабиринта
+     *
+     * @param cell      комната
+     * @return true, если комната в пределах лабиринта, false - в противном случае
+     */
+    public boolean isValid(@NotNull Cell cell) {
+        for(int i=0; i< mazeDimension.size(); i++) {
+            if (!isValid(cell, i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Можно ли пройти из комнаты from в комнату to (то есть между ними нет стены)
      *
      * @param from откуда идем
