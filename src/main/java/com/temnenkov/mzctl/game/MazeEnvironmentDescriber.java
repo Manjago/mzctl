@@ -8,9 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class MazeEnvironmentDescriber {
 
-    private static final int ROW_DIMENSION = 0;
-    private static final int COLUMN_DIMENSION = 1;
-
     private final Maze maze;
 
     public MazeEnvironmentDescriber(Maze maze) {
@@ -55,7 +52,7 @@ public class MazeEnvironmentDescriber {
      */
     @Contract("_ -> new")
     private @NotNull Facing turnLeft(@NotNull Facing facing) {
-        return facing.turnLeft2D(); // для 2D лабиринта
+        return facing.rotateCounterClockwise2D(); // для 2D лабиринта
     }
 
     /**
@@ -63,6 +60,6 @@ public class MazeEnvironmentDescriber {
      */
     @Contract("_ -> new")
     private @NotNull Facing turnRight(@NotNull Facing facing) {
-        return facing.turnRight2D(); // для 2D лабиринта
+        return facing.rotateClockwise2D(); // для 2D лабиринта
     }
 }

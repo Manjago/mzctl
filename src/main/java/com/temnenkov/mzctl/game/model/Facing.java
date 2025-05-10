@@ -10,6 +10,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 public final class Facing {
+    public static final Facing NORTH = Facing.of(AxisDirection.ZERO, AxisDirection.NEGATIVE);
+    public static final Facing SOUTH = Facing.of(AxisDirection.ZERO, AxisDirection.POSITIVE);
+    public static final Facing WEST = Facing.of(AxisDirection.NEGATIVE, AxisDirection.ZERO);
+    public static final Facing EAST = Facing.of(AxisDirection.POSITIVE, AxisDirection.ZERO);
+
     private final AxisDirection[] direction;
 
     /**
@@ -31,7 +36,7 @@ public final class Facing {
         }
 
         @JsonCreator
-        public static AxisDirection fromValue(int value) {
+        private static AxisDirection fromValue(int value) {
             return switch (value) {
                 case -1 -> NEGATIVE;
                 case 0 -> ZERO;
@@ -126,19 +131,21 @@ public final class Facing {
     }
 
     /**
-     * Поворот налево в двумерном лабиринте.
+     * Поворот против часовой стрелки в двумерном лабиринте.
+     * (South → East → North → West → South)
      */
-    public @NotNull Facing turnLeft2D() {
+    public @NotNull Facing rotateCounterClockwise2D() {
         SimplePreconditions.checkState(direction.length == 2, "Only 2D directions are supported");
-        return turn(Dimension.X, Dimension.Y);
+        return turn(Dimension.Y, Dimension.X);
     }
 
     /**
-     * Поворот направо в двумерном лабиринте.
+     * Поворот по часовой стрелке в двумерном лабиринте.
+     * (South → West → North → East → South)
      */
-    public @NotNull Facing turnRight2D() {
+    public @NotNull Facing rotateClockwise2D() {
         SimplePreconditions.checkState(direction.length == 2, "Only 2D directions are supported");
-        return turn(Dimension.Y, Dimension.X);
+        return turn(Dimension.X, Dimension.Y);
     }
 
     private void validateDimensions(@NotNull Dimension dimA, @NotNull Dimension dimB) {
