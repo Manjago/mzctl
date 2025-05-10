@@ -3,14 +3,24 @@ package com.temnenkov.mzctl.game;
 import com.temnenkov.mzctl.game.model.Facing;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
-import org.jetbrains.annotations.Contract;
+import com.temnenkov.mzctl.util.SimplePreconditions;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Генерирует текстовое описание окружения игрока в двумерном лабиринте.
+ */
 public class MazeEnvironmentDescriber {
 
     private final Maze maze;
 
-    public MazeEnvironmentDescriber(Maze maze) {
+    /**
+     * Создаёт описатель окружения для заданного двумерного лабиринта.
+     *
+     * @param maze лабиринт для описания
+     * @throws IllegalArgumentException если лабиринт не является двумерным
+     */
+    public MazeEnvironmentDescriber(@NotNull Maze maze) {
+        SimplePreconditions.checkArgument(maze.getMazeDimension().size() == 2, "Maze must be 2D");
         this.maze = maze;
     }
 
@@ -20,19 +30,34 @@ public class MazeEnvironmentDescriber {
      * @param player текущее состояние игрока
      * @return текстовое описание окружения
      */
-    public String describeEnvironment(PlayerStateND player) {
-        StringBuilder description = new StringBuilder();
-        description.append("Вы находитесь в комнате.\n");
+    public String describeEnvironment(@NotNull PlayerStateND player) {
+        StringBuilder description = new StringBuilder("Вы находитесь в комнате.\n");
 
-        description.append("- Впереди: ").append(describeDirection(player, player.getFacing())).append("\n");
-        description.append("- Слева: ").append(describeDirection(player, turnLeft(player.getFacing()))).append("\n");
-        description.append("- Справа: ").append(describeDirection(player, turnRight(player.getFacing()))).append("\n");
+        description.append("- Впереди: ")
+                .append(describeDirection(player, player.getFacing()))
+                .append("\n");
+
+        description.append("- Слева: ")
+                .append(describeDirection(player, player.getFacing().rotateCounterClockwise2D()))
+                .append("\n");
+
+        description.append("- Справа: ")
+                .append(describeDirection(player, player.getFacing().rotateClockwise2D()))
+                .append("\n");
+
+        description.append("- Сзади: ")
+                .append(describeDirection(player, player.getFacing().opposite()))
+                .append("\n");
 
         return description.toString();
     }
 
     /**
-     * Описывает, что находится в направлении взгляда.
+     * Описывает, что находится в заданном направлении от игрока.
+     *
+     * @param player состояние игрока
+     * @param facing направление для описания
+     * @return строковое описание объекта в указанном направлении
      */
     private @NotNull String describeDirection(@NotNull PlayerStateND player, @NotNull Facing facing) {
         final Cell fromCell = player.getPosition();
@@ -47,19 +72,8 @@ public class MazeEnvironmentDescriber {
         return "стена";
     }
 
-    /**
-     * Поворот налево в двумерном лабиринте.
-     */
-    @Contract("_ -> new")
-    private @NotNull Facing turnLeft(@NotNull Facing facing) {
-        return facing.rotateCounterClockwise2D(); // для 2D лабиринта
-    }
-
-    /**
-     * Поворот направо в двумерном лабиринте.
-     */
-    @Contract("_ -> new")
-    private @NotNull Facing turnRight(@NotNull Facing facing) {
-        return facing.rotateClockwise2D(); // для 2D лабиринта
+    @Override
+    public String toString() {
+        return "MazeEnvironmentDescriber{maze=" + maze + '}';
     }
 }
