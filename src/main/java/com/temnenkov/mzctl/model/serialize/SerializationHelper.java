@@ -1,14 +1,10 @@
 package com.temnenkov.mzctl.model.serialize;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.temnenkov.mzctl.game.model.Facing;
 import com.temnenkov.mzctl.game.model.PlayerSession;
+import com.temnenkov.mzctl.game.model.PlayerStateND;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +13,6 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public final class SerializationHelper {
     private static final ObjectMapper MESSAGE_PACK_MAPPER = createMessagePackMapper();
@@ -50,6 +44,14 @@ public final class SerializationHelper {
         }
     }
 
+    public static byte[] playerStateToMessagePack(@NotNull PlayerStateND playerState) {
+        try {
+            return MESSAGE_PACK_MAPPER.writeValueAsBytes(playerState);
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot serialize facing " + playerState, e);
+        }
+    }
+
     public static Maze mazeFromMessagePack(byte[] bytes) {
         try {
             return MESSAGE_PACK_MAPPER.readValue(bytes, Maze.class);
@@ -71,6 +73,14 @@ public final class SerializationHelper {
             return MESSAGE_PACK_MAPPER.readValue(bytes, Facing.class);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot deserialize facing " + bytesToString(bytes, 20), e);
+        }
+    }
+
+    public static PlayerStateND playerStateFromMessagePack(byte[] bytes) {
+        try {
+            return MESSAGE_PACK_MAPPER.readValue(bytes, PlayerStateND.class);
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot deserialize playerState " + bytesToString(bytes, 20), e);
         }
     }
 
@@ -131,18 +141,42 @@ public final class SerializationHelper {
         return facingFromMessagePack(bytes);
     }
 
+    public static void savePlayerStateToFile(@NotNull PlayerStateND playerState, @NotNull String filename) {
+        final byte[] bytes = playerStateToMessagePack(playerState);
+        try {
+            Files.write(Path.of(filename), bytes);
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot save playerState to file " + filename, e);
+        }
+    }
+
+    public static @NotNull PlayerStateND loadPlayerStateFromFile(@NotNull String filename) {
+        final byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(Path.of(filename));
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot read playerState from file " + filename, e);
+        }
+        return playerStateFromMessagePack(bytes);
+    }
+
     private static @NotNull ObjectMapper createMessagePackMapper() {
         final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
         final SimpleModule module = new SimpleModule();
+
+        // Facing
         module.addSerializer(Facing.class, new FacingSerializer());
         module.addDeserializer(Facing.class, new FacingDeserializer());
+
+        // Cell as map key
         module.addKeySerializer(Cell.class, new CellKeySerializer());
         module.addKeyDeserializer(Cell.class, new CellKeyDeserializer());
+
         mapper.registerModule(module);
         return mapper;
     }
 
-    private static String bytesToString(byte[] bytes, int maxLength) {
+    private static @NotNull String bytesToString(byte[] bytes, int maxLength) {
         if (bytes == null) {
             return "null";
         }
@@ -161,25 +195,4 @@ public final class SerializationHelper {
         return sb.toString();
     }
 
-    private static class CellKeyDeserializer extends KeyDeserializer {
-        @Override
-        public @NotNull Cell deserializeKey(@NotNull String key, DeserializationContext ctxt) {
-            int[] coordinates = Arrays.stream(key.split(","))
-                    .mapToInt(Integer::parseInt)
-                    .toArray();
-            return new Cell(coordinates);
-        }
-    }
-
-    private static class CellKeySerializer extends JsonSerializer<Cell> {
-        @Override
-        public void serialize(@NotNull Cell cell,
-                @NotNull JsonGenerator jsonGenerator,
-                SerializerProvider serializerProvider) throws IOException {
-            String key = Arrays.stream(cell.getCoordinates())
-                    .mapToObj(Integer::toString)
-                    .collect(Collectors.joining(","));
-            jsonGenerator.writeFieldName(key);
-        }
-    }
 }

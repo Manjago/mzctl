@@ -24,7 +24,7 @@ public class PlayerStateND {
      * @throws IllegalArgumentException если размерность позиции и направления не совпадают
      */
     @JsonCreator
-    public PlayerStateND(@JsonProperty("startPosition") @NotNull Cell startPosition, @JsonProperty("startFacing") @NotNull Facing startFacing) {
+    public PlayerStateND(@JsonProperty("position") @NotNull Cell startPosition, @JsonProperty("facing") @NotNull Facing startFacing) {
         SimplePreconditions.checkArgument(startPosition.size() == startFacing.size(),
                 "Position and Facing must be same size");
         this.position = startPosition;

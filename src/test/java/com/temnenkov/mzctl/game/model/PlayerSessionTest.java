@@ -5,7 +5,6 @@ import com.temnenkov.mzctl.model.MazeDim;
 import com.temnenkov.mzctl.model.MazeFactory;
 import com.temnenkov.mzctl.model.serialize.SerializationHelper;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class PlayerSessionTest {
     @Test
-    @Disabled
     void testSaveAndLoad(@TempDir @NotNull Path tempDir) {
         final String login  = "tester";
         final Maze maze = MazeFactory.createFullConnectedMaze(MazeDim.of(3, 3));
