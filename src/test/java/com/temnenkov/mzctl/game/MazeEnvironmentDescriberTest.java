@@ -30,19 +30,19 @@ class MazeEnvironmentDescriberTest {
         //           |
         // 2 x---x---x
 
-        maze.addPass(Cell.ofColumnAndRow(0, 0), Cell.ofColumnAndRow(1, 0));
-        maze.addPass(Cell.ofColumnAndRow(1, 0), Cell.ofColumnAndRow(2, 0));
-        maze.addPass(Cell.ofColumnAndRow(2, 0), Cell.ofColumnAndRow(2, 1));
-        maze.addPass(Cell.ofColumnAndRow(2, 1), Cell.ofColumnAndRow(2, 2));
-        maze.addPass(Cell.ofColumnAndRow(2, 2), Cell.ofColumnAndRow(1, 2));
-        maze.addPass(Cell.ofColumnAndRow(1, 2), Cell.ofColumnAndRow(0, 2));
+        maze.addPass(Cell.ofRowAndColumn(0, 0), Cell.ofRowAndColumn(1, 0));
+        maze.addPass(Cell.ofRowAndColumn(1, 0), Cell.ofRowAndColumn(2, 0));
+        maze.addPass(Cell.ofRowAndColumn(2, 0), Cell.ofRowAndColumn(2, 1));
+        maze.addPass(Cell.ofRowAndColumn(2, 1), Cell.ofRowAndColumn(2, 2));
+        maze.addPass(Cell.ofRowAndColumn(2, 2), Cell.ofRowAndColumn(1, 2));
+        maze.addPass(Cell.ofRowAndColumn(1, 2), Cell.ofRowAndColumn(0, 2));
 
         describer = new MazeEnvironmentDescriber(maze);
     }
 
     @Test
     void testDescribeEnvironment_CenterFacingEast() {
-        PlayerStateND player = new PlayerStateND(Cell.ofColumnAndRow(1, 1), Facing.EAST);
+        PlayerStateND player = new PlayerStateND(Cell.ofRowAndColumn(1, 1), Facing.EAST);
 
         String description = describer.describeEnvironment(player);
 
@@ -62,7 +62,7 @@ class MazeEnvironmentDescriberTest {
 
     @Test
     void testDescribeEnvironment_CornerFacingNorth() {
-        PlayerStateND player = new PlayerStateND(Cell.ofColumnAndRow(0, 0), Facing.NORTH);
+        PlayerStateND player = new PlayerStateND(Cell.ofRowAndColumn(0, 0), Facing.NORTH);
 
         String description = describer.describeEnvironment(player);
 
@@ -82,7 +82,7 @@ class MazeEnvironmentDescriberTest {
 
     @Test
     void testDescribeEnvironment_EdgeFacingSouth() {
-        PlayerStateND player = new PlayerStateND(Cell.ofColumnAndRow(2, 0), Facing.SOUTH);
+        PlayerStateND player = new PlayerStateND(Cell.ofRowAndColumn(2, 0), Facing.SOUTH);
 
         String description = describer.describeEnvironment(player);
 

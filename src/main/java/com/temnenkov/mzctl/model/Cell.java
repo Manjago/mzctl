@@ -35,8 +35,8 @@ public final class Cell implements Iterable<Cell> {
         return new Cell(coords);
     }
 
-    public static @NotNull Cell ofColumnAndRow(int column, int row) {
-        return  Cell.of(column, row);
+    public static @NotNull Cell ofRowAndColumn(int row, int column) {
+        return Cell.of(row, column);
     }
 
     @Contract("_ -> new")
