@@ -1,11 +1,6 @@
 package com.temnenkov.mzctl.commands;
 
-import com.temnenkov.mzctl.context.GameContext;
-import com.temnenkov.mzctl.game.MazeManager;
-import com.temnenkov.mzctl.game.model.MazeEnvironmentDescriber;
-import com.temnenkov.mzctl.game.model.PlayerSession;
-import com.temnenkov.mzctl.game.model.PlayerStateND;
-import com.temnenkov.mzctl.model.Maze;
+import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.model.serialize.MazeSerializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,25 +12,21 @@ public class LoadMaze implements Runnable {
 
     @CommandLine.Option(names = {"-n", "--name"}, required = true)
     String name;
+    @CommandLine.Option(names = {"-u", "--user"}, required = false, defaultValue = "tester")
+    String userLogin;
 
-    private final GameContext context;
+    private final GameEngine gameEngine;
 
-    public LoadMaze(GameContext context) {
-        this.context = context;
+    public LoadMaze(GameEngine gameEngine) {
+        this.gameEngine = gameEngine;
     }
 
     @Override
     public void run() {
         try {
-            final MazeManager mazeManager = context.getMazeManager();
-            final Maze maze = mazeManager.loadMaze(name);
-            final PlayerStateND playerState = mazeManager.createPlayerInRandomPosition(maze);
-            final MazeEnvironmentDescriber describer = new MazeEnvironmentDescriber(maze);
-            // временно один логин, потом их будет много
-            final PlayerSession playerSession = new PlayerSession("test", maze, describer, playerState, null);
-            context.createPlayerSession(playerSession);
+            gameEngine.loadMaze(name, userLogin);
             System.out.println("Лабиринт '" + name + "' загружен.");
-            System.out.println(describer.describeEnvironment(playerState));
+            System.out.println(gameEngine.describeEnvironment(userLogin));
         } catch (MazeSerializationException e) {
             logger.error("Fail load maze", e);
             System.out.println("Ошибка: лабиринт '" + name + "' не найден или повреждён.");

@@ -11,6 +11,8 @@ import com.temnenkov.mzctl.commands.util.CommandFactory;
 import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.context.SimpleGameContext;
 import com.temnenkov.mzctl.game.MazeManager;
+import com.temnenkov.mzctl.gameengine.GameEngine;
+import com.temnenkov.mzctl.gameengine.GameEngineImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jline.reader.EndOfFileException;
@@ -46,8 +48,11 @@ public class MainCommand implements Runnable {
     public static void main(String[] args) throws IOException {
 
         final GameContext context = new SimpleGameContext(new MazeManager(Path.of("mazes")));
-        final CommandFactory factory = new CommandFactory(context);
+
+        final GameEngine gameEngine = new GameEngineImpl(context);
+        final CommandFactory factory = new CommandFactory(gameEngine); // <-- передаем его в фабрику
         final CommandLine cmd = new CommandLine(new MainCommand(), factory);
+
 
         if (args.length > 0) {
             executeSingleCommand(cmd, args);

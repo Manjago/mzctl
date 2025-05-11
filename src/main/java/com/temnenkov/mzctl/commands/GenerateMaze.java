@@ -1,9 +1,7 @@
 package com.temnenkov.mzctl.commands;
 
-import com.temnenkov.mzctl.context.GameContext;
-import com.temnenkov.mzctl.game.MazeManager;
+import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
-import com.temnenkov.mzctl.model.Maze;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "generate-maze", description = "Генерирует и сохраняет лабиринт")
@@ -16,18 +14,18 @@ public class GenerateMaze implements Runnable {
     int height;
     @CommandLine.Option(names = {"-a", "--algo"}, required = true)
     MazeGeneratorFactory.Algo algo;
+    @CommandLine.Option(names = {"-u", "--user"}, required = false, defaultValue = "tester")
+    String userLogin;
 
-    private final GameContext context;
+    private final GameEngine gameEngine;
 
-    public GenerateMaze(GameContext context) {
-        this.context = context;
+    public GenerateMaze(GameEngine gameEngine) {
+        this.gameEngine = gameEngine;
     }
 
     @Override
     public void run() {
-       final MazeManager mazeManager = context.getMazeManager();
-       final Maze maze = mazeManager.generateMaze2D(width, height, algo);
-       mazeManager.saveMaze(name, maze);
-       System.out.println("Лабиринт '" + name + "' создан и сохранён.");
+        gameEngine.generateMaze(name, width, height, algo);
+        System.out.println("Лабиринт '" + name + "' создан и сохранён.");
     }
 }

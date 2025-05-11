@@ -1,31 +1,23 @@
 package com.temnenkov.mzctl.commands;
 
-import com.temnenkov.mzctl.context.GameContext;
-import com.temnenkov.mzctl.game.model.MazeEnvironmentDescriber;
-import com.temnenkov.mzctl.game.model.PlayerSession;
-import com.temnenkov.mzctl.game.model.PlayerStateND;
+import com.temnenkov.mzctl.gameengine.GameEngine;
 import picocli.CommandLine;
-
-import static com.temnenkov.mzctl.commands.util.CommandUtils.loadValidPlayerSession;
 
 @CommandLine.Command(name = "d", description = "Повернуться направо")
 public class TurnRight implements Runnable {
 
-    private final GameContext context;
+    @CommandLine.Option(names = {"-u", "--user"}, required = false, defaultValue = "tester")
+    String userLogin;
 
-    public TurnRight(GameContext context) {
-        this.context = context;
+    private final GameEngine gameEngine;
+
+    public TurnRight(GameEngine gameEngine) {
+        this.gameEngine = gameEngine;
     }
 
     @Override
     public void run() {
-        final PlayerSession playerSession = loadValidPlayerSession(context);
-        if (playerSession == null)
-            return;
-        final PlayerStateND playerState = playerSession.getPlayerStateND();
-        playerState.rotateClockwise2D();
-        final MazeEnvironmentDescriber describer = playerSession.getMazeEnvironmentDescriber();
-        System.out.println(describer.describeEnvironment(playerState));
-        context.updatePlayerSession(playerSession);
+        gameEngine.turnRight(userLogin);
+        System.out.println(gameEngine.describeEnvironment(userLogin));
     }
 }
