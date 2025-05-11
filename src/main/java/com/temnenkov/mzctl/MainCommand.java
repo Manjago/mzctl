@@ -1,12 +1,16 @@
 package com.temnenkov.mzctl;
 
 import com.temnenkov.mzctl.commands.GenerateMaze;
+import com.temnenkov.mzctl.commands.LoadMaze;
+import com.temnenkov.mzctl.commands.MoveForward;
+import com.temnenkov.mzctl.commands.TurnBack;
+import com.temnenkov.mzctl.commands.TurnLeft;
+import com.temnenkov.mzctl.commands.TurnRight;
+import com.temnenkov.mzctl.commands.WhereAmI;
 import com.temnenkov.mzctl.context.SimpleContextHolder;
 import com.temnenkov.mzctl.game.MazeManager;
-import com.temnenkov.mzctl.game.model.MazeEnvironmentDescriber;
-import com.temnenkov.mzctl.game.model.PlayerStateND;
-import com.temnenkov.mzctl.model.Maze;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -22,22 +26,18 @@ import java.nio.file.Path;
         mixinStandardHelpOptions = true,
         subcommands = {
                 GenerateMaze.class,
-                MainCommand.LoadMaze.class,
-                MainCommand.MoveForward.class,
-                MainCommand.TurnLeft.class,
-                MainCommand.TurnRight.class,
-                MainCommand.TurnBack.class,
-                MainCommand.WhereAmI.class
+                LoadMaze.class,
+                MoveForward.class,
+                TurnLeft.class,
+                TurnRight.class,
+                TurnBack.class,
+                WhereAmI.class
         }
 )
 public class MainCommand implements Runnable {
 
-    private final MazeManager mazeManager;
-    private PlayerStateND playerState;
-    private MazeEnvironmentDescriber describer;
-
     public MainCommand() throws IOException {
-        mazeManager = new MazeManager(Path.of("mazes"));
+        // нужен?
     }
 
     public static void main(String[] args) throws IOException {
@@ -73,7 +73,7 @@ public class MainCommand implements Runnable {
         }
     }
 
-    private static String readLine(LineReader reader) {
+    private static @Nullable String readLine(@NotNull LineReader reader) {
         try {
             return reader.readLine("> ").trim();
         } catch (UserInterruptException | EndOfFileException e) {
@@ -103,75 +103,4 @@ public class MainCommand implements Runnable {
         CommandLine.usage(this, System.out);
     }
 
-    private boolean isMazeLoaded() {
-        if (playerState == null || describer == null) {
-            System.out.println("Ошибка: лабиринт не загружен. Сначала загрузите лабиринт командой 'load-maze'.");
-            return false;
-        }
-        return true;
-    }
-
-    @CommandLine.Command(name = "load-maze", description = "Загружает лабиринт и помещает игрока в случайную комнату")
-    public static class LoadMaze implements Runnable {
-        @CommandLine.Option(names = {"-n", "--name"}, required = true) String name;
-
-        @Override
-        public void run() {
-            final MazeManager mazeManager = MazeManager.getInstance();
-            final Maze maze = mazeManager.loadMaze(name);
-            final PlayerStateND playerState = mazeManager.createPlayerInRandomPosition(maze);
-            final MazeEnvironmentDescriber describer = new MazeEnvironmentDescriber(maze);
-            System.out.println("Лабиринт '" + name + "' загружен.");
-            System.out.println(describer.describeEnvironment(playerState));
-        }
-    }
-
-    @CommandLine.Command(name = "w", description = "Идти вперед")
-    public class MoveForward implements Runnable {
-        @Override
-        public void run() {
-            if (!isMazeLoaded()) return;
-            playerState.moveForward();
-            System.out.println(describer.describeEnvironment(playerState));
-        }
-    }
-
-    @CommandLine.Command(name = "a", description = "Повернуться налево")
-    public class TurnLeft implements Runnable {
-        @Override
-        public void run() {
-            if (!isMazeLoaded()) return;
-            playerState.rotateCounterClockwise2D();
-            System.out.println(describer.describeEnvironment(playerState));
-        }
-    }
-
-    @CommandLine.Command(name = "d", description = "Повернуться направо")
-    public class TurnRight implements Runnable {
-        @Override
-        public void run() {
-            if (!isMazeLoaded()) return;
-            playerState.rotateClockwise2D();
-            System.out.println(describer.describeEnvironment(playerState));
-        }
-    }
-
-    @CommandLine.Command(name = "s", description = "Повернуться назад")
-    public class TurnBack implements Runnable {
-        @Override
-        public void run() {
-            if (!isMazeLoaded()) return;
-            playerState.opposite();
-            System.out.println(describer.describeEnvironment(playerState));
-        }
-    }
-
-    @CommandLine.Command(name = "?", description = "Повторить описание окружения")
-    public class WhereAmI implements Runnable {
-        @Override
-        public void run() {
-            if (!isMazeLoaded()) return;
-            System.out.println(describer.describeEnvironment(playerState));
-        }
-    }
 }

@@ -16,13 +16,30 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class PlayerSessionTest {
     @Test
-    void testSaveAndLoad(@TempDir @NotNull Path tempDir) {
+    void testSaveAndLoadNullVersion(@TempDir @NotNull Path tempDir) {
         final String login  = "tester";
         final Maze maze = MazeFactory.createFullConnectedMaze(MazeDim.of(3, 3));
         final MazeEnvironmentDescriber mazeEnvironmentDescriber = new MazeEnvironmentDescriber(maze);
         final PlayerStateND playerState = new PlayerStateND(maze.getRandomCell(new Random(42)), Facing.SOUTH);
 
-        final PlayerSession playerSession = new PlayerSession(login, maze, mazeEnvironmentDescriber, playerState);
+        final PlayerSession playerSession = new PlayerSession(login, maze, mazeEnvironmentDescriber, playerState, null);
+
+        final Path file = tempDir.resolve("test.mzpack");
+        SerializationHelper.savePlayerSessionToFile(playerSession, file.toString());
+
+        final PlayerSession loadedPlayerSession = SerializationHelper.loadPlayerSessionFromFile(file.toString());
+        assertNotNull(loadedPlayerSession);
+        assertEquals(playerSession, loadedPlayerSession);
+    }
+
+    @Test
+    void testSaveAndLoadNotNullVersion(@TempDir @NotNull Path tempDir) {
+        final String login  = "tester";
+        final Maze maze = MazeFactory.createFullConnectedMaze(MazeDim.of(3, 3));
+        final MazeEnvironmentDescriber mazeEnvironmentDescriber = new MazeEnvironmentDescriber(maze);
+        final PlayerStateND playerState = new PlayerStateND(maze.getRandomCell(new Random(42)), Facing.SOUTH);
+
+        final PlayerSession playerSession = new PlayerSession(login, maze, mazeEnvironmentDescriber, playerState, 5L);
 
         final Path file = tempDir.resolve("test.mzpack");
         SerializationHelper.savePlayerSessionToFile(playerSession, file.toString());
