@@ -1,6 +1,7 @@
 package com.temnenkov.mzctl.game;
 
 import com.temnenkov.mzctl.analysis.MazeExplorer;
+import com.temnenkov.mzctl.game.model.PlayerStateND;
 import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;

@@ -1,6 +1,7 @@
-package com.temnenkov.mzctl.game;
+package com.temnenkov.mzctl.game.model;
 
-import com.temnenkov.mzctl.game.model.Facing;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.util.SimplePreconditions;
 import org.jetbrains.annotations.NotNull;
@@ -12,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  * <p>Класс является мутабельным: методы перемещения и поворота изменяют внутреннее состояние объекта.</p>
  */
 public class PlayerStateND {
-    private Cell position;
-    private Facing facing;
+    private @NotNull Cell position;
+    private @NotNull Facing facing;
 
     /**
      * Создаёт новое состояние игрока с заданной начальной позицией и направлением взгляда.
@@ -22,7 +23,8 @@ public class PlayerStateND {
      * @param startFacing начальное направление взгляда игрока
      * @throws IllegalArgumentException если размерность позиции и направления не совпадают
      */
-    public PlayerStateND(@NotNull Cell startPosition, @NotNull Facing startFacing) {
+    @JsonCreator
+    public PlayerStateND(@JsonProperty("startPosition") @NotNull Cell startPosition, @JsonProperty("startFacing") @NotNull Facing startFacing) {
         SimplePreconditions.checkArgument(startPosition.size() == startFacing.size(),
                 "Position and Facing must be same size");
         this.position = startPosition;
@@ -88,6 +90,22 @@ public class PlayerStateND {
      */
     public void opposite() {
         facing = facing.opposite();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        PlayerStateND that = (PlayerStateND) o;
+        return position.equals(that.position) && facing.equals(that.facing);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = position.hashCode();
+        result = 31 * result + facing.hashCode();
+        return result;
     }
 
     /**

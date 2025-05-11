@@ -1,6 +1,7 @@
 package com.temnenkov.mzctl.game;
 
 import com.temnenkov.mzctl.game.model.Facing;
+import com.temnenkov.mzctl.game.model.PlayerStateND;
 import com.temnenkov.mzctl.model.Cell;
 import org.junit.jupiter.api.Test;
 

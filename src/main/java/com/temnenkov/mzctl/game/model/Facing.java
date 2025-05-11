@@ -36,7 +36,7 @@ public final class Facing {
         }
 
         @JsonCreator
-        private static AxisDirection fromValue(int value) {
+        public static AxisDirection fromValue(int value) {
             return switch (value) {
                 case -1 -> NEGATIVE;
                 case 0 -> ZERO;

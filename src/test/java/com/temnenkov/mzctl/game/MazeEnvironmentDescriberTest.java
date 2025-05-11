@@ -1,6 +1,8 @@
 package com.temnenkov.mzctl.game;
 
 import com.temnenkov.mzctl.game.model.Facing;
+import com.temnenkov.mzctl.game.model.MazeEnvironmentDescriber;
+import com.temnenkov.mzctl.game.model.PlayerStateND;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;

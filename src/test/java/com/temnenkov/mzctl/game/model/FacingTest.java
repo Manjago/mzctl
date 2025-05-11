@@ -1,7 +1,12 @@
 package com.temnenkov.mzctl.game.model;
 
 import com.temnenkov.mzctl.model.Cell;
+import com.temnenkov.mzctl.model.serialize.SerializationHelper;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.nio.file.Path;
 
 import static com.temnenkov.mzctl.game.model.Facing.AxisDirection;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -146,5 +151,14 @@ class FacingTest {
     void testInvalidSizeMoveForward() {
         Cell initialCell = Cell.of(1);
         assertThrows(IllegalStateException.class, () -> Facing.SOUTH.moveForward(initialCell));
+    }
+
+    @Test
+    void testSaveAndLoad(@TempDir @NotNull Path tempDir) {
+        final Facing facing = Facing.of(AxisDirection.POSITIVE, AxisDirection.ZERO);
+        final Path file = tempDir.resolve("facing.mzpack");
+        SerializationHelper.saveFacingToFile(facing, file.toString());
+        final Facing loadedFacing = SerializationHelper.loadFacingFromFile(file.toString());
+        assertEquals(facing, loadedFacing);
     }
 }

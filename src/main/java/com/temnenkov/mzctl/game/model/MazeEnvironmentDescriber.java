@@ -1,6 +1,8 @@
-package com.temnenkov.mzctl.game;
+package com.temnenkov.mzctl.game.model;
 
-import com.temnenkov.mzctl.game.model.Facing;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.util.SimplePreconditions;
@@ -9,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Генерирует текстовое описание окружения игрока в двумерном лабиринте.
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class MazeEnvironmentDescriber {
 
     private final Maze maze;
@@ -19,7 +22,8 @@ public class MazeEnvironmentDescriber {
      * @param maze лабиринт для описания
      * @throws IllegalArgumentException если лабиринт не является двумерным
      */
-    public MazeEnvironmentDescriber(@NotNull Maze maze) {
+    @JsonCreator
+    public MazeEnvironmentDescriber(@JsonProperty("maze") @NotNull Maze maze) {
         SimplePreconditions.checkArgument(maze.getMazeDimension().size() == 2, "Maze must be 2D");
         this.maze = maze;
     }
@@ -70,6 +74,20 @@ public class MazeEnvironmentDescriber {
             return "проход";
         }
         return "стена";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        MazeEnvironmentDescriber that = (MazeEnvironmentDescriber) o;
+        return maze.equals(that.maze);
+    }
+
+    @Override
+    public int hashCode() {
+        return maze.hashCode();
     }
 
     @Override

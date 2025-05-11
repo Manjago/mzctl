@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.temnenkov.mzctl.game.model.Facing;
+import com.temnenkov.mzctl.game.model.PlayerSession;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import org.jetbrains.annotations.NotNull;
@@ -32,11 +34,43 @@ public final class SerializationHelper {
         }
     }
 
+    public static byte[] playerSessionToMessagePack(@NotNull PlayerSession playerSession) {
+        try {
+            return MESSAGE_PACK_MAPPER.writeValueAsBytes(playerSession);
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot serialize playerSession " + playerSession, e);
+        }
+    }
+
+    public static byte[] facingToMessagePack(@NotNull Facing facing) {
+        try {
+            return MESSAGE_PACK_MAPPER.writeValueAsBytes(facing);
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot serialize facing " + facing, e);
+        }
+    }
+
     public static Maze mazeFromMessagePack(byte[] bytes) {
         try {
             return MESSAGE_PACK_MAPPER.readValue(bytes, Maze.class);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot deserialize maze " + bytesToString(bytes, 20), e);
+        }
+    }
+
+    public static PlayerSession playerSessionFromMessagePack(byte[] bytes) {
+        try {
+            return MESSAGE_PACK_MAPPER.readValue(bytes, PlayerSession.class);
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot deserialize playerSession " + bytesToString(bytes, 20), e);
+        }
+    }
+
+    public static Facing facingFromMessagePack(byte[] bytes) {
+        try {
+            return MESSAGE_PACK_MAPPER.readValue(bytes, Facing.class);
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot deserialize facing " + bytesToString(bytes, 20), e);
         }
     }
 
@@ -59,9 +93,49 @@ public final class SerializationHelper {
         return mazeFromMessagePack(bytes);
     }
 
+    public static void savePlayerSessionToFile(@NotNull PlayerSession playerSession, @NotNull String filename) {
+        final byte[] bytes = playerSessionToMessagePack(playerSession);
+        try {
+            Files.write(Path.of(filename), bytes);
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot save playerSession to file " + filename, e);
+        }
+    }
+
+    public static @NotNull PlayerSession loadPlayerSessionFromFile(@NotNull String filename) {
+        final byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(Path.of(filename));
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot read playerSession from file " + filename, e);
+        }
+        return playerSessionFromMessagePack(bytes);
+    }
+
+    public static void saveFacingToFile(@NotNull Facing facing, @NotNull String filename) {
+        final byte[] bytes = facingToMessagePack(facing);
+        try {
+            Files.write(Path.of(filename), bytes);
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot save facing to file " + filename, e);
+        }
+    }
+
+    public static @NotNull Facing loadFacingFromFile(@NotNull String filename) {
+        final byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(Path.of(filename));
+        } catch (IOException e) {
+            throw new MazeSerializationException("Cannot read facing from file " + filename, e);
+        }
+        return facingFromMessagePack(bytes);
+    }
+
     private static @NotNull ObjectMapper createMessagePackMapper() {
         final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
         final SimpleModule module = new SimpleModule();
+        module.addSerializer(Facing.class, new FacingSerializer());
+        module.addDeserializer(Facing.class, new FacingDeserializer());
         module.addKeySerializer(Cell.class, new CellKeySerializer());
         module.addKeyDeserializer(Cell.class, new CellKeyDeserializer());
         mapper.registerModule(module);
