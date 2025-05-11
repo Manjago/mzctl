@@ -2,7 +2,6 @@ package com.temnenkov.mzctl.game.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.temnenkov.mzctl.context.SimpleContextHolder;
 import com.temnenkov.mzctl.model.Maze;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,14 +24,6 @@ public class PlayerSession {
         this.mazeEnvironmentDescriber = mazeEnvironmentDescriber;
         this.playerStateND = playerStateND;
         this.version = version;
-    }
-
-    public static void create(PlayerSession playerSession) {
-        SimpleContextHolder.INSTANCE.getSimpleContext().createPlayerSession(playerSession);
-    }
-
-    public static void update(PlayerSession playerSession) {
-        SimpleContextHolder.INSTANCE.getSimpleContext().updatePlayerSession(playerSession);
     }
 
     public Long getVersion() {

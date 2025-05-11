@@ -7,7 +7,9 @@ import com.temnenkov.mzctl.commands.TurnBack;
 import com.temnenkov.mzctl.commands.TurnLeft;
 import com.temnenkov.mzctl.commands.TurnRight;
 import com.temnenkov.mzctl.commands.WhereAmI;
-import com.temnenkov.mzctl.context.SimpleContextHolder;
+import com.temnenkov.mzctl.commands.util.CommandFactory;
+import com.temnenkov.mzctl.context.GameContext;
+import com.temnenkov.mzctl.context.SimpleGameContext;
 import com.temnenkov.mzctl.game.MazeManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +33,8 @@ import java.nio.file.Path;
                 TurnLeft.class,
                 TurnRight.class,
                 TurnBack.class,
-                WhereAmI.class
+                WhereAmI.class,
+                CommandLine.HelpCommand.class
         }
 )
 public class MainCommand implements Runnable {
@@ -42,9 +45,9 @@ public class MainCommand implements Runnable {
 
     public static void main(String[] args) throws IOException {
 
-        SimpleContextHolder.INSTANCE.getSimpleContext().setMazeManager(new MazeManager(Path.of("mazes")));
-
-        final CommandLine cmd = new CommandLine(new MainCommand());
+        final GameContext context = new SimpleGameContext(new MazeManager(Path.of("mazes")));
+        final CommandFactory factory = new CommandFactory(context);
+        final CommandLine cmd = new CommandLine(new MainCommand(), factory);
 
         if (args.length > 0) {
             executeSingleCommand(cmd, args);

@@ -8,29 +8,32 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class SimpleContext {
-    private final AtomicReference<MazeManager> mazeManagerHolder = new AtomicReference<>();
+public class SimpleGameContext implements GameContext {
+    private final MazeManager mazeManager;
 
-    public MazeManager getMazeManager() {
-        return mazeManagerHolder.get();
+    public SimpleGameContext(MazeManager mazeManager) {
+        this.mazeManager = mazeManager;
     }
 
-    public void setMazeManager(MazeManager mazeManager) {
-        this.mazeManagerHolder.set(mazeManager);
+    @Override
+    public MazeManager getMazeManager() {
+        return mazeManager;
     }
 
     private final ConcurrentMap<String, PlayerSession> playerSessions = new ConcurrentHashMap<>();
 
+    @Override
     public PlayerSession getPlayerSession(String login) {
         return playerSessions.get(login);
     }
 
+    @Override
     public void createPlayerSession(@NotNull PlayerSession playerSession) {
         playerSessions.put(playerSession.getLogin(), playerSession);
     }
 
+    @Override
     public void updatePlayerSession(@NotNull PlayerSession playerSession) {
         final Long version = playerSession.getVersion();
         final PlayerSession oldPlayerSession = playerSessions.get(playerSession.getLogin());

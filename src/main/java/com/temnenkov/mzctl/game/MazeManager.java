@@ -1,6 +1,5 @@
 package com.temnenkov.mzctl.game;
 
-import com.temnenkov.mzctl.context.SimpleContextHolder;
 import com.temnenkov.mzctl.game.model.Facing;
 import com.temnenkov.mzctl.game.model.PlayerStateND;
 import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
@@ -36,10 +35,6 @@ public class MazeManager {
             Files.createDirectories(mazeDirectory);
         }
         this.mazeDirectory = mazeDirectory;
-    }
-
-    public static MazeManager getInstance() {
-        return SimpleContextHolder.INSTANCE.getSimpleContext().getMazeManager();
     }
 
     /**
