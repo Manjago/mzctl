@@ -57,8 +57,8 @@ public final class Facing {
      * Перечисление осей измерений.
      */
     public enum Dimension {
-        X(0),
-        Y(1),
+        Y(0),
+        X(1),
         Z(2),
         W(3); // Можно добавлять по необходимости
 
@@ -144,7 +144,7 @@ public final class Facing {
      */
     public @NotNull Facing rotateCounterClockwise2D() {
         SimplePreconditions.checkState(direction.length == 2, "Only 2D directions are supported");
-        return turn(Dimension.Y, Dimension.X);
+        return turn(Dimension.X, Dimension.Y);
     }
 
     /**
@@ -153,7 +153,7 @@ public final class Facing {
      */
     public @NotNull Facing rotateClockwise2D() {
         SimplePreconditions.checkState(direction.length == 2, "Only 2D directions are supported");
-        return turn(Dimension.X, Dimension.Y);
+        return turn(Dimension.Y, Dimension.X);
     }
 
     private void validateDimensions(@NotNull Dimension dimA, @NotNull Dimension dimB) {

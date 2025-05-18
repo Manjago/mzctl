@@ -30,9 +30,9 @@ class FacingTest {
 
     @Test
     void testMoveForward() {
-        Cell initialCell = Cell.of(2, 3);
+        Cell initialCell = Cell.ofRowAndColumn(2, 3);
         Cell resultCell = Facing.SOUTH.moveForward(initialCell);
-        assertEquals(Cell.of(2, 4), resultCell);
+        assertEquals(Cell.ofRowAndColumn(3, 3), resultCell);
     }
 
     // South → East → North → West → South
@@ -126,13 +126,13 @@ class FacingTest {
     @Test
     void testRotateCounterClockwise2D() {
         final Facing facing = Facing.EAST;
-        assertEquals(facing.rotateCounterClockwise2D(), facing.turn(Facing.Dimension.Y, Facing.Dimension.X));
+        assertEquals(facing.rotateCounterClockwise2D(), facing.turn(Facing.Dimension.X, Facing.Dimension.Y));
     }
 
     @Test
     void testRotateClockwise2D() {
         final Facing facing = Facing.EAST;
-        assertEquals(facing.rotateClockwise2D(), facing.turn(Facing.Dimension.X, Facing.Dimension.Y));
+        assertEquals(facing.rotateClockwise2D(), facing.turn(Facing.Dimension.Y, Facing.Dimension.X));
     }
 
     @Test
