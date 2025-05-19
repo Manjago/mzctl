@@ -14,13 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MazeEnvironmentDescriberTest {
 
-    private Maze maze;
     private MazeEnvironmentDescriber describer;
 
     @BeforeEach
     void setUp() {
-        MazeDim dim = MazeDim.of(3, 3);
-        maze = MazeFactory.createNotConnectedMaze(dim);
+        final MazeDim dim = MazeDim.of(3, 3);
+        final Maze maze = MazeFactory.createNotConnectedMaze(dim);
 
         // Создаем простой лабиринт:
         //   0   1   2
@@ -30,12 +29,12 @@ class MazeEnvironmentDescriberTest {
         //           |
         // 2 x---x---x
 
-        maze.addPass(Cell.ofRowAndColumn(0, 0), Cell.ofRowAndColumn(1, 0));
-        maze.addPass(Cell.ofRowAndColumn(1, 0), Cell.ofRowAndColumn(2, 0));
-        maze.addPass(Cell.ofRowAndColumn(2, 0), Cell.ofRowAndColumn(2, 1));
-        maze.addPass(Cell.ofRowAndColumn(2, 1), Cell.ofRowAndColumn(2, 2));
-        maze.addPass(Cell.ofRowAndColumn(2, 2), Cell.ofRowAndColumn(1, 2));
-        maze.addPass(Cell.ofRowAndColumn(1, 2), Cell.ofRowAndColumn(0, 2));
+        maze.addPass(Cell.ofRowAndColumn(0, 0), Cell.ofRowAndColumn(0, 1));
+        maze.addPass(Cell.ofRowAndColumn(0, 1), Cell.ofRowAndColumn(0, 2));
+        maze.addPass(Cell.ofRowAndColumn(0, 2), Cell.ofRowAndColumn(1, 2));
+        maze.addPass(Cell.ofRowAndColumn(1, 2), Cell.ofRowAndColumn(2, 2));
+        maze.addPass(Cell.ofRowAndColumn(2, 2), Cell.ofRowAndColumn(2, 1));
+        maze.addPass(Cell.ofRowAndColumn(2, 1), Cell.ofRowAndColumn(2, 0));
 
         describer = new MazeEnvironmentDescriber(maze);
     }
@@ -87,12 +86,12 @@ class MazeEnvironmentDescriberTest {
         String description = describer.describeEnvironment(player);
 
         String expectedDescription = """
-    Вы находитесь в комнате.
-    - Впереди: проход
-    - Слева: граница лабиринта
-    - Справа: проход
-    - Сзади: граница лабиринта
-    """;
+Вы находитесь в комнате.
+- Впереди: граница лабиринта
+- Слева: проход
+- Справа: граница лабиринта
+- Сзади: стена
+""";
 
         System.out.println("Actual description: \n" + description);
         System.out.println("Expected description: \n" + expectedDescription);

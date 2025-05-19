@@ -31,16 +31,16 @@ class PlayerStateNDTest {
 
     @Test
     void testMoveForward() {
-        PlayerStateND player = new PlayerStateND(Cell.of(2, 2), Facing.NORTH);
+        PlayerStateND player = new PlayerStateND(Cell.ofRowAndColumn(2, 2), Facing.NORTH);
         player.moveForward();
 
-        assertEquals(Cell.of(2, 1), player.getPosition());
+        assertEquals(Cell.ofRowAndColumn(1, 2), player.getPosition());
     }
 
     @Test
     void testTurn() {
-        PlayerStateND player = new PlayerStateND(Cell.of(0, 0), Facing.NORTH);
-        player.turn(Facing.Dimension.X, Facing.Dimension.Y);
+        PlayerStateND player = new PlayerStateND(Cell.ofRowAndColumn(0, 0), Facing.NORTH);
+        player.turn(Facing.Dimension.Y, Facing.Dimension.X);
 
         assertEquals(Facing.EAST, player.getFacing());
     }

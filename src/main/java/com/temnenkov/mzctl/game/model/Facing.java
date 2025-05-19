@@ -10,10 +10,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 public final class Facing {
-    public static final Facing NORTH = Facing.of(AxisDirection.ZERO, AxisDirection.NEGATIVE);
-    public static final Facing SOUTH = Facing.of(AxisDirection.ZERO, AxisDirection.POSITIVE);
-    public static final Facing WEST = Facing.of(AxisDirection.NEGATIVE, AxisDirection.ZERO);
-    public static final Facing EAST = Facing.of(AxisDirection.POSITIVE, AxisDirection.ZERO);
+
+    // (ряд, столбец)
+
+    // вверх (уменьшаем ряд)
+    public static final Facing NORTH = Facing.of(AxisDirection.NEGATIVE, AxisDirection.ZERO);
+    // вниз (увеличиваем ряд)
+    public static final Facing SOUTH = Facing.of(AxisDirection.POSITIVE, AxisDirection.ZERO);
+    // влево (уменьшаем столбец)
+    public static final Facing WEST = Facing.of(AxisDirection.ZERO, AxisDirection.NEGATIVE);
+    // вправо (увеличиваем столбец)
+    public static final Facing EAST = Facing.of(AxisDirection.ZERO, AxisDirection.POSITIVE);
 
     private final AxisDirection[] direction;
 
@@ -50,8 +57,8 @@ public final class Facing {
      * Перечисление осей измерений.
      */
     public enum Dimension {
-        X(0),
-        Y(1),
+        Y(0),
+        X(1),
         Z(2),
         W(3); // Можно добавлять по необходимости
 
@@ -124,9 +131,10 @@ public final class Facing {
         validateDimensions(dimA, dimB);
 
         final AxisDirection[] dir = getDirections();
-        AxisDirection temp = dir[dimA.index()];
-        dir[dimA.index()] = AxisDirection.fromValue(-dir[dimB.index()].value());
-        dir[dimB.index()] = temp;
+        final AxisDirection a = dir[dimA.index()];
+        final AxisDirection b = dir[dimB.index()];
+        dir[dimA.index()] = b;
+        dir[dimB.index()] = AxisDirection.fromValue(-a.value());
         return new Facing(dir);
     }
 
@@ -136,7 +144,7 @@ public final class Facing {
      */
     public @NotNull Facing rotateCounterClockwise2D() {
         SimplePreconditions.checkState(direction.length == 2, "Only 2D directions are supported");
-        return turn(Dimension.Y, Dimension.X);
+        return turn(Dimension.X, Dimension.Y);
     }
 
     /**
@@ -145,7 +153,7 @@ public final class Facing {
      */
     public @NotNull Facing rotateClockwise2D() {
         SimplePreconditions.checkState(direction.length == 2, "Only 2D directions are supported");
-        return turn(Dimension.X, Dimension.Y);
+        return turn(Dimension.Y, Dimension.X);
     }
 
     private void validateDimensions(@NotNull Dimension dimA, @NotNull Dimension dimB) {
