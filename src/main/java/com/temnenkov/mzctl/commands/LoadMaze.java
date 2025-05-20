@@ -30,7 +30,6 @@ public class LoadMaze implements Runnable {
         try {
             final String resolvedUserId = GameContextHelper.getUserId(gameContext, userId);
             if (resolvedUserId == null) {
-                System.out.println("Ошибка: сначала авторизуйтесь через команду login");
                 return;
             }
             gameEngine.loadMaze(name, resolvedUserId);

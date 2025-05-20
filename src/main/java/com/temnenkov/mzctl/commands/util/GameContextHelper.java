@@ -17,6 +17,12 @@ public final class GameContextHelper {
      */
     @Nullable
     public static String getUserId(@NotNull GameContext gameContext, @Nullable String candidate) {
-        return candidate != null ? candidate : gameContext.getCurrentUserId();
+        final String resolvedUserId = candidate != null ? candidate : gameContext.getCurrentUserId();
+        if (resolvedUserId == null) {
+            System.out.println("Ошибка: сначала авторизуйтесь через команду login");
+            return null;
+        }
+        return resolvedUserId;
     }
+
 }

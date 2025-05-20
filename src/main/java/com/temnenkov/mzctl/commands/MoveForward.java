@@ -23,7 +23,6 @@ public class MoveForward implements Runnable {
     public void run() {
         final String resolvedUserId = GameContextHelper.getUserId(gameContext, userId);
         if (resolvedUserId == null) {
-            System.out.println("Ошибка: сначала авторизуйтесь через команду login");
             return;
         }
         gameEngine.moveForward(resolvedUserId);
