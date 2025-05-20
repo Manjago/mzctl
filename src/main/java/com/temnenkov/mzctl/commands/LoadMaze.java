@@ -1,5 +1,7 @@
 package com.temnenkov.mzctl.commands;
 
+import com.temnenkov.mzctl.commands.util.GameContextHelper;
+import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.model.serialize.MazeSerializationException;
 import org.slf4j.Logger;
@@ -13,20 +15,27 @@ public class LoadMaze implements Runnable {
     @CommandLine.Option(names = {"-n", "--name"}, required = true)
     String name;
     @CommandLine.Option(names = {"-u", "--user"}, required = false, defaultValue = "tester")
-    String userLogin;
+    String userId;
 
     private final GameEngine gameEngine;
+    private final GameContext gameContext;
 
-    public LoadMaze(GameEngine gameEngine) {
+    public LoadMaze(GameEngine gameEngine, GameContext gameContext) {
         this.gameEngine = gameEngine;
+        this.gameContext = gameContext;
     }
 
     @Override
     public void run() {
         try {
-            gameEngine.loadMaze(name, userLogin);
+            final String resolvedUserId = GameContextHelper.getUserId(gameContext, userId);
+            if (resolvedUserId == null) {
+                System.out.println("Ошибка: сначала авторизуйтесь через команду login");
+                return;
+            }
+            gameEngine.loadMaze(name, resolvedUserId);
             System.out.println("Лабиринт '" + name + "' загружен.");
-            System.out.println(gameEngine.describeEnvironment(userLogin));
+            System.out.println(gameEngine.describeEnvironment(resolvedUserId));
         } catch (MazeSerializationException e) {
             logger.error("Fail load maze", e);
             System.out.println("Ошибка: лабиринт '" + name + "' не найден или повреждён.");

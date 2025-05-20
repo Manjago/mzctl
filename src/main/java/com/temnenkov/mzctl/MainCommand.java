@@ -2,6 +2,7 @@ package com.temnenkov.mzctl;
 
 import com.temnenkov.mzctl.commands.GenerateMaze;
 import com.temnenkov.mzctl.commands.LoadMaze;
+import com.temnenkov.mzctl.commands.Login;
 import com.temnenkov.mzctl.commands.MoveForward;
 import com.temnenkov.mzctl.commands.TurnBack;
 import com.temnenkov.mzctl.commands.TurnLeft;
@@ -37,6 +38,7 @@ import java.nio.file.Path;
                 TurnRight.class,
                 TurnBack.class,
                 WhereAmI.class,
+                Login.class,
                 CommandLine.HelpCommand.class
         }
 )
@@ -51,7 +53,7 @@ public class MainCommand implements Runnable {
         final SimpleDIContainer container = new SimpleDIContainer();
 
         final MazeManager mazeManager = new MazeManager(Path.of("mazes"));
-        final GameContext gameContext = new SimpleGameContext(new MazeManager(Path.of("mazes")));
+        final GameContext gameContext = new SimpleGameContext(mazeManager);
         final GameEngine gameEngine = new GameEngineImpl(gameContext);
 
         container.registerBean(MazeManager.class, mazeManager);
@@ -60,7 +62,6 @@ public class MainCommand implements Runnable {
 
         final CommandFactory factory = new CommandFactory(container);
         final CommandLine cmd = new CommandLine(new MainCommand(), factory);
-
 
         if (args.length > 0) {
             executeSingleCommand(cmd, args);

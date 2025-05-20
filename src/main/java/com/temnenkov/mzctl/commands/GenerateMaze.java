@@ -14,8 +14,6 @@ public class GenerateMaze implements Runnable {
     int height;
     @CommandLine.Option(names = {"-a", "--algo"}, required = true)
     MazeGeneratorFactory.Algo algo;
-    @CommandLine.Option(names = {"-u", "--user"}, required = false, defaultValue = "tester")
-    String userLogin;
 
     private final GameEngine gameEngine;
 

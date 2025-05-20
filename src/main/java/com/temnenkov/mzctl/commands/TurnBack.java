@@ -1,5 +1,7 @@
 package com.temnenkov.mzctl.commands;
 
+import com.temnenkov.mzctl.commands.util.GameContextHelper;
+import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import picocli.CommandLine;
 
@@ -10,14 +12,16 @@ public class TurnBack implements Runnable {
     String userId;
 
     private final GameEngine gameEngine;
+    private final GameContext gameContext;
 
-    public TurnBack(GameEngine gameEngine) {
+    public TurnBack(GameEngine gameEngine, GameContext gameContext) {
         this.gameEngine = gameEngine;
+        this.gameContext = gameContext;
     }
 
     @Override
     public void run() {
-        final String resolvedUserId = GameContextHelper.getUserId(gameEngine.getContext(), userId);
+        final String resolvedUserId = GameContextHelper.getUserId(gameContext, userId);
         if (resolvedUserId == null) {
             System.out.println("Ошибка: сначала авторизуйтесь через команду login");
             return;

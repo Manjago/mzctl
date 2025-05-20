@@ -1,4 +1,4 @@
-package com.temnenkov.mzctl.commands;
+package com.temnenkov.mzctl.commands.util;
 
 import com.temnenkov.mzctl.context.GameContext;
 import org.jetbrains.annotations.NotNull;
