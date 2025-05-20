@@ -1,26 +1,19 @@
 package com.temnenkov.mzctl.commands.util;
 
-import com.temnenkov.mzctl.gameengine.GameEngine;
+import com.temnenkov.mzctl.di.SimpleDIContainer;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
-import java.lang.reflect.Constructor;
-
 public class CommandFactory implements CommandLine.IFactory {
-    private final GameEngine gameEngine;
+    @NotNull
+    private final SimpleDIContainer container;
 
-    public CommandFactory(GameEngine gameEngine) {
-        this.gameEngine = gameEngine;
+    public CommandFactory(@NotNull SimpleDIContainer container) {
+        this.container = container;
     }
 
     @Override
-    public <K> K create(Class<K> cls) throws Exception {
-        try {
-            // Если у команды есть конструктор с GameEngine — используем его
-            Constructor<K> constructor = cls.getDeclaredConstructor(GameEngine.class);
-            return constructor.newInstance(gameEngine);
-        } catch (NoSuchMethodException e) {
-            // иначе используем конструктор без аргументов
-            return cls.getDeclaredConstructor().newInstance();
-        }
+    public <K> K create(Class<K> cls) {
+        return container.createBean(cls);
     }
 }

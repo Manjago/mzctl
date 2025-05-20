@@ -10,6 +10,7 @@ import com.temnenkov.mzctl.commands.WhereAmI;
 import com.temnenkov.mzctl.commands.util.CommandFactory;
 import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.context.SimpleGameContext;
+import com.temnenkov.mzctl.di.SimpleDIContainer;
 import com.temnenkov.mzctl.game.MazeManager;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.gameengine.GameEngineImpl;
@@ -47,10 +48,17 @@ public class MainCommand implements Runnable {
 
     public static void main(String[] args) throws IOException {
 
-        final GameContext context = new SimpleGameContext(new MazeManager(Path.of("mazes")));
+        final SimpleDIContainer container = new SimpleDIContainer();
 
-        final GameEngine gameEngine = new GameEngineImpl(context);
-        final CommandFactory factory = new CommandFactory(gameEngine); // <-- передаем его в фабрику
+        final MazeManager mazeManager = new MazeManager(Path.of("mazes"));
+        final GameContext gameContext = new SimpleGameContext(new MazeManager(Path.of("mazes")));
+        final GameEngine gameEngine = new GameEngineImpl(gameContext);
+
+        container.registerBean(MazeManager.class, mazeManager);
+        container.registerBean(GameContext.class, gameContext);
+        container.registerBean(GameEngine.class, gameEngine);
+
+        final CommandFactory factory = new CommandFactory(container);
         final CommandLine cmd = new CommandLine(new MainCommand(), factory);
 
 
