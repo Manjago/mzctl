@@ -8,4 +8,6 @@ public interface GameContext {
     PlayerSession getPlayerSession(String login);
     void createPlayerSession(PlayerSession playerSession);
     void updatePlayerSession(PlayerSession playerSession);
+    void setCurrentUserId(String userId);
+    String getCurrentUserId();
 }

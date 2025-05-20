@@ -15,6 +15,11 @@ public class GameEngineImpl implements GameEngine {
     }
 
     @Override
+    public GameContext getContext() {
+        return context;
+    }
+
+    @Override
     public void generateMaze(String mazeName, int width, int height, MazeGeneratorFactory.Algo algo) {
         Maze maze = context.getMazeManager().generateMaze2D(width, height, algo);
         context.getMazeManager().saveMaze(mazeName, maze);

@@ -7,7 +7,7 @@ import picocli.CommandLine;
 public class TurnBack implements Runnable {
 
     @CommandLine.Option(names = {"-u", "--user"}, required = false, defaultValue = "tester")
-    String userLogin;
+    String userId;
 
     private final GameEngine gameEngine;
 
@@ -17,7 +17,12 @@ public class TurnBack implements Runnable {
 
     @Override
     public void run() {
-        gameEngine.turnBack(userLogin);
-        System.out.println(gameEngine.describeEnvironment(userLogin));
+        final String resolvedUserId = GameContextHelper.getUserId(gameEngine.getContext(), userId);
+        if (resolvedUserId == null) {
+            System.out.println("Ошибка: сначала авторизуйтесь через команду login");
+            return;
+        }
+        gameEngine.turnBack(resolvedUserId);
+        System.out.println(gameEngine.describeEnvironment(resolvedUserId));
     }
 }

@@ -7,7 +7,7 @@ import picocli.CommandLine;
 public class TurnRight implements Runnable {
 
     @CommandLine.Option(names = {"-u", "--user"}, required = false, defaultValue = "tester")
-    String userLogin;
+    String userId;
 
     private final GameEngine gameEngine;
 
@@ -17,7 +17,12 @@ public class TurnRight implements Runnable {
 
     @Override
     public void run() {
-        gameEngine.turnRight(userLogin);
-        System.out.println(gameEngine.describeEnvironment(userLogin));
+        final String resolvedUserId = GameContextHelper.getUserId(gameEngine.getContext(), userId);
+        if (resolvedUserId == null) {
+            System.out.println("Ошибка: сначала авторизуйтесь через команду login");
+            return;
+        }
+        gameEngine.turnRight(resolvedUserId);
+        System.out.println(gameEngine.describeEnvironment(resolvedUserId));
     }
 }

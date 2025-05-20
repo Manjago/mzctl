@@ -8,9 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SimpleGameContext implements GameContext {
     private final MazeManager mazeManager;
+    private final AtomicReference<String> currentUserId = new AtomicReference<>();
 
     public SimpleGameContext(MazeManager mazeManager) {
         this.mazeManager = mazeManager;
@@ -41,6 +43,16 @@ public class SimpleGameContext implements GameContext {
         SimplePreconditions.checkState(Objects.equals(oldPlayerSession.getVersion(), version), "Player session versions do not match");
         playerSession.setVersion(version == null ? 0L : version + 1);
         playerSessions.put(playerSession.getLogin(), playerSession);
+    }
+
+    @Override
+    public void setCurrentUserId(String userId) {
+        currentUserId.set(userId);
+    }
+
+    @Override
+    public String getCurrentUserId() {
+        return currentUserId.get();
     }
 
 }

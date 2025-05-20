@@ -3,11 +3,11 @@ package com.temnenkov.mzctl.commands;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "?", description = "Повторить описание окружения")
+@CommandLine.Command(name = "v", description = "Повторить описание окружения")
 public class WhereAmI implements Runnable {
 
     @CommandLine.Option(names = {"-u", "--user"}, required = false, defaultValue = "tester")
-    String userLogin;
+    String userId;
 
     private final GameEngine gameEngine;
 
@@ -17,6 +17,11 @@ public class WhereAmI implements Runnable {
 
     @Override
     public void run() {
-        gameEngine.describeEnvironment(userLogin);
+        final String resolvedUserId = GameContextHelper.getUserId(gameEngine.getContext(), userId);
+        if (resolvedUserId == null) {
+            System.out.println("Ошибка: сначала авторизуйтесь через команду login");
+            return;
+        }
+        gameEngine.describeEnvironment(resolvedUserId);
     }
 }
