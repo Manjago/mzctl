@@ -1,7 +1,6 @@
 package com.temnenkov.mzctl.game;
 
 import com.temnenkov.mzctl.analysis.MazeExplorer;
-import com.temnenkov.mzctl.game.model.PlayerStateND;
 import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
@@ -46,12 +45,4 @@ class MazeManagerTest {
         assertEquals(originalMaze, loadedMaze);
     }
 
-    @Test
-    void testCreatePlayerInRandomPosition() {
-        Maze maze = mazeManager.generateMaze2D( 3, 3, MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
-        PlayerStateND player = mazeManager.createPlayerInRandomPosition(maze);
-        assertNotNull(player);
-        assertTrue(maze.isValid(player.getPosition()));
-        assertNotNull(player.getFacing());
-    }
 }

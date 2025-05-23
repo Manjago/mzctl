@@ -15,6 +15,8 @@ import com.temnenkov.mzctl.di.SimpleDIContainer;
 import com.temnenkov.mzctl.game.MazeManager;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.gameengine.GameEngineImpl;
+import com.temnenkov.mzctl.gameengine.PlayerPositionProvider;
+import com.temnenkov.mzctl.gameengine.RandomPlayerPositionProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jline.reader.EndOfFileException;
@@ -25,6 +27,7 @@ import picocli.CommandLine;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.concurrent.ThreadLocalRandom;
 
 @CommandLine.Command(
         name = "mzctl",
@@ -54,7 +57,8 @@ public class MainCommand implements Runnable {
 
         final MazeManager mazeManager = new MazeManager(Path.of("mazes"));
         final GameContext gameContext = new SimpleGameContext(mazeManager);
-        final GameEngine gameEngine = new GameEngineImpl(gameContext);
+        final PlayerPositionProvider playerPositionProvider = new RandomPlayerPositionProvider(ThreadLocalRandom::current);
+        final GameEngine gameEngine = new GameEngineImpl(gameContext, playerPositionProvider);
 
         container.registerBean(MazeManager.class, mazeManager);
         container.registerBean(GameContext.class, gameContext);

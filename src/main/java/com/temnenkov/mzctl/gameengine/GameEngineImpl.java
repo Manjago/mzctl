@@ -9,9 +9,11 @@ import com.temnenkov.mzctl.model.Maze;
 
 public class GameEngineImpl implements GameEngine {
     private final GameContext context;
+    private final PlayerPositionProvider positionProvider;
 
-    public GameEngineImpl(GameContext context) {
+    public GameEngineImpl(GameContext context, PlayerPositionProvider positionProvider) {
         this.context = context;
+        this.positionProvider = positionProvider;
     }
 
     @Override
@@ -23,7 +25,7 @@ public class GameEngineImpl implements GameEngine {
     @Override
     public void loadMaze(String mazeName, String userLogin) {
         Maze maze = context.getMazeManager().loadMaze(mazeName);
-        PlayerStateND playerState = context.getMazeManager().createPlayerInRandomPosition(maze);
+        PlayerStateND playerState = positionProvider.createPlayerPosition(maze);
         MazeEnvironmentDescriber describer = new MazeEnvironmentDescriber(maze);
         PlayerSession playerSession = new PlayerSession(userLogin, maze, describer, playerState, null);
         context.createPlayerSession(playerSession);

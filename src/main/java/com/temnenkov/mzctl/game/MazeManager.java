@@ -1,9 +1,6 @@
 package com.temnenkov.mzctl.game;
 
-import com.temnenkov.mzctl.game.model.Facing;
-import com.temnenkov.mzctl.game.model.PlayerStateND;
 import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
-import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
 import com.temnenkov.mzctl.model.serialize.SerializationHelper;
@@ -22,7 +19,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MazeManager {
 
     private final Path mazeDirectory;
-    private static final Facing[] DIRECTIONS = {Facing.NORTH, Facing.SOUTH, Facing.EAST, Facing.WEST};
 
     /**
      * Создаёт MazeManager, работающий с лабиринтами в заданной директории.
@@ -72,24 +68,7 @@ public class MazeManager {
         return SerializationHelper.loadMazeFromFile(filename);
     }
 
-    /**
-     * Создаёт состояние игрока в случайной клетке лабиринта с случайным направлением взгляда.
-     *
-     * @param maze лабиринт
-     * @return состояние игрока
-     */
-    public PlayerStateND createPlayerInRandomPosition(@NotNull Maze maze) {
-        final Cell randomCell = maze.getRandomCell(getLocalRandom());
-        final Facing randomFacing = randomFacing();
-        return new PlayerStateND(randomCell, randomFacing);
-    }
-
     private static ThreadLocalRandom getLocalRandom() {
         return ThreadLocalRandom.current();
     }
-
-    private Facing randomFacing() {
-        return DIRECTIONS[getLocalRandom().nextInt(DIRECTIONS.length)];
-    }
-
 }

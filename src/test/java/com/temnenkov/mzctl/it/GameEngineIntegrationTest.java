@@ -3,6 +3,8 @@ package com.temnenkov.mzctl.it;
 import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.context.SimpleGameContext;
 import com.temnenkov.mzctl.game.MazeManager;
+import com.temnenkov.mzctl.game.model.Facing;
+import com.temnenkov.mzctl.gameengine.FixedPlayerPositionProvider;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.gameengine.GameEngineImpl;
 import com.temnenkov.mzctl.model.serialize.MazeSerializationException;
@@ -28,7 +30,7 @@ class GameEngineIntegrationTest {
     void setUp() throws IOException {
         final MazeManager mazeManager = new MazeManager(TEST_RESOURCES_PATH);
         final GameContext gameContext = new SimpleGameContext(mazeManager);
-        gameEngine = new GameEngineImpl(gameContext);
+        gameEngine = new GameEngineImpl(gameContext, new FixedPlayerPositionProvider(0, 0, Facing.NORTH));
         userLogin = "tester";
     }
 

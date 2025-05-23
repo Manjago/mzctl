@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public final class Facing {
 
@@ -21,6 +22,8 @@ public final class Facing {
     public static final Facing WEST = Facing.of(AxisDirection.ZERO, AxisDirection.NEGATIVE);
     // вправо (увеличиваем столбец)
     public static final Facing EAST = Facing.of(AxisDirection.ZERO, AxisDirection.POSITIVE);
+
+    private static final Facing[] DIRECTIONS = {Facing.NORTH, Facing.SOUTH, Facing.EAST, Facing.WEST};
 
     private final AxisDirection[] direction;
 
@@ -189,5 +192,11 @@ public final class Facing {
         }
         sb.append(']');
         return sb.toString();
+    }
+
+
+    @NotNull
+    public static Facing randomFacing(@NotNull Random random) {
+        return DIRECTIONS[random.nextInt(DIRECTIONS.length)];
     }
 }

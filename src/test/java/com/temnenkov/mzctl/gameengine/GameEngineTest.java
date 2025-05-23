@@ -27,25 +27,23 @@ class GameEngineTest {
     void setUp(@TempDir Path tempDir) throws IOException {
         MazeManager mazeManager = new MazeManager(tempDir);
         context = new SimpleGameContext(mazeManager);
-        gameEngine = new GameEngineImpl(context);
+        final PlayerPositionProvider fixedPositionProvider = new FixedPlayerPositionProvider(0, 0, Facing.NORTH);
+        gameEngine = new GameEngineImpl(context, fixedPositionProvider);
     }
 
     @Test
     void testWalkThroughPredefinedMaze() throws IOException {
         final MazeManager mazeManager = new MazeManager(Path.of("src/test/resources"));
         context = new SimpleGameContext(mazeManager);
-        gameEngine = new GameEngineImpl(context);
+        final FixedPlayerPositionProvider fixedPlayerPositionProvider = new FixedPlayerPositionProvider(0, 0, Facing.NORTH);
+        gameEngine = new GameEngineImpl(context, fixedPlayerPositionProvider);
+        gameEngine.loadMaze("test", LOGIN);
 
-        Cell position;
-        Facing facing;
-        do {
-            gameEngine.loadMaze("test", LOGIN);
-            position = context.getPlayerSession(LOGIN).getPlayerStateND().getPosition();
-            facing = context.getPlayerSession(LOGIN).getPlayerStateND().getFacing();
-        }while (!position.equals(Cell.ofRowAndColumn(0, 0)) || facing != Facing.NORTH);
+        final Cell position = context.getPlayerSession(LOGIN).getPlayerStateND().getPosition();
+        final Facing facing = context.getPlayerSession(LOGIN).getPlayerStateND().getFacing();
 
-        assertEquals(Cell.ofRowAndColumn(0, 0), position);
-        assertEquals(Facing.NORTH, facing);
+        assertEquals(Cell.ofRowAndColumn(0, 0), position, "Игрок должен стартовать в позиции (0,0)");
+        assertEquals(Facing.NORTH, facing, "Игрок должен смотреть на север при старте");
 
         final MazeEnvironmentDescriber describer = context.getPlayerSession(LOGIN).getMazeEnvironmentDescriber();
         final PlayerStateND playerState = context.getPlayerSession(LOGIN).getPlayerStateND();
