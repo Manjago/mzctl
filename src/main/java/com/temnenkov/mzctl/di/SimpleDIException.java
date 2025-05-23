@@ -1,6 +1,5 @@
 package com.temnenkov.mzctl.di;
 
-// simple DIE - ха-ха!
 public sealed class SimpleDIException extends RuntimeException {
 
     public SimpleDIException(String message) {
@@ -18,6 +17,11 @@ public sealed class SimpleDIException extends RuntimeException {
     }
     public static final class ConstructorNotFoundException extends SimpleDIException {
         public ConstructorNotFoundException(String message) {
+            super(message);
+        }
+    }
+    public static final class BeanNotFoundException extends SimpleDIException {
+        public BeanNotFoundException(String message) {
             super(message);
         }
     }

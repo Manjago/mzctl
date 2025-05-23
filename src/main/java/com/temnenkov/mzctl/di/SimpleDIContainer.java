@@ -30,12 +30,22 @@ public class SimpleDIContainer {
 
             if (allParamsFound) {
                 try {
-                    return cls.cast(constructor.newInstance(params));
+                    T instance = cls.cast(constructor.newInstance(params));
+                    registerBean(cls, instance);
+                    return instance;
                 } catch (Exception e) {
                     throw new SimpleDIException.BeanInstanceException("Не удалось создать bean: " + cls, e);
                 }
             }
         }
         throw new SimpleDIException.ConstructorNotFoundException("Не найден подходящий конструктор для: " + cls);
+    }
+
+    public <T> T getBean(Class<T> type) {
+        final Object bean = beans.get(type);
+        if (bean == null) {
+            throw new SimpleDIException.BeanNotFoundException("Bean не найден: " + type);
+        }
+        return type.cast(bean);
     }
 }

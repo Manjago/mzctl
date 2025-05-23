@@ -13,7 +13,6 @@ import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.context.SimpleGameContext;
 import com.temnenkov.mzctl.di.SimpleDIContainer;
 import com.temnenkov.mzctl.game.MazeManager;
-import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.gameengine.GameEngineImpl;
 import com.temnenkov.mzctl.gameengine.PlayerPositionProvider;
 import com.temnenkov.mzctl.gameengine.RandomPlayerPositionProvider;
@@ -51,18 +50,22 @@ public class MainCommand implements Runnable {
         // нужен?
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String @NotNull [] args) throws IOException {
 
         final SimpleDIContainer container = new SimpleDIContainer();
 
+        // Регистрируем базовые зависимости
         final MazeManager mazeManager = new MazeManager(Path.of("mazes"));
-        final GameContext gameContext = new SimpleGameContext(mazeManager);
-        final PlayerPositionProvider playerPositionProvider = new RandomPlayerPositionProvider(ThreadLocalRandom::current);
-        final GameEngine gameEngine = new GameEngineImpl(gameContext, playerPositionProvider);
-
         container.registerBean(MazeManager.class, mazeManager);
+
+        final GameContext gameContext = new SimpleGameContext(mazeManager);
         container.registerBean(GameContext.class, gameContext);
-        container.registerBean(GameEngine.class, gameEngine);
+
+        final PlayerPositionProvider playerPositionProvider = new RandomPlayerPositionProvider(ThreadLocalRandom::current);
+        container.registerBean(PlayerPositionProvider.class, playerPositionProvider);
+
+        // Создаём GameEngine через контейнер (он разрешит зависимости автоматически)
+        container.createBean(GameEngineImpl.class);
 
         final CommandFactory factory = new CommandFactory(container);
         final CommandLine cmd = new CommandLine(new MainCommand(), factory);
