@@ -58,16 +58,15 @@ class SimpleDIContainerTest {
 
         // when / then
         assertThrows(SimpleDIException.ConstructorNotFoundException.class,
-                () -> container.createBean(BeanWithDependencies.class),
-                "Должен выбросить исключение, если зависимость не зарегистрирована");
+                () -> container.createBean(BeanWithDependencies.class), "Должен выбросить исключение, если " +
+                        "зависимость не зарегистрирована");
     }
 
     @DisplayName("Проверка ошибки при попытке получить незарегистрированный бин")
     @Test
     void shouldThrowExceptionIfBeanNotRegistered() {
-        assertThrows(SimpleDIException.BeanNotFoundException.class,
-                () -> container.getBean(MyService.class),
-                "Должен выбросить исключение, если бин не зарегистрирован");
+        assertThrows(SimpleDIException.BeanNotFoundException.class, () -> container.getBean(MyService.class), "Должен" +
+                " выбросить исключение, если бин не зарегистрирован");
     }
 
     @DisplayName("Проверка, что при создании бина автоматически регистрируешь его в контейнере")
@@ -87,37 +86,38 @@ class SimpleDIContainerTest {
         assertSame(createdBean, retrievedBean, "Созданный бин должен автоматически регистрироваться в контейнере");
     }
 
-}
-
-interface MyService {
-    void doSomething();
-}
-
-class MyServiceImpl implements MyService {
-    @Override
-    public void doSomething() {}
-}
-
-class DependencyA {
-}
-
-class DependencyB {
-}
-
-class BeanWithDependencies {
-    private final DependencyA dependencyA;
-    private final DependencyB dependencyB;
-
-    public BeanWithDependencies(DependencyA dependencyA, DependencyB dependencyB) {
-        this.dependencyA = dependencyA;
-        this.dependencyB = dependencyB;
+    interface MyService {
+        void doSomething();
     }
 
-    public DependencyA getDependencyA() {
-        return dependencyA;
+    static class MyServiceImpl implements MyService {
+        @Override
+        public void doSomething() {
+        }
     }
 
-    public DependencyB getDependencyB() {
-        return dependencyB;
+    static class DependencyA {
+    }
+
+    static class DependencyB {
+    }
+
+    static class BeanWithDependencies {
+        private final DependencyA dependencyA;
+        private final DependencyB dependencyB;
+
+        public BeanWithDependencies(DependencyA dependencyA, DependencyB dependencyB) {
+            this.dependencyA = dependencyA;
+            this.dependencyB = dependencyB;
+        }
+
+        public DependencyA getDependencyA() {
+            return dependencyA;
+        }
+
+        public DependencyB getDependencyB() {
+            return dependencyB;
+        }
     }
 }
+
