@@ -2,11 +2,13 @@ package com.temnenkov.mzctl.it;
 
 import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.context.SimpleGameContext;
+import com.temnenkov.mzctl.di.SimpleDIContainer;
 import com.temnenkov.mzctl.game.MazeManager;
 import com.temnenkov.mzctl.game.model.Facing;
 import com.temnenkov.mzctl.gameengine.FixedPlayerPositionProvider;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.gameengine.GameEngineImpl;
+import com.temnenkov.mzctl.gameengine.PlayerPositionProvider;
 import com.temnenkov.mzctl.model.serialize.MazeSerializationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,11 +28,27 @@ class GameEngineIntegrationTest {
     private GameEngine gameEngine;
     private String userLogin;
 
+    private SimpleDIContainer container;
+
     @BeforeEach
     void setUp() throws IOException {
-        final MazeManager mazeManager = new MazeManager(TEST_RESOURCES_PATH);
-        final GameContext gameContext = new SimpleGameContext(mazeManager);
-        gameEngine = new GameEngineImpl(gameContext, new FixedPlayerPositionProvider(0, 0, Facing.NORTH));
+        container = new SimpleDIContainer();
+
+        // Регистрируем MazeManager
+        MazeManager mazeManager = new MazeManager(TEST_RESOURCES_PATH);
+        container.registerBean(MazeManager.class, mazeManager);
+
+        // Регистрируем GameContext
+        GameContext gameContext = new SimpleGameContext(mazeManager);
+        container.registerBean(GameContext.class, gameContext);
+
+        // Регистрируем PlayerPositionProvider (фиксированный для тестов)
+        FixedPlayerPositionProvider positionProvider = new FixedPlayerPositionProvider(0, 0, Facing.NORTH);
+        container.registerBean(PlayerPositionProvider.class, positionProvider);
+
+        // Создаем GameEngine через контейнер
+        gameEngine = container.createBean(GameEngineImpl.class);
+
         userLogin = "tester";
     }
 
