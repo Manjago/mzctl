@@ -20,10 +20,9 @@ class PlayerSessionTest {
     void testSaveAndLoadNullVersion(@TempDir @NotNull Path tempDir) {
         final String login  = "tester";
         final Maze maze = MazeFactory.createFullConnectedMaze(MazeDim.of(3, 3));
-        final MazeEnvironmentDescriber mazeEnvironmentDescriber = new MazeEnvironmentDescriber(maze);
         final PlayerStateND playerState = new PlayerStateND(maze.getRandomCell(new Random(42)), Facing.SOUTH);
 
-        final PlayerSession playerSession = new PlayerSession(login, maze, mazeEnvironmentDescriber, playerState, Role.PLAYER, null);
+        final PlayerSession playerSession = createTestPlayerSession(login, maze, playerState, null);
 
         final Path file = tempDir.resolve("test.mzpack");
         SerializationHelper.savePlayerSessionToFile(playerSession, file.toString());
@@ -37,10 +36,9 @@ class PlayerSessionTest {
     void testSaveAndLoadNotNullVersion(@TempDir @NotNull Path tempDir) {
         final String login  = "tester";
         final Maze maze = MazeFactory.createFullConnectedMaze(MazeDim.of(3, 3));
-        final MazeEnvironmentDescriber mazeEnvironmentDescriber = new MazeEnvironmentDescriber(maze);
         final PlayerStateND playerState = new PlayerStateND(maze.getRandomCell(new Random(42)), Facing.SOUTH);
 
-        final PlayerSession playerSession = new PlayerSession(login, maze, mazeEnvironmentDescriber, playerState, Role.PLAYER, 5L);
+        final PlayerSession playerSession = createTestPlayerSession(login, maze, playerState, 5L);
 
         final Path file = tempDir.resolve("test.mzpack");
         SerializationHelper.savePlayerSessionToFile(playerSession, file.toString());
@@ -48,5 +46,9 @@ class PlayerSessionTest {
         final PlayerSession loadedPlayerSession = SerializationHelper.loadPlayerSessionFromFile(file.toString());
         assertNotNull(loadedPlayerSession);
         assertEquals(playerSession, loadedPlayerSession);
+    }
+
+    private PlayerSession createTestPlayerSession(String login, Maze maze, PlayerStateND playerState, Long version) {
+        return new PlayerSession(login, maze, new MazeEnvironmentDescriber(maze), playerState, Role.PLAYER, version);
     }
 }

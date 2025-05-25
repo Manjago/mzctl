@@ -1,12 +1,16 @@
 package com.temnenkov.mzctl.auth;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+
 public class RoleResolver {
-    public Role roleByUserLogin(String login) {
-        // в телеграм такого id не будет никогда, для консольного отладочного режима такой уровень секьюрности ок
-        if ("tester".equalsIgnoreCase(login)) {
-            return Role.DEVELOPER;
-        } else {
-            return Role.PLAYER;
-        }
+    private static final Map<String, Role> USER_ROLES = Map.of(
+            "tester", Role.DEVELOPER
+            // здесь можно легко добавлять новых пользователей
+    );
+
+    public Role roleByUserLogin(@NotNull String login) {
+        return USER_ROLES.getOrDefault(login.toLowerCase(), Role.PLAYER);
     }
 }

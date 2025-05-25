@@ -81,7 +81,7 @@ public class GameEngineImpl implements GameEngine {
     public String visualizeMaze(String userLogin) {
         PlayerSession session = context.getPlayerSession(userLogin);
         if (session.getRole() == Role.PLAYER) {
-            throw new SecurityException("Вы не имеете прав для просмотра лабиринта");
+            throw new SecurityException("User '" + userLogin + "' does not have permissions to visualize the maze");
         }
 
         final Maze maze = session.getMaze();
