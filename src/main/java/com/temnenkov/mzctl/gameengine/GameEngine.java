@@ -10,4 +10,5 @@ public interface GameEngine {
     void turnRight(String userLogin);
     void turnBack(String userLogin);
     String describeEnvironment(String userLogin);
+    String visualizeMaze(String userLogin);
 }

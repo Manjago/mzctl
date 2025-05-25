@@ -1,5 +1,6 @@
 package com.temnenkov.mzctl.game.model;
 
+import com.temnenkov.mzctl.auth.Role;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
 import com.temnenkov.mzctl.model.MazeFactory;
@@ -22,7 +23,7 @@ class PlayerSessionTest {
         final MazeEnvironmentDescriber mazeEnvironmentDescriber = new MazeEnvironmentDescriber(maze);
         final PlayerStateND playerState = new PlayerStateND(maze.getRandomCell(new Random(42)), Facing.SOUTH);
 
-        final PlayerSession playerSession = new PlayerSession(login, maze, mazeEnvironmentDescriber, playerState, null);
+        final PlayerSession playerSession = new PlayerSession(login, maze, mazeEnvironmentDescriber, playerState, Role.PLAYER, null);
 
         final Path file = tempDir.resolve("test.mzpack");
         SerializationHelper.savePlayerSessionToFile(playerSession, file.toString());
@@ -39,7 +40,7 @@ class PlayerSessionTest {
         final MazeEnvironmentDescriber mazeEnvironmentDescriber = new MazeEnvironmentDescriber(maze);
         final PlayerStateND playerState = new PlayerStateND(maze.getRandomCell(new Random(42)), Facing.SOUTH);
 
-        final PlayerSession playerSession = new PlayerSession(login, maze, mazeEnvironmentDescriber, playerState, 5L);
+        final PlayerSession playerSession = new PlayerSession(login, maze, mazeEnvironmentDescriber, playerState, Role.PLAYER, 5L);
 
         final Path file = tempDir.resolve("test.mzpack");
         SerializationHelper.savePlayerSessionToFile(playerSession, file.toString());

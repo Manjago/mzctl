@@ -2,15 +2,19 @@ package com.temnenkov.mzctl.game.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.temnenkov.mzctl.auth.Role;
 import com.temnenkov.mzctl.model.Maze;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class PlayerSession {
     private final String login;
     private final Maze maze;
     private final EnvironmentDescriber mazeEnvironmentDescriber;
     private final PlayerStateND playerStateND;
+    private final Role role;
     private Long version;
 
     @JsonCreator
@@ -18,11 +22,13 @@ public class PlayerSession {
             @JsonProperty("maze") @NotNull Maze maze,
             @JsonProperty("mazeEnvironmentDescriber") @NotNull EnvironmentDescriber environmentDescriber,
             @JsonProperty("playerStateND") @NotNull PlayerStateND playerStateND,
+            @JsonProperty("role") @NotNull Role role,
             @JsonProperty("version") @Nullable Long version) {
         this.login = login;
         this.maze = maze;
         this.mazeEnvironmentDescriber = environmentDescriber;
         this.playerStateND = playerStateND;
+        this.role = role;
         this.version = version;
     }
 
@@ -50,13 +56,18 @@ public class PlayerSession {
         return playerStateND;
     }
 
+
+    public Role getRole() {
+        return role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass())
             return false;
 
         PlayerSession that = (PlayerSession) o;
-        return login.equals(that.login) && maze.equals(that.maze) && mazeEnvironmentDescriber.equals(that.mazeEnvironmentDescriber) && playerStateND.equals(that.playerStateND);
+        return login.equals(that.login) && maze.equals(that.maze) && mazeEnvironmentDescriber.equals(that.mazeEnvironmentDescriber) && playerStateND.equals(that.playerStateND) && role == that.role && Objects.equals(version, that.version);
     }
 
     @Override
@@ -65,11 +76,13 @@ public class PlayerSession {
         result = 31 * result + maze.hashCode();
         result = 31 * result + mazeEnvironmentDescriber.hashCode();
         result = 31 * result + playerStateND.hashCode();
+        result = 31 * result + role.hashCode();
+        result = 31 * result + Objects.hashCode(version);
         return result;
     }
 
     @Override
     public String toString() {
-        return "PlayerSession{" + "login='" + login + '\'' + ", maze=" + maze + ", mazeEnvironmentDescriber=" + mazeEnvironmentDescriber + ", playerStateND=" + playerStateND + '}';
+        return "PlayerSession{" + "login='" + login + '\'' + ", maze=" + maze + ", mazeEnvironmentDescriber=" + mazeEnvironmentDescriber + ", playerStateND=" + playerStateND + ", role=" + role + ", version=" + version + '}';
     }
 }

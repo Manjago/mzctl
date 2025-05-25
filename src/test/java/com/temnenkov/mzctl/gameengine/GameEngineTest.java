@@ -1,5 +1,6 @@
 package com.temnenkov.mzctl.gameengine;
 
+import com.temnenkov.mzctl.auth.RoleResolver;
 import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.context.SimpleGameContext;
 import com.temnenkov.mzctl.game.MazeManager;
@@ -29,7 +30,7 @@ class GameEngineTest {
         MazeManager mazeManager = new MazeManager(tempDir);
         context = new SimpleGameContext(mazeManager);
         final PlayerPositionProvider fixedPositionProvider = new FixedPlayerPositionProvider(0, 0, Facing.NORTH);
-        gameEngine = new GameEngineImpl(context, fixedPositionProvider, new RussianDescriberFactory());
+        gameEngine = new GameEngineImpl(context, fixedPositionProvider, new RussianDescriberFactory(), new RoleResolver());
     }
 
     @Test
@@ -37,7 +38,7 @@ class GameEngineTest {
         final MazeManager mazeManager = new MazeManager(Path.of("src/test/resources"));
         context = new SimpleGameContext(mazeManager);
         final FixedPlayerPositionProvider fixedPlayerPositionProvider = new FixedPlayerPositionProvider(0, 0, Facing.NORTH);
-        gameEngine = new GameEngineImpl(context, fixedPlayerPositionProvider, new RussianDescriberFactory());
+        gameEngine = new GameEngineImpl(context, fixedPlayerPositionProvider, new RussianDescriberFactory(), new RoleResolver());
         gameEngine.loadMaze("test", LOGIN);
 
         final Cell position = context.getPlayerSession(LOGIN).getPlayerStateND().getPosition();

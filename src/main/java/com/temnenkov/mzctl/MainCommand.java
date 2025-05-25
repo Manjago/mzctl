@@ -1,5 +1,6 @@
 package com.temnenkov.mzctl;
 
+import com.temnenkov.mzctl.auth.RoleResolver;
 import com.temnenkov.mzctl.commands.GenerateMaze;
 import com.temnenkov.mzctl.commands.LoadMaze;
 import com.temnenkov.mzctl.commands.Login;
@@ -65,6 +66,8 @@ public class MainCommand implements Runnable {
 
         final PlayerPositionProvider playerPositionProvider = new RandomPlayerPositionProvider(ThreadLocalRandom::current);
         container.registerBean(PlayerPositionProvider.class, playerPositionProvider);
+
+        container.registerBean(RoleResolver.class, new RoleResolver());
 
         container.registerBean(EnvironmentDescriberFactory.class, new RussianDescriberFactory());
 

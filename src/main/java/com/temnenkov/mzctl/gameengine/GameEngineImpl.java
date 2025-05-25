@@ -1,21 +1,30 @@
 package com.temnenkov.mzctl.gameengine;
 
+import com.temnenkov.mzctl.auth.Role;
+import com.temnenkov.mzctl.auth.RoleResolver;
 import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.game.model.EnvironmentDescriber;
+import com.temnenkov.mzctl.game.model.Facing;
 import com.temnenkov.mzctl.game.model.PlayerSession;
 import com.temnenkov.mzctl.game.model.PlayerStateND;
 import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
+import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
+import com.temnenkov.mzctl.visualization.MazeAsciiVisualizer;
 
 public class GameEngineImpl implements GameEngine {
     private final GameContext context;
     private final PlayerPositionProvider positionProvider;
     private final EnvironmentDescriberFactory describerFactory;
+    private final RoleResolver roleResolver;
 
-    public GameEngineImpl(GameContext context, PlayerPositionProvider positionProvider, EnvironmentDescriberFactory describerFactory) {
+    public GameEngineImpl(GameContext context,
+            PlayerPositionProvider positionProvider,
+            EnvironmentDescriberFactory describerFactory, RoleResolver roleResolver) {
         this.context = context;
         this.positionProvider = positionProvider;
         this.describerFactory = describerFactory;
+        this.roleResolver = roleResolver;
     }
 
     @Override
@@ -29,7 +38,7 @@ public class GameEngineImpl implements GameEngine {
         Maze maze = context.getMazeManager().loadMaze(mazeName);
         PlayerStateND playerState = positionProvider.createPlayerPosition(maze);
         EnvironmentDescriber describer = describerFactory.create(maze);
-        PlayerSession playerSession = new PlayerSession(userLogin, maze, describer, playerState, null);
+        PlayerSession playerSession = new PlayerSession(userLogin, maze, describer, playerState, roleResolver.roleByUserLogin(userLogin), null);
         context.createPlayerSession(playerSession);
     }
 
@@ -66,5 +75,19 @@ public class GameEngineImpl implements GameEngine {
         PlayerSession session = context.getPlayerSession(userLogin);
         return session.getMazeEnvironmentDescriber()
                 .describeEnvironment(session.getPlayerStateND());
+    }
+
+    @Override
+    public String visualizeMaze(String userLogin) {
+        PlayerSession session = context.getPlayerSession(userLogin);
+        if (session.getRole() == Role.PLAYER) {
+            throw new SecurityException("Вы не имеете прав для просмотра лабиринта");
+        }
+
+        final Maze maze = session.getMaze();
+        final Cell position = session.getPlayerStateND().getPosition();
+        final Facing facing = session.getPlayerStateND().getFacing();
+
+        return new MazeAsciiVisualizer(maze).mazeToString(position, facing);
     }
 }

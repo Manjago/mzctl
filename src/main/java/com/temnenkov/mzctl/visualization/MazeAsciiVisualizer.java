@@ -4,6 +4,7 @@ import com.temnenkov.mzctl.game.model.Facing;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MazeAsciiVisualizer {
 
@@ -21,86 +22,70 @@ public class MazeAsciiVisualizer {
     }
 
     public void printMaze() {
-        // верхняя граница лабиринта
-        System.out.print("+");
-        for (int x = 0; x < width; x++) {
-            System.out.print("---+");
-        }
-        System.out.println();
-
-        for (int y = 0; y < height; y++) {
-            // левая стена первого столбца
-            System.out.print("|");
-            // горизонтальный проход между комнатами
-            for (int x = 0; x < width; x++) {
-                Cell current = Cell.of(y, x);
-                // если проход вправо есть, не рисуем стену справа
-                if (x < width - 1 && maze.canPass(current, Cell.of(y, x + 1))) {
-                    System.out.print("    ");
-                } else {
-                    System.out.print("   |");
-                }
-            }
-            System.out.println();
-
-            // стены под текущим рядом комнат
-            System.out.print("+");
-            for (int x = 0; x < width; x++) {
-                Cell current = Cell.of(y, x);
-                // если проход вниз есть, не рисуем стену снизу
-                if (y < height - 1 && maze.canPass(current, Cell.of(y + 1, x))) {
-                    System.out.print("   +");
-                } else {
-                    System.out.print("---+");
-                }
-            }
-            System.out.println();
-        }
+        System.out.print(mazeToString(null, null));
     }
 
     public void printMaze(@NotNull Cell playerPosition, @NotNull Facing playerFacing) {
+        System.out.print(mazeToString(playerPosition, playerFacing));
+    }
+
+    @NotNull
+    public String mazeToString(@Nullable Cell playerPosition, @Nullable Facing playerFacing) {
+        return buildMazeString(playerPosition, playerFacing);
+    }
+
+    @NotNull
+    public String mazeToString() {
+        return buildMazeString(null, null);
+    }
+
+    private @NotNull String buildMazeString(@Nullable Cell playerPosition, @Nullable Facing playerFacing) {
+        StringBuilder sb = new StringBuilder();
+
         // верхняя граница лабиринта
-        System.out.print("+");
-        for (int x = 0; x < width; x++) {
-            System.out.print("---+");
-        }
-        System.out.println();
+        sb.append("+");
+        sb.append("---+".repeat(Math.max(0, width)));
+        sb.append("\n");
 
         for (int y = 0; y < height; y++) {
             // левая стена первого столбца
-            System.out.print("|");
+            sb.append("|");
+
             // горизонтальный проход между комнатами
             for (int x = 0; x < width; x++) {
                 Cell current = Cell.of(y, x);
-                if (current.equals(playerPosition)) {
+
+                if (playerFacing != null && current.equals(playerPosition)) {
                     // рисуем игрока с направлением
-                    System.out.print(" " + facingSymbol(playerFacing) + " ");
+                    sb.append(" ").append(facingSymbol(playerFacing)).append(" ");
                 } else {
-                    System.out.print("   ");
+                    sb.append("   ");
                 }
 
                 // если проход вправо есть, не рисуем стену справа
                 if (x < width - 1 && maze.canPass(current, Cell.of(y, x + 1))) {
-                    System.out.print(" ");
+                    sb.append(" ");
                 } else {
-                    System.out.print("|");
+                    sb.append("|");
                 }
             }
-            System.out.println();
+            sb.append("\n");
 
             // стены под текущим рядом комнат
-            System.out.print("+");
+            sb.append("+");
             for (int x = 0; x < width; x++) {
                 Cell current = Cell.of(y, x);
                 // если проход вниз есть, не рисуем стену снизу
                 if (y < height - 1 && maze.canPass(current, Cell.of(y + 1, x))) {
-                    System.out.print("   +");
+                    sb.append("   +");
                 } else {
-                    System.out.print("---+");
+                    sb.append("---+");
                 }
             }
-            System.out.println();
+            sb.append("\n");
         }
+
+        return sb.toString();
     }
 
     // Вспомогательный метод для получения символа направления
