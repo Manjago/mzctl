@@ -5,6 +5,8 @@ import com.temnenkov.mzctl.context.SimpleGameContext;
 import com.temnenkov.mzctl.di.SimpleDIContainer;
 import com.temnenkov.mzctl.game.MazeManager;
 import com.temnenkov.mzctl.game.model.Facing;
+import com.temnenkov.mzctl.game.model.ShortDescriberFactory;
+import com.temnenkov.mzctl.gameengine.EnvironmentDescriberFactory;
 import com.temnenkov.mzctl.gameengine.FixedPlayerPositionProvider;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.gameengine.GameEngineImpl;
@@ -45,6 +47,9 @@ class GameEngineIntegrationTest {
         // Регистрируем PlayerPositionProvider (фиксированный для тестов)
         FixedPlayerPositionProvider positionProvider = new FixedPlayerPositionProvider(0, 0, Facing.NORTH);
         container.registerBean(PlayerPositionProvider.class, positionProvider);
+
+        // используем короткую фабрику для тестов
+        container.registerBean(EnvironmentDescriberFactory.class, new ShortDescriberFactory());
 
         // Создаем GameEngine через контейнер
         gameEngine = container.createBean(GameEngineImpl.class);

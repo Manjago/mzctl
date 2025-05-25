@@ -9,19 +9,19 @@ import org.jetbrains.annotations.Nullable;
 public class PlayerSession {
     private final String login;
     private final Maze maze;
-    private final MazeEnvironmentDescriber mazeEnvironmentDescriber;
+    private final EnvironmentDescriber mazeEnvironmentDescriber;
     private final PlayerStateND playerStateND;
     private Long version;
 
     @JsonCreator
     public PlayerSession(@JsonProperty("login") @NotNull String login,
             @JsonProperty("maze") @NotNull Maze maze,
-            @JsonProperty("mazeEnvironmentDescriber") @NotNull MazeEnvironmentDescriber mazeEnvironmentDescriber,
+            @JsonProperty("mazeEnvironmentDescriber") @NotNull EnvironmentDescriber environmentDescriber,
             @JsonProperty("playerStateND") @NotNull PlayerStateND playerStateND,
             @JsonProperty("version") @Nullable Long version) {
         this.login = login;
         this.maze = maze;
-        this.mazeEnvironmentDescriber = mazeEnvironmentDescriber;
+        this.mazeEnvironmentDescriber = environmentDescriber;
         this.playerStateND = playerStateND;
         this.version = version;
     }
@@ -42,7 +42,7 @@ public class PlayerSession {
         return maze;
     }
 
-    public MazeEnvironmentDescriber getMazeEnvironmentDescriber() {
+    public EnvironmentDescriber getMazeEnvironmentDescriber() {
         return mazeEnvironmentDescriber;
     }
 

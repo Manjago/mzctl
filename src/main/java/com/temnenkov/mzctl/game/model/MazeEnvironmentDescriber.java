@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * Генерирует текстовое описание окружения игрока в двумерном лабиринте.
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class MazeEnvironmentDescriber {
+public class MazeEnvironmentDescriber implements EnvironmentDescriber {
 
     private final Maze maze;
 
@@ -34,8 +34,9 @@ public class MazeEnvironmentDescriber {
      * @param player текущее состояние игрока
      * @return текстовое описание окружения
      */
-    public String describeEnvironment(@NotNull PlayerStateND player) {
-        StringBuilder description = new StringBuilder("Вы находитесь в комнате.\n");
+    @Override
+    public @NotNull String describeEnvironment(@NotNull PlayerStateND player) {
+        final StringBuilder description = new StringBuilder("Вы находитесь в комнате.\n");
 
         description.append("- Впереди: ")
                 .append(describeDirection(player, player.getFacing()))
