@@ -178,9 +178,8 @@ class GameEngineIntegrationTest {
         System.out.println(gameEngine.visualizeMaze(userLogin));
 
         // проверка - остались на месте
-        String afterTurnRightDescription = gameEngine.describeEnvironment(userLogin);
-        assertEquals("F:X L:X R:. B:#", afterTurnRightDescription, "Некорректное описание окружения после поворота назад");
-
+        String afterMoveDescription = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:X L:X R:. B:#", afterMoveDescription, "Некорректное описание окружения после попытки выхода за пределы лабиринта");
     }
 
     @Test
@@ -203,8 +202,8 @@ class GameEngineIntegrationTest {
         System.out.println(gameEngine.visualizeMaze(userLogin));
 
         // проверка
-        String afterTurnRightDescription = gameEngine.describeEnvironment(userLogin);
-        assertEquals("F:# L:. R:X B:X", afterTurnRightDescription, "Некорректное описание окружения после поворота налево");
+        String afterTurnBackDescription = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:# L:. R:X B:X", afterTurnBackDescription, "Некорректное описание окружения после поворота назад");
 
         // идем вперед (пытаемся пройти сквозь стену)
         gameEngine.moveForward(userLogin);

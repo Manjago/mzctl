@@ -3,6 +3,7 @@ package com.temnenkov.mzctl.game.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.temnenkov.mzctl.model.Cell;
+import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.util.SimplePreconditions;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,6 +62,11 @@ public class PlayerStateND {
      */
     public Cell predictMoveForward() {
         return facing.moveForward(position);
+    }
+
+    public boolean canMoveForward(@NotNull Maze maze) {
+        final Cell nextPosition = predictMoveForward();
+        return maze.canPass(this.position, nextPosition);
     }
 
     /**

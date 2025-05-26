@@ -44,11 +44,10 @@ public class GameEngineImpl implements GameEngine {
 
     @Override
     public void moveForward(String userLogin) {
-        PlayerSession session = context.getPlayerSession(userLogin);
-        final Cell newPosition = session.getPlayerStateND().predictMoveForward();
-        final Cell oldPosition = session.getPlayerStateND().getPosition();
-        if (session.getMaze().canPass(oldPosition, newPosition)) {
-            session.getPlayerStateND().moveForward();
+        final PlayerSession session = context.getPlayerSession(userLogin);
+        final PlayerStateND state = session.getPlayerStateND();
+        if (state.canMoveForward(session.getMaze())) {
+            state.moveForward();
             context.updatePlayerSession(session);
         }
     }
