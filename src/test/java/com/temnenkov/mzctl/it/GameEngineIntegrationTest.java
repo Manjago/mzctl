@@ -107,4 +107,114 @@ class GameEngineIntegrationTest {
         assertEquals("F:. L:X R:# B:.", afterMoveDescription, "Некорректное описание окружения после движения вперёд");
         System.out.println(gameEngine.visualizeMaze(userLogin));
     }
+
+    @Test
+    @DisplayName("Игрок должен корректно повернуться налево и получать правильное описание окружения")
+    void shouldTurnLeftAndDescribeEnvironmentCorrectly() {
+        // загружаем лабиринт
+        gameEngine.loadMaze("test2", userLogin);
+
+        // для наглядности покажем его
+        System.out.println(gameEngine.visualizeMaze(userLogin));
+
+        // проверяем начальное окружение
+        String initialDescription = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:X L:X R:. B:#", initialDescription, "Некорректное начальное описание окружения");
+
+        // поворачиваемся налево
+        gameEngine.turnLeft(userLogin);
+
+        // для наглядности еще раз покажем
+        System.out.println(gameEngine.visualizeMaze(userLogin));
+
+        // проверка
+        String afterTurnRightDescription = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:X L:# R:X B:.", afterTurnRightDescription, "Некорректное описание окружения после поворота налево");
+
+    }
+
+    @Test
+    @DisplayName("Игрок должен корректно повернуться назад и получать правильное описание окружения")
+    void shouldTurnBackAndDescribeEnvironmentCorrectly() {
+        // загружаем лабиринт
+        gameEngine.loadMaze("test2", userLogin);
+
+        // для наглядности покажем его
+        System.out.println(gameEngine.visualizeMaze(userLogin));
+
+        // проверяем начальное окружение
+        String initialDescription = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:X L:X R:. B:#", initialDescription, "Некорректное начальное описание окружения");
+
+        // поворачиваемся назад
+        gameEngine.turnBack(userLogin);
+
+        // для наглядности еще раз покажем
+        System.out.println(gameEngine.visualizeMaze(userLogin));
+
+        // проверка
+        String afterTurnRightDescription = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:# L:. R:X B:X", afterTurnRightDescription, "Некорректное описание окружения после поворота назад");
+
+    }
+
+    @Test
+    @DisplayName("Игрок должен попытаться выйти за пределы лабиринта и получать правильное описание окружения")
+    void shouldGoAwayAndDescribeEnvironmentCorrectly() {
+        // загружаем лабиринт
+        gameEngine.loadMaze("test2", userLogin);
+
+        // для наглядности покажем его
+        System.out.println(gameEngine.visualizeMaze(userLogin));
+
+        // проверяем начальное окружение
+        String initialDescription = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:X L:X R:. B:#", initialDescription, "Некорректное начальное описание окружения");
+
+        // идем вперед
+        gameEngine.moveForward(userLogin);
+
+        // для наглядности еще раз покажем
+        System.out.println(gameEngine.visualizeMaze(userLogin));
+
+        // проверка - остались на месте
+        String afterTurnRightDescription = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:X L:X R:. B:#", afterTurnRightDescription, "Некорректное описание окружения после поворота назад");
+
+    }
+
+    @Test
+    @DisplayName("Игрок должен попытаться пройти сквозь стену и получать правильное описание окружения")
+    void shouldGoThroughWallAndDescribeEnvironmentCorrectly() {
+        // загружаем лабиринт
+        gameEngine.loadMaze("test2", userLogin);
+
+        // для наглядности покажем его
+        System.out.println(gameEngine.visualizeMaze(userLogin));
+
+        // проверяем начальное окружение
+        String initialDescription = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:X L:X R:. B:#", initialDescription, "Некорректное начальное описание окружения");
+
+        // поворачиваемся назад
+        gameEngine.turnBack(userLogin);
+
+        // для наглядности еще раз покажем
+        System.out.println(gameEngine.visualizeMaze(userLogin));
+
+        // проверка
+        String afterTurnRightDescription = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:# L:. R:X B:X", afterTurnRightDescription, "Некорректное описание окружения после поворота налево");
+
+        // идем вперед (пытаемся пройти сквозь стену)
+        gameEngine.moveForward(userLogin);
+
+        // для наглядности еще раз покажем
+        System.out.println(gameEngine.visualizeMaze(userLogin));
+
+        // проверка - остались на месте
+        String afterGo = gameEngine.describeEnvironment(userLogin);
+        assertEquals("F:# L:. R:X B:X", afterGo, "Некорректное описание окружения после попытки пройти сквозь стену");
+
+    }
 }

@@ -53,7 +53,14 @@ public class PlayerStateND {
      * Перемещает игрока на одну клетку вперед в текущем направлении взгляда.
      */
     public void moveForward() {
-        position = facing.moveForward(position);
+        position = predictMoveForward();
+    }
+
+    /**
+     * Предсказывает позицию игрока на одну клетку вперед в текущем направлении взгляда.
+     */
+    public Cell predictMoveForward() {
+        return facing.moveForward(position);
     }
 
     /**
