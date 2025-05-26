@@ -5,6 +5,7 @@ import com.temnenkov.mzctl.commands.GenerateMaze;
 import com.temnenkov.mzctl.commands.LoadMaze;
 import com.temnenkov.mzctl.commands.Login;
 import com.temnenkov.mzctl.commands.MoveForward;
+import com.temnenkov.mzctl.commands.TelegramBotCommand;
 import com.temnenkov.mzctl.commands.TurnBack;
 import com.temnenkov.mzctl.commands.TurnLeft;
 import com.temnenkov.mzctl.commands.TurnRight;
@@ -44,6 +45,7 @@ import java.util.concurrent.ThreadLocalRandom;
                 TurnBack.class,
                 WhereAmI.class,
                 Login.class,
+                TelegramBotCommand.class,
                 CommandLine.HelpCommand.class
         }
 )
