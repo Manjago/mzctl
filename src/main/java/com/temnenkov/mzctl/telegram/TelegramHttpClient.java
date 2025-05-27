@@ -1,6 +1,9 @@
 package com.temnenkov.mzctl.telegram;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,6 +15,8 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 public class TelegramHttpClient {
+    private static final Logger logger = LoggerFactory.getLogger(TelegramHttpClient.class);
+
     private final HttpClient httpClient;
     private final String token;
     private final Duration requestTimeout;
@@ -31,26 +36,53 @@ public class TelegramHttpClient {
     }
 
     public String sendRequest(String method, String jsonBody) throws IOException, InterruptedException {
+        final String url = "https://api.telegram.org/bot" + token + "/" + method;
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Telegram API Request: POST {}\nBody: {}", maskToken(url), jsonBody);
+        }
+
         final HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.telegram.org/bot" + token + "/" + method))
+                .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .timeout(requestTimeout)
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
 
         final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Telegram API Response: Status {}\nBody: {}", response.statusCode(), response.body());
+        }
+
         return response.body();
     }
 
     public String getUpdates(long offset, int longPollingTimeout) throws IOException, InterruptedException {
+        final String url = String.format("https://api.telegram.org/bot%s/getUpdates?timeout=%d&offset=%d",
+                token, longPollingTimeout, offset);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Telegram API Request: GET {}", maskToken(url));
+        }
+
         final HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format("https://api.telegram.org/bot%s/getUpdates?timeout=%d&offset=%d",
-                        token, longPollingTimeout, offset)))
+                .uri(URI.create(url))
                 .timeout(requestTimeout.plusSeconds(longPollingTimeout))
                 .GET()
                 .build();
 
         final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Telegram API Response: Status {}\nBody: {}", response.statusCode(), response.body());
+        }
+
         return response.body();
+    }
+
+    @Contract(pure = true)
+    private @NotNull String maskToken(@NotNull String input) {
+        return input.replace(token, "***TOKEN***");
     }
 }
