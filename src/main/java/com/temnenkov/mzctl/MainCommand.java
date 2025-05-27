@@ -45,7 +45,6 @@ import java.util.concurrent.ThreadLocalRandom;
                 TurnBack.class,
                 WhereAmI.class,
                 Login.class,
-                TelegramBotCommand.class,
                 CommandLine.HelpCommand.class
         }
 )
@@ -78,6 +77,9 @@ public class MainCommand implements Runnable {
 
         final CommandFactory factory = new CommandFactory(container);
         final CommandLine cmd = new CommandLine(new MainCommand(), factory);
+
+        // регистрируем команду TelegramBotCommand явно через контейнер
+        cmd.addSubcommand("telegram-bot", container.createBean(TelegramBotCommand.class));
 
         if (args.length > 0) {
             executeSingleCommand(cmd, args);

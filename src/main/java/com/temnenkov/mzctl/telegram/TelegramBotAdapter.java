@@ -3,6 +3,7 @@ package com.temnenkov.mzctl.telegram;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.temnenkov.mzctl.gameengine.GameEngine;
+import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class TelegramBotAdapter {
@@ -47,12 +48,29 @@ public class TelegramBotAdapter {
     }
 
     private String handleCommand(@NotNull String userId, @NotNull String command) {
-        return switch (command.toLowerCase()) {
+        final String[] args = command.split("\\s+");
+        return switch (args[0].toLowerCase()) {
             case "/start" -> "Добро пожаловать! Используйте w,a,s,d для движения.";
             case "w" -> { gameEngine.moveForward(userId); yield gameEngine.describeEnvironment(userId); }
             case "a" -> { gameEngine.turnLeft(userId); yield gameEngine.describeEnvironment(userId); }
             case "d" -> { gameEngine.turnRight(userId); yield gameEngine.describeEnvironment(userId); }
             case "s" -> { gameEngine.turnBack(userId); yield gameEngine.describeEnvironment(userId); }
+            case "/generate" -> {
+                if (args.length == 4) {
+                    gameEngine.generateMaze(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
+                    yield "Лабиринт '" + args[1] + "' сгенерирован";
+                } else {
+                    yield "Использование: /generate <имя> <ширина> <высота>";
+                }
+            }
+            case "/load" -> {
+                if (args.length == 2) {
+                    gameEngine.loadMaze(args[1], userId);
+                    yield "Лабиринт '" + args[1] + "' загружен.\n" + gameEngine.describeEnvironment(userId);
+                } else {
+                    yield "Использование: /load <имя>";
+                }
+            }
             default -> "Неизвестная команда: " + command;
         };
     }
