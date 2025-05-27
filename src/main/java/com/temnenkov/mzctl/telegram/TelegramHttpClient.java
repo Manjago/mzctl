@@ -1,5 +1,6 @@
 package com.temnenkov.mzctl.telegram;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -37,9 +38,12 @@ public class TelegramHttpClient {
 
     public String sendRequest(String method, String jsonBody) throws IOException, InterruptedException {
         final String url = "https://api.telegram.org/bot" + token + "/" + method;
+        final String maskedUrl = maskToken(url);
+        final String requestId = NanoIdUtils.randomNanoId();
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Telegram API Request: POST {}\nBody: {}", maskToken(url), jsonBody);
+            logger.debug("[{}] Telegram API Request: POST {}\nHeaders: {}\nBody: {}", requestId, maskedUrl,
+                    "Content-Type: application/json", jsonBody);
         }
 
         final HttpRequest request = HttpRequest.newBuilder()
@@ -51,9 +55,7 @@ public class TelegramHttpClient {
 
         final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Telegram API Response: Status {}\nBody: {}", response.statusCode(), response.body());
-        }
+        logResponse(requestId, response);
 
         return response.body();
     }
@@ -61,9 +63,11 @@ public class TelegramHttpClient {
     public String getUpdates(long offset, int longPollingTimeout) throws IOException, InterruptedException {
         final String url = String.format("https://api.telegram.org/bot%s/getUpdates?timeout=%d&offset=%d",
                 token, longPollingTimeout, offset);
+        final String maskedUrl = maskToken(url);
+        final String requestId =  NanoIdUtils.randomNanoId();
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Telegram API Request: GET {}", maskToken(url));
+            logger.debug("[{}] Telegram API Request: GET {}\nHeaders: {}", requestId, maskedUrl, "No additional headers");
         }
 
         final HttpRequest request = HttpRequest.newBuilder()
@@ -74,11 +78,18 @@ public class TelegramHttpClient {
 
         final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Telegram API Response: Status {}\nBody: {}", response.statusCode(), response.body());
-        }
+        logResponse(requestId, response);
 
         return response.body();
+    }
+
+    private static void logResponse(String requestId, HttpResponse<String> response) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("[{}] Telegram API Response: Status {}\nHeaders: {}\nBody: {}", requestId,
+                    response.statusCode(),
+                    response.headers().map(),
+                    response.body());
+        }
     }
 
     @Contract(pure = true)
