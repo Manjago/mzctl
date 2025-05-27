@@ -45,6 +45,7 @@ import java.util.concurrent.ThreadLocalRandom;
                 TurnBack.class,
                 WhereAmI.class,
                 Login.class,
+                TelegramBotCommand.class,
                 CommandLine.HelpCommand.class
         }
 )
@@ -57,6 +58,9 @@ public class MainCommand implements Runnable {
     public static void main(String @NotNull [] args) throws IOException {
 
         final SimpleDIContainer container = new SimpleDIContainer();
+
+        // явно регистрируем контейнер сам в себе
+        container.registerBean(SimpleDIContainer.class, container);
 
         // Регистрируем базовые зависимости
         final MazeManager mazeManager = new MazeManager(Path.of("mazes"));
@@ -77,9 +81,6 @@ public class MainCommand implements Runnable {
 
         final CommandFactory factory = new CommandFactory(container);
         final CommandLine cmd = new CommandLine(new MainCommand(), factory);
-
-        // регистрируем команду TelegramBotCommand явно через контейнер
-        cmd.addSubcommand("telegram-bot", container.createBean(TelegramBotCommand.class));
 
         if (args.length > 0) {
             executeSingleCommand(cmd, args);
