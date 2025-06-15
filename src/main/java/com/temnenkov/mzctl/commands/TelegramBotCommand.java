@@ -9,6 +9,7 @@ import picocli.CommandLine;
 
 import java.nio.file.Path;
 
+@CommandLine.Command(name = "tg", description = "Запустить режим телеграм-бота")
 public class TelegramBotCommand implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(TelegramBotCommand.class);
