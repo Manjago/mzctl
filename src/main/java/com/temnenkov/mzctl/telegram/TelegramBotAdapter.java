@@ -15,6 +15,16 @@ import java.io.IOException;
 
 public class TelegramBotAdapter {
     private static final Logger logger = LoggerFactory.getLogger(TelegramBotAdapter.class);
+    private static final String GO_AHEAD_CMD = "⬆️";
+    private static final String LEFT_CMD = "⬅️";
+    private static final String WHERE_AM_I_CMD = "❓";
+    private static final String RIGHT_CMD = "➡️";
+    private static final String BACK_CMD = "🔄";
+    private static final String GO_AHEAD = "⬆️ Вперёд";
+    private static final String LEFT = "⬅️ Влево";
+    private static final String WHERE_AM_I = "❓ Где я?";
+    private static final String RIGHT = "➡️ Вправо";
+    private static final String BACK = "🔄 Назад";
 
     private final TelegramHttpClient client;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -65,7 +75,8 @@ public class TelegramBotAdapter {
 
     private String handleCommand(@NotNull String userId, @NotNull String command) {
         final String[] args = command.split("\\s+");
-        return switch (args[0].toLowerCase()) {
+        logger.debug("handleCommand command = '{}'", args[0]);
+        return switch (args[0]) {
             case "/start" -> "Добро пожаловать! Используйте кнопки для движения или введите /help для получения списка команд.";
             case "/help" -> """
             Доступные команды:
@@ -77,23 +88,11 @@ public class TelegramBotAdapter {
             /generate <имя> <ширина> <высота> – создать новый лабиринт
             /load <имя> – загрузить существующий лабиринт
             """;
-            case "⬆️ вперёд" -> {
-                gameEngine.moveForward(userId);
-                yield gameEngine.describeEnvironment(userId);
-            }
-            case "⬅️ влево" -> {
-                gameEngine.turnLeft(userId);
-                yield gameEngine.describeEnvironment(userId);
-            }
-            case "➡️ вправо" -> {
-                gameEngine.turnRight(userId);
-                yield gameEngine.describeEnvironment(userId);
-            }
-            case "🔄 назад" -> {
-                gameEngine.turnBack(userId);
-                yield gameEngine.describeEnvironment(userId);
-            }
-            case "❓ где я?" -> gameEngine.describeEnvironment(userId);
+            case GO_AHEAD_CMD -> { gameEngine.moveForward(userId); yield gameEngine.describeEnvironment(userId); }
+            case LEFT_CMD -> { gameEngine.turnLeft(userId); yield gameEngine.describeEnvironment(userId); }
+            case RIGHT_CMD -> { gameEngine.turnRight(userId); yield gameEngine.describeEnvironment(userId); }
+            case BACK_CMD -> { gameEngine.turnBack(userId); yield gameEngine.describeEnvironment(userId); }
+            case WHERE_AM_I_CMD -> gameEngine.describeEnvironment(userId);
             case "/generate" -> {
                 if (args.length == 4) {
                     gameEngine.generateMaze(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
@@ -110,7 +109,7 @@ public class TelegramBotAdapter {
                     yield "Использование: /load <имя>";
                 }
             }
-            default -> "Неизвестная команда: " + command + ". Введите /help для получения списка команд.";
+            default -> "Неизвестная команда: '" + command + "'. Введите /help для получения списка команд.";
         };
     }
 
@@ -152,9 +151,9 @@ public class TelegramBotAdapter {
     private static class ReplyKeyboardMarkup {
         @JsonProperty("keyboard")
         private final String[][] keyboard = {
-                {"⬆️ Вперёд"},
-                {"⬅️ Влево", "❓ Где я?", "➡️ Вправо"},
-                {"🔄 Назад"}
+                {GO_AHEAD},
+                {LEFT, WHERE_AM_I, RIGHT},
+                {BACK}
         };
 
         @JsonProperty("resize_keyboard")
