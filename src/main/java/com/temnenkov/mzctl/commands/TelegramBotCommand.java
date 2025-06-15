@@ -3,6 +3,7 @@ package com.temnenkov.mzctl.commands;
 import com.temnenkov.mzctl.di.SimpleDIContainer;
 import com.temnenkov.mzctl.telegram.TelegramBotAdapter;
 import com.temnenkov.mzctl.telegram.TelegramBotConfig;
+import com.temnenkov.mzctl.telegram.TelegramHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -26,10 +27,13 @@ public class TelegramBotCommand implements Runnable {
     @Override
     public void run() {
         try {
-            TelegramBotConfig config = new TelegramBotConfig(configPath);
+            final TelegramBotConfig config = new TelegramBotConfig(configPath);
             container.registerBean(TelegramBotConfig.class, config);
 
-            TelegramBotAdapter adapter = container.createBean(TelegramBotAdapter.class);
+            final TelegramHttpClient telegramHttpClient = new TelegramHttpClient(config);
+            container.registerBean(TelegramHttpClient.class, telegramHttpClient);
+
+            final TelegramBotAdapter adapter = container.createBean(TelegramBotAdapter.class);
             adapter.run();
         } catch (Exception e) {
             logger.error("Ошибка запуска Telegram-бота: {}", e.getMessage(), e);
