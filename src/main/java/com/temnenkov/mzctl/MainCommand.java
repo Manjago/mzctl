@@ -17,6 +17,7 @@ import com.temnenkov.mzctl.di.SimpleDIContainer;
 import com.temnenkov.mzctl.game.MazeManager;
 import com.temnenkov.mzctl.game.model.RussianDescriberFactory;
 import com.temnenkov.mzctl.gameengine.EnvironmentDescriberFactory;
+import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.gameengine.GameEngineImpl;
 import com.temnenkov.mzctl.gameengine.PlayerPositionProvider;
 import com.temnenkov.mzctl.gameengine.RandomPlayerPositionProvider;
@@ -77,7 +78,10 @@ public class MainCommand implements Runnable {
         container.registerBean(EnvironmentDescriberFactory.class, new RussianDescriberFactory());
 
         // Создаём GameEngine через контейнер (он разрешит зависимости автоматически)
-        container.createBean(GameEngineImpl.class);
+        final GameEngine gameEngine = container.createBean(GameEngineImpl.class);
+
+        // Явно регистрируем GameEngine по интерфейсу
+        container.registerBean(GameEngine.class, gameEngine);
 
         final CommandFactory factory = new CommandFactory(container);
         final CommandLine cmd = new CommandLine(new MainCommand(), factory);
