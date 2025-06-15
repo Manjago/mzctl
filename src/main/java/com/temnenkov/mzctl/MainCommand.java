@@ -90,7 +90,7 @@ public class MainCommand implements Runnable {
     }
 
     private static void executeSingleCommand(@NotNull CommandLine cmd, String[] args) {
-        System.exit(cmd.execute(args));
+        cmd.execute(args);
     }
 
     private static void startRepl(CommandLine cmd) {
