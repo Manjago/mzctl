@@ -2,20 +2,31 @@ package com.temnenkov.mzctl.telegram;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.temnenkov.mzctl.context.GameContext;
+import com.temnenkov.mzctl.game.model.PlayerSession;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TelegramBotAdapter {
+    private static final Logger logger = LoggerFactory.getLogger(TelegramBotAdapter.class);
+
     private final TelegramHttpClient client;
     private final ObjectMapper mapper = new ObjectMapper();
     private final GameEngine gameEngine;
     private final TelegramBotConfig config;
+    private final GameContext gameContext;
 
-    public TelegramBotAdapter(@NotNull TelegramHttpClient client, @NotNull GameEngine gameEngine, @NotNull TelegramBotConfig config) {
+    public TelegramBotAdapter(@NotNull TelegramHttpClient client,
+            @NotNull GameEngine gameEngine,
+            @NotNull TelegramBotConfig config,
+            @NotNull GameContext gameContext) {
         this.client = client;
         this.gameEngine = gameEngine;
         this.config = config;
+        this.gameContext = gameContext;
     }
 
     public void run() throws Exception {
@@ -41,6 +52,8 @@ public class TelegramBotAdapter {
             final long chatId = message.get("chat").get("id").asLong();
             final String text = message.get("text").asText();
             final String userId = String.valueOf(chatId);
+
+            ensureSessionExists(userId);
 
             final String responseText = handleCommand(userId, text);
             sendMessage(chatId, responseText);
@@ -81,4 +94,18 @@ public class TelegramBotAdapter {
     }
 
     private record Message(long chat_id, String text) {}
+
+    private void ensureSessionExists(String userId) {
+        PlayerSession session = gameContext.getPlayerSession(userId);
+        if (session == null) {
+            String defaultMazeName = "default";
+            try {
+                gameEngine.loadMaze(defaultMazeName, userId);
+            } catch (Exception e) {
+                logger.warn("Лабиринт '{}' не найден. Генерируем новый лабиринт автоматически.", defaultMazeName);
+                gameEngine.generateMaze(defaultMazeName, 3, 3, MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
+                gameEngine.loadMaze(defaultMazeName, userId);
+            }
+        }
+    }
 }
