@@ -1,5 +1,6 @@
 package com.temnenkov.mzctl.telegram;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.temnenkov.mzctl.context.GameContext;
@@ -9,6 +10,8 @@ import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class TelegramBotAdapter {
     private static final Logger logger = LoggerFactory.getLogger(TelegramBotAdapter.class);
@@ -56,18 +59,18 @@ public class TelegramBotAdapter {
             ensureSessionExists(userId);
 
             final String responseText = handleCommand(userId, text);
-            sendMessage(chatId, responseText);
+            sendMessageWithKeyboard(chatId, responseText);
         }
     }
 
     private String handleCommand(@NotNull String userId, @NotNull String command) {
         final String[] args = command.split("\\s+");
         return switch (args[0].toLowerCase()) {
-            case "/start" -> "Добро пожаловать! Используйте w,a,s,d для движения.";
-            case "w" -> { gameEngine.moveForward(userId); yield gameEngine.describeEnvironment(userId); }
-            case "a" -> { gameEngine.turnLeft(userId); yield gameEngine.describeEnvironment(userId); }
-            case "d" -> { gameEngine.turnRight(userId); yield gameEngine.describeEnvironment(userId); }
-            case "s" -> { gameEngine.turnBack(userId); yield gameEngine.describeEnvironment(userId); }
+            case "/start" -> "Добро пожаловать! Используйте кнопки для движения.";
+            case "⬆️ вперёд" -> { gameEngine.moveForward(userId); yield gameEngine.describeEnvironment(userId); }
+            case "⬅️ влево" -> { gameEngine.turnLeft(userId); yield gameEngine.describeEnvironment(userId); }
+            case "➡️ вправо" -> { gameEngine.turnRight(userId); yield gameEngine.describeEnvironment(userId); }
+            case "🔄 назад" -> { gameEngine.turnBack(userId); yield gameEngine.describeEnvironment(userId); }
             case "/generate" -> {
                 if (args.length == 4) {
                     gameEngine.generateMaze(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
@@ -88,12 +91,15 @@ public class TelegramBotAdapter {
         };
     }
 
-    private void sendMessage(long chatId, String text) throws Exception {
+    private void sendMessage(long chatId, String text) throws IOException, InterruptedException {
         final String json = mapper.writeValueAsString(new Message(chatId, text));
         client.sendRequest("sendMessage", json);
     }
 
-    private record Message(long chat_id, String text) {}
+    private record Message(
+            @JsonProperty("chat_id") long chatId,
+            @JsonProperty("text") String text
+    ) {}
 
     private void ensureSessionExists(String userId) {
         PlayerSession session = gameContext.getPlayerSession(userId);
@@ -108,4 +114,31 @@ public class TelegramBotAdapter {
             }
         }
     }
+
+    private void sendMessageWithKeyboard(long chatId, String text) throws IOException, InterruptedException {
+        final String json = mapper.writeValueAsString(new MessageWithKeyboard(chatId, text, new ReplyKeyboardMarkup()));
+        client.sendRequest("sendMessage", json);
+    }
+
+    private record MessageWithKeyboard(
+            @JsonProperty("chat_id") long chatId,
+            @JsonProperty("text") String text,
+            @JsonProperty("reply_markup") ReplyKeyboardMarkup replyMarkup
+    ) {}
+
+    private static class ReplyKeyboardMarkup {
+        @JsonProperty("keyboard")
+        private final String[][] keyboard = {
+                {"⬆️ Вперёд"},
+                {"⬅️ Влево", "➡️ Вправо"},
+                {"🔄 Назад"}
+        };
+
+        @JsonProperty("resize_keyboard")
+        private final boolean resizeKeyboard = true;
+
+        @JsonProperty("one_time_keyboard")
+        private final boolean oneTimeKeyboard = false;
+    }
+
 }
