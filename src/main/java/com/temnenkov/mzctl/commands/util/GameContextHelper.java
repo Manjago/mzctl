@@ -24,6 +24,7 @@ public final class GameContextHelper {
         final UserId currentUserId = gameContext.getCurrentUserId();
         if (currentUserId == null) {
             System.out.println("Ошибка: сначала авторизуйтесь через команду login");
+            return null;
         }
         return currentUserId;
     }

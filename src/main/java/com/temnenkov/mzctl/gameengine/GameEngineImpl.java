@@ -44,10 +44,11 @@ public class GameEngineImpl implements GameEngine {
     @Override
     public void loadMaze(@NotNull UserId userId, String mazeName) {
         try {
-            Maze maze = context.getMazeManager().loadUserMaze(userId, mazeName);
-            PlayerStateND playerState = positionProvider.createPlayerPosition(maze);
-            EnvironmentDescriber describer = describerFactory.create(maze);
-            PlayerSession playerSession = new PlayerSession(userId.getValue(), maze, describer, playerState, roleResolver.roleByUserId(userId), null);
+            final Maze maze = context.getMazeManager().loadUserMaze(userId, mazeName);
+            final PlayerStateND playerState = positionProvider.createPlayerPosition(maze);
+            final EnvironmentDescriber describer = describerFactory.create(maze);
+            final Role role = roleResolver.roleByUserId(userId);
+            PlayerSession playerSession = new PlayerSession(userId.getValue(), maze, describer, playerState, role, null);
             context.createPlayerSession(playerSession);
         } catch (IOException e) {
             throw new RuntimeException("Не удалось загрузить лабиринт '" + mazeName + "' для пользователя " + userId, e);
