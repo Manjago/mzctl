@@ -47,14 +47,18 @@ public class TelegramBotAdapter {
         final int longPollingTimeout = config.getLongPollingTimeout();
 
         while (true) {
-            final String response = client.getUpdates(offset, longPollingTimeout);
-            final JsonNode updates = mapper.readTree(response).get("result");
+            try {
+                final String response = client.getUpdates(offset, longPollingTimeout);
+                final JsonNode updates = mapper.readTree(response).get("result");
 
-            if (updates.isArray()) {
-                for (JsonNode update : updates) {
-                    offset = update.get("update_id").asLong() + 1;
-                    processUpdate(update);
+                if (updates.isArray()) {
+                    for (JsonNode update : updates) {
+                        offset = update.get("update_id").asLong() + 1;
+                        processUpdate(update);
+                    }
                 }
+            } catch (IOException e) {
+                logger.warn("Telegram bot request failed", e);
             }
         }
     }
