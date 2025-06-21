@@ -28,22 +28,6 @@ public final class SerializationHelper {
         }
     }
 
-    public static byte[] playerSessionToMessagePack(@NotNull PlayerSession playerSession) {
-        try {
-            return MESSAGE_PACK_MAPPER.writeValueAsBytes(playerSession);
-        } catch (IOException e) {
-            throw new MazeSerializationException("Cannot serialize playerSession " + playerSession, e);
-        }
-    }
-
-    public static byte[] facingToMessagePack(@NotNull Facing facing) {
-        try {
-            return MESSAGE_PACK_MAPPER.writeValueAsBytes(facing);
-        } catch (IOException e) {
-            throw new MazeSerializationException("Cannot serialize facing " + facing, e);
-        }
-    }
-
     public static byte[] playerStateToMessagePack(@NotNull PlayerStateND playerState) {
         try {
             return MESSAGE_PACK_MAPPER.writeValueAsBytes(playerState);
@@ -57,22 +41,6 @@ public final class SerializationHelper {
             return MESSAGE_PACK_MAPPER.readValue(bytes, Maze.class);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot deserialize maze " + bytesToString(bytes, 20), e);
-        }
-    }
-
-    public static PlayerSession playerSessionFromMessagePack(byte[] bytes) {
-        try {
-            return MESSAGE_PACK_MAPPER.readValue(bytes, PlayerSession.class);
-        } catch (IOException e) {
-            throw new MazeSerializationException("Cannot deserialize playerSession " + bytesToString(bytes, 20), e);
-        }
-    }
-
-    public static Facing facingFromMessagePack(byte[] bytes) {
-        try {
-            return MESSAGE_PACK_MAPPER.readValue(bytes, Facing.class);
-        } catch (IOException e) {
-            throw new MazeSerializationException("Cannot deserialize facing " + bytesToString(bytes, 20), e);
         }
     }
 
@@ -120,22 +88,19 @@ public final class SerializationHelper {
     }
 
     public static void saveFacingToFile(@NotNull Facing facing, @NotNull String filename) {
-        final byte[] bytes = facingToMessagePack(facing);
         try {
-            Files.write(Path.of(filename), bytes);
+            KryoHelper.saveToFile(facing, filename);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot save facing to file " + filename, e);
         }
     }
 
     public static @NotNull Facing loadFacingFromFile(@NotNull String filename) {
-        final byte[] bytes;
         try {
-            bytes = Files.readAllBytes(Path.of(filename));
+            return KryoHelper.loadFromFile(Facing.class, filename);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot read facing from file " + filename, e);
         }
-        return facingFromMessagePack(bytes);
     }
 
     public static void savePlayerStateToFile(@NotNull PlayerStateND playerState, @NotNull String filename) {
