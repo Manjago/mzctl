@@ -104,22 +104,19 @@ public final class SerializationHelper {
     }
 
     public static void savePlayerSessionToFile(@NotNull PlayerSession playerSession, @NotNull String filename) {
-        final byte[] bytes = playerSessionToMessagePack(playerSession);
         try {
-            Files.write(Path.of(filename), bytes);
+            KryoHelper.saveToFile(playerSession, filename);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot save playerSession to file " + filename, e);
         }
     }
 
     public static @NotNull PlayerSession loadPlayerSessionFromFile(@NotNull String filename) {
-        final byte[] bytes;
         try {
-            bytes = Files.readAllBytes(Path.of(filename));
+            return KryoHelper.loadFromFile(PlayerSession.class, filename);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot read playerSession from file " + filename, e);
         }
-        return playerSessionFromMessagePack(bytes);
     }
 
     public static void saveFacingToFile(@NotNull Facing facing, @NotNull String filename) {
