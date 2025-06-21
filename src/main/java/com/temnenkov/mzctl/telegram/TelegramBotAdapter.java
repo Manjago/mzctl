@@ -99,7 +99,7 @@ public class TelegramBotAdapter {
             case WHERE_AM_I_CMD -> gameEngine.describeEnvironment(userId);
             case "/generate" -> {
                 if (args.length == 4) {
-                    gameEngine.generateMaze(args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
+                    gameEngine.generateMaze(userId, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
                     yield "Лабиринт '" + args[1] + "' сгенерирован";
                 } else {
                     yield "Использование: /generate <имя> <ширина> <высота>";
@@ -135,7 +135,7 @@ public class TelegramBotAdapter {
                 gameEngine.loadMaze(defaultMazeName, userId);
             } catch (Exception e) {
                 logger.warn("Лабиринт '{}' не найден. Генерируем новый лабиринт автоматически.", defaultMazeName);
-                gameEngine.generateMaze(defaultMazeName, 3, 3, MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
+                gameEngine.generateMaze(userId, defaultMazeName, 3, 3, MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
                 gameEngine.loadMaze(defaultMazeName, userId);
             }
         }

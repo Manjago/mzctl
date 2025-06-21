@@ -14,6 +14,8 @@ public class GenerateMaze implements Runnable {
     int height;
     @CommandLine.Option(names = {"-a", "--algo"}, required = true)
     MazeGeneratorFactory.Algo algo;
+    @CommandLine.Option(names = {"-u", "--user"}, required = false, defaultValue = "tester")
+    String userId;
 
     private final GameEngine gameEngine;
 
@@ -23,7 +25,7 @@ public class GenerateMaze implements Runnable {
 
     @Override
     public void run() {
-        gameEngine.generateMaze(name, width, height, algo);
+        gameEngine.generateMaze(userId, name, width, height, algo);
         System.out.println("Лабиринт '" + name + "' создан и сохранён.");
     }
 }

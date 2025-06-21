@@ -12,6 +12,8 @@ import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.visualization.MazeAsciiVisualizer;
 
+import java.io.IOException;
+
 public class GameEngineImpl implements GameEngine {
     private final GameContext context;
     private final PlayerPositionProvider positionProvider;
@@ -28,9 +30,13 @@ public class GameEngineImpl implements GameEngine {
     }
 
     @Override
-    public void generateMaze(String mazeName, int width, int height, MazeGeneratorFactory.Algo algo) {
+    public void generateMaze(String userId, String mazeName, int width, int height, MazeGeneratorFactory.Algo algo) {
         Maze maze = context.getMazeManager().generateMaze2D(width, height, algo);
-        context.getMazeManager().saveMaze(mazeName, maze);
+        try {
+            context.getMazeManager().saveUserMaze(userId, mazeName, maze);
+        } catch (IOException e) {
+            throw new RuntimeException("Не удалось сохранить лабиринт для пользователя " + userId, e);
+        }
     }
 
     @Override
