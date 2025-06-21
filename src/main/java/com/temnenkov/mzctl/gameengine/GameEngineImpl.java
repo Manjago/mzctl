@@ -47,7 +47,7 @@ public class GameEngineImpl implements GameEngine {
             Maze maze = context.getMazeManager().loadUserMaze(userId, mazeName);
             PlayerStateND playerState = positionProvider.createPlayerPosition(maze);
             EnvironmentDescriber describer = describerFactory.create(maze);
-            PlayerSession playerSession = new PlayerSession(userId.getValue(), maze, describer, playerState, roleResolver.roleByUserLogin(userId), null);
+            PlayerSession playerSession = new PlayerSession(userId.getValue(), maze, describer, playerState, roleResolver.roleByUserId(userId), null);
             context.createPlayerSession(playerSession);
         } catch (IOException e) {
             throw new RuntimeException("Не удалось загрузить лабиринт '" + mazeName + "' для пользователя " + userId, e);

@@ -191,7 +191,7 @@ class SimpleDIContainerTest {
     }
 
     private static class TestRoleResolver extends RoleResolver {
-        @Override public Role roleByUserLogin(@NotNull UserId login) { return Role.PLAYER; }
+        @Override public Role roleByUserId(@NotNull UserId login) { return Role.PLAYER; }
     }
 }
 

@@ -11,7 +11,7 @@ public class RoleResolver {
             // здесь можно легко добавлять новых пользователей
     );
 
-    public Role roleByUserLogin(@NotNull UserId userId) {
+    public Role roleByUserId(@NotNull UserId userId) {
         return USER_ROLES.getOrDefault(userId.getValue().toLowerCase(), Role.PLAYER);
     }
 }

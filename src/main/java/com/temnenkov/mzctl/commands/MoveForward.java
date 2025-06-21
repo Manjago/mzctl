@@ -22,7 +22,7 @@ public class MoveForward implements Runnable {
 
     @Override
     public void run() {
-        final UserId resolvedUserId = GameContextHelper.getUserId(gameContext, new UserId(userId));
+        final UserId resolvedUserId = GameContextHelper.resolveUserId(gameContext, userId);
         if (resolvedUserId == null) {
             return;
         }

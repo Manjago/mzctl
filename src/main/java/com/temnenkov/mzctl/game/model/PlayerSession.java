@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.temnenkov.mzctl.auth.Role;
 import com.temnenkov.mzctl.model.Maze;
+import com.temnenkov.mzctl.model.UserId;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,9 +57,12 @@ public class PlayerSession {
         return playerStateND;
     }
 
-
     public Role getRole() {
         return role;
+    }
+
+    public UserId getUserId() {
+        return new UserId(login);
     }
 
     @Override

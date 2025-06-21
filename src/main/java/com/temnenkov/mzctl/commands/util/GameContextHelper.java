@@ -13,17 +13,18 @@ public final class GameContextHelper {
     /**
      * Получить идентификатор пользователя с fallback в контекст
      * @param gameContext контекст
-     * @param candidate идентификатор пользователя, может быть null, если так, то лезем в контекст
+     * @param userIdString идентификатор пользователя, может быть null, если так, то лезем в контекст
      * @return идентификатор пользователя - переданный или из контекста
      */
     @Nullable
-    public static UserId getUserId(@NotNull GameContext gameContext, @Nullable UserId candidate) {
-        final UserId resolvedUserId = candidate != null ? candidate : gameContext.getCurrentUserId();
-        if (resolvedUserId == null) {
-            System.out.println("Ошибка: сначала авторизуйтесь через команду login");
-            return null;
+    public static UserId resolveUserId(@NotNull GameContext gameContext, @Nullable String userIdString) {
+        if (userIdString != null) {
+            return new UserId(userIdString);
         }
-        return resolvedUserId;
+        final UserId currentUserId = gameContext.getCurrentUserId();
+        if (currentUserId == null) {
+            System.out.println("Ошибка: сначала авторизуйтесь через команду login");
+        }
+        return currentUserId;
     }
-
 }
