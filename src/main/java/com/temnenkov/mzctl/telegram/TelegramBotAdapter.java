@@ -7,6 +7,7 @@ import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.game.model.PlayerSession;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
+import com.temnenkov.mzctl.model.UserId;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,7 @@ public class TelegramBotAdapter {
         if (message != null && message.has("text")) {
             final long chatId = message.get("chat").get("id").asLong();
             final String text = message.get("text").asText();
-            final String userId = String.valueOf(chatId);
+            final UserId userId = new UserId(String.valueOf(chatId));
 
             ensureSessionExists(userId);
 
@@ -77,7 +78,7 @@ public class TelegramBotAdapter {
         }
     }
 
-    private String handleCommand(@NotNull String userId, @NotNull String command) {
+    private String handleCommand(@NotNull UserId userId, @NotNull String command) {
         final String[] args = command.split("\\s+");
         logger.debug("handleCommand command = '{}'", args[0]);
         return switch (args[0]) {
@@ -127,20 +128,20 @@ public class TelegramBotAdapter {
             @JsonProperty("text") String text
     ) {}
 
-    private void ensureSessionExists(String userId) {
+    private void ensureSessionExists(@NotNull UserId userId) {
         final PlayerSession session = gameContext.getPlayerSession(userId);
         if (session == null) {
             final String defaultMazeName = "default";
             try {
                 // Проверяем, есть ли лабиринт default у пользователя
                 gameContext.getMazeManager().loadUserMaze(userId, defaultMazeName);
-                gameEngine.loadMaze(defaultMazeName, userId);
+                gameEngine.loadMaze(userId, defaultMazeName);
             } catch (Exception e) {
                 logger.warn("Лабиринт '{}' не найден для пользователя {}. Генерируем новый лабиринт автоматически.", defaultMazeName, userId);
                 // Если нет, генерируем и сохраняем лабиринт персонально для пользователя
                 gameEngine.generateMaze(userId, defaultMazeName, 3, 3, MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
                 // Теперь загружаем его для пользователя
-                gameEngine.loadMaze(defaultMazeName, userId);
+                gameEngine.loadMaze(userId, defaultMazeName); // здесь тоже правильно
             }
         }
     }

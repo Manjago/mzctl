@@ -12,6 +12,8 @@ import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.gameengine.GameEngineImpl;
 import com.temnenkov.mzctl.gameengine.PlayerPositionProvider;
 import com.temnenkov.mzctl.model.Maze;
+import com.temnenkov.mzctl.model.UserId;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -166,17 +168,17 @@ class SimpleDIContainerTest {
     private static class TestGameContext implements GameContext {
         @Override public MazeManager getMazeManager() { return null; }
         @Override public void createPlayerSession(PlayerSession playerSession) {}
-        @Override public PlayerSession getPlayerSession(String userLogin) { return null; }
+        @Override public PlayerSession getPlayerSession(UserId userId) { return null; }
         @Override public void updatePlayerSession(PlayerSession session) {}
 
         @Override
-        public void setCurrentUserId(String userId) {
+        public void setCurrentUserId(UserId userId) {
 
         }
 
         @Override
-        public String getCurrentUserId() {
-            return "";
+        public UserId getCurrentUserId() {
+            return new UserId("");
         }
     }
 
@@ -189,7 +191,7 @@ class SimpleDIContainerTest {
     }
 
     private static class TestRoleResolver extends RoleResolver {
-        @Override public Role roleByUserLogin(String login) { return Role.PLAYER; }
+        @Override public Role roleByUserLogin(@NotNull UserId login) { return Role.PLAYER; }
     }
 }
 

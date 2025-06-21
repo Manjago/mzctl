@@ -3,6 +3,7 @@ package com.temnenkov.mzctl.game;
 import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeDim;
+import com.temnenkov.mzctl.model.UserId;
 import com.temnenkov.mzctl.model.serialize.SerializationHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,13 +71,13 @@ public class MazeManager {
         return loadMaze(name, mazeDirectory);
     }
 
-    public void saveUserMaze(String userId, String mazeName, Maze maze) throws IOException {
+    public void saveUserMaze(@NotNull UserId userId, String mazeName, Maze maze) throws IOException {
         final Path userMazeDir = getUserMazeDir(userId);
         saveMaze(mazeName, maze, userMazeDir);
     }
 
-    private @NotNull Path getUserMazeDir(String userId) throws IOException {
-        final Path userMazeDir = mazeDirectory.resolve("users").resolve(userId).resolve("mazes");
+    private @NotNull Path getUserMazeDir(@NotNull UserId userId) throws IOException {
+        final Path userMazeDir = mazeDirectory.resolve("users").resolve(userId.getValue()).resolve("mazes");
         Files.createDirectories(userMazeDir);
         return userMazeDir;
     }
@@ -86,7 +87,7 @@ public class MazeManager {
         SerializationHelper.saveMazeToFile(maze, filename);
     }
 
-    public Maze loadUserMaze(String userId, String mazeName) throws IOException {
+    public Maze loadUserMaze(@NotNull UserId userId, String mazeName) throws IOException {
         final Path userMazeDir = getUserMazeDir(userId);
         return loadMaze(mazeName, userMazeDir);
     }

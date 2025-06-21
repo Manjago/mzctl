@@ -10,6 +10,7 @@ import com.temnenkov.mzctl.game.model.PlayerStateND;
 import com.temnenkov.mzctl.game.model.RussianDescriberFactory;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
+import com.temnenkov.mzctl.model.UserId;
 import com.temnenkov.mzctl.visualization.MazeAsciiVisualizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GameEngineTest {
-    private static final String LOGIN = "tester";
+    private static final UserId LOGIN = new UserId("tester");
     private GameEngine gameEngine;
     private GameContext context;
 

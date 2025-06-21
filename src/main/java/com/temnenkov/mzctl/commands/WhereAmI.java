@@ -3,6 +3,7 @@ package com.temnenkov.mzctl.commands;
 import com.temnenkov.mzctl.commands.util.GameContextHelper;
 import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.gameengine.GameEngine;
+import com.temnenkov.mzctl.model.UserId;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "v", description = "Повторить описание окружения")
@@ -21,7 +22,7 @@ public class WhereAmI implements Runnable {
 
     @Override
     public void run() {
-        final String resolvedUserId = GameContextHelper.getUserId(gameContext, userId);
+        final UserId resolvedUserId = GameContextHelper.getUserId(gameContext, new UserId(userId));
         if (resolvedUserId == null) {
             return;
         }

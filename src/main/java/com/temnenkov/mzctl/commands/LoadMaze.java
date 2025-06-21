@@ -3,6 +3,7 @@ package com.temnenkov.mzctl.commands;
 import com.temnenkov.mzctl.commands.util.GameContextHelper;
 import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.gameengine.GameEngine;
+import com.temnenkov.mzctl.model.UserId;
 import com.temnenkov.mzctl.model.serialize.MazeSerializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class LoadMaze implements Runnable {
     @Override
     public void run() {
         try {
-            final String resolvedUserId = GameContextHelper.getUserId(gameContext, userId);
+            final UserId resolvedUserId = GameContextHelper.getUserId(gameContext, new UserId(userId));
             if (resolvedUserId == null) {
                 return;
             }

@@ -12,6 +12,7 @@ import com.temnenkov.mzctl.gameengine.FixedPlayerPositionProvider;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.gameengine.GameEngineImpl;
 import com.temnenkov.mzctl.gameengine.PlayerPositionProvider;
+import com.temnenkov.mzctl.model.UserId;
 import com.temnenkov.mzctl.model.serialize.MazeSerializationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +34,7 @@ class GameEngineIntegrationTest {
     private static final Facing START_FACING = Facing.NORTH;
 
     private GameEngine gameEngine;
-    private String userLogin;
+    private UserId userLogin;
 
     private SimpleDIContainer container;
 
@@ -62,7 +63,7 @@ class GameEngineIntegrationTest {
         // Создаем GameEngine через контейнер
         gameEngine = container.createBean(GameEngineImpl.class);
 
-        userLogin = "tester";
+        userLogin = new UserId("tester");
     }
 
     @Test

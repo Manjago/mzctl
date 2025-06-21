@@ -2,6 +2,7 @@ package com.temnenkov.mzctl.context;
 
 import com.temnenkov.mzctl.game.MazeManager;
 import com.temnenkov.mzctl.game.model.PlayerSession;
+import com.temnenkov.mzctl.model.UserId;
 import com.temnenkov.mzctl.model.serialize.SerializationHelper;
 import com.temnenkov.mzctl.util.SimplePreconditions;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SimpleGameContext implements GameContext {
     private static final Logger logger = LoggerFactory.getLogger(SimpleGameContext.class);
     private final MazeManager mazeManager;
-    private final AtomicReference<String> currentUserId = new AtomicReference<>();
+    private final AtomicReference<UserId> currentUserId = new AtomicReference<>();
 
     public SimpleGameContext(MazeManager mazeManager) {
         this.mazeManager = mazeManager;
@@ -34,26 +35,26 @@ public class SimpleGameContext implements GameContext {
     private final ConcurrentMap<String, PlayerSession> playerSessions = new ConcurrentHashMap<>();
 
     @Override
-    public PlayerSession getPlayerSession(String login) {
+    public PlayerSession getPlayerSession(@NotNull UserId userId) {
         // Сначала проверяем в памяти
-        PlayerSession session = playerSessions.get(login);
+        PlayerSession session = playerSessions.get(userId.getValue());
         if (session != null) {
             return session;
         }
 
         // Если нет в памяти, пробуем загрузить из файла
-        session = loadSessionFromFile(login);
+        session = loadSessionFromFile(userId);
         if (session != null) {
-            playerSessions.put(login, session);
+            playerSessions.put(userId.getValue(), session);
         }
 
         return session; // может быть null
     }
 
-    private @Nullable PlayerSession loadSessionFromFile(String userId) {
+    private @Nullable PlayerSession loadSessionFromFile(@NotNull UserId userId) {
         Path sessionFile = mazeManager.getMazeDirectory()
                 .resolve("users")
-                .resolve(userId)
+                .resolve(userId.getValue())
                 .resolve("session.mzpack");
 
         if (Files.exists(sessionFile)) {
@@ -94,12 +95,12 @@ public class SimpleGameContext implements GameContext {
     }
 
     @Override
-    public void setCurrentUserId(String userId) {
+    public void setCurrentUserId(@NotNull UserId userId) {
         currentUserId.set(userId);
     }
 
     @Override
-    public String getCurrentUserId() {
+    public UserId getCurrentUserId() {
         return currentUserId.get();
     }
 

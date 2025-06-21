@@ -1,6 +1,7 @@
 package com.temnenkov.mzctl.commands.util;
 
 import com.temnenkov.mzctl.context.GameContext;
+import com.temnenkov.mzctl.model.UserId;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,8 +17,8 @@ public final class GameContextHelper {
      * @return идентификатор пользователя - переданный или из контекста
      */
     @Nullable
-    public static String getUserId(@NotNull GameContext gameContext, @Nullable String candidate) {
-        final String resolvedUserId = candidate != null ? candidate : gameContext.getCurrentUserId();
+    public static UserId getUserId(@NotNull GameContext gameContext, @Nullable UserId candidate) {
+        final UserId resolvedUserId = candidate != null ? candidate : gameContext.getCurrentUserId();
         if (resolvedUserId == null) {
             System.out.println("Ошибка: сначала авторизуйтесь через команду login");
             return null;
