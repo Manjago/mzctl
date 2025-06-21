@@ -20,6 +20,10 @@ public class MazeManager {
 
     private final Path mazeDirectory;
 
+    public Path getMazeDirectory() {
+        return mazeDirectory;
+    }
+
     /**
      * Создаёт MazeManager, работающий с лабиринтами в заданной директории.
      *
@@ -53,8 +57,7 @@ public class MazeManager {
      * @param maze лабиринт
      */
     public void saveMaze(@NotNull String name, @NotNull Maze maze) {
-        final String filename = mazeDirectory.resolve(name + ".mzpack").toString();
-        SerializationHelper.saveMazeToFile(maze, filename);
+        saveMaze(name, maze, mazeDirectory);
     }
 
     /**
@@ -64,7 +67,32 @@ public class MazeManager {
      * @return загруженный лабиринт
      */
     public Maze loadMaze(@NotNull String name) {
-        final String filename = mazeDirectory.resolve(name + ".mzpack").toString();
+        return loadMaze(name, mazeDirectory);
+    }
+
+    public void saveUserMaze(String userId, String mazeName, Maze maze) throws IOException {
+        final Path userMazeDir = getUserMazeDir(userId);
+        saveMaze(mazeName, maze, userMazeDir);
+    }
+
+    private @NotNull Path getUserMazeDir(String userId) throws IOException {
+        final Path userMazeDir = mazeDirectory.resolve("users").resolve(userId).resolve("mazes");
+        Files.createDirectories(userMazeDir);
+        return userMazeDir;
+    }
+
+    private static void saveMaze(String mazeName, Maze maze, @NotNull Path userMazeDir) {
+        final String filename = userMazeDir.resolve(mazeName + ".mzpack").toString();
+        SerializationHelper.saveMazeToFile(maze, filename);
+    }
+
+    public Maze loadUserMaze(String userId, String mazeName) throws IOException {
+        final Path userMazeDir = getUserMazeDir(userId);
+        return loadMaze(mazeName, userMazeDir);
+    }
+
+    private static @NotNull Maze loadMaze(String mazeName, @NotNull Path userMazeDir) {
+        final String filename = userMazeDir.resolve(mazeName + ".mzpack").toString();
         return SerializationHelper.loadMazeFromFile(filename);
     }
 
