@@ -68,7 +68,7 @@ class GameEngineIntegrationTest {
     @Test
     @DisplayName("Должен успешно загружать лабиринт, если файл существует")
     void shouldLoadMazeSuccessfullyWhenMazeExists() {
-        assertDoesNotThrow(() -> gameEngine.loadMaze("test2", userLogin), "Загрузка существующего лабиринта не должна" +
+        assertDoesNotThrow(() -> gameEngine.loadMaze(userLogin, "test2"), "Загрузка существующего лабиринта не должна" +
                 " бросать исключений");
     }
 
@@ -76,7 +76,7 @@ class GameEngineIntegrationTest {
     @DisplayName("Должен бросать исключение при загрузке несуществующего лабиринта")
     void shouldThrowExceptionWhenMazeNotExists() {
         final MazeSerializationException exception = assertThrows(MazeSerializationException.class,
-                () -> gameEngine.loadMaze("test-not-existed", userLogin));
+                () -> gameEngine.loadMaze(userLogin, "test-not-existed"));
         assertTrue(exception.getMessage().contains("Cannot read maze from file"), "Сообщение исключения должно " +
                 "содержать информацию о невозможности прочитать файл лабиринта");
     }
@@ -85,7 +85,7 @@ class GameEngineIntegrationTest {
     @DisplayName("Игрок должен корректно двигаться вперёд и получать правильное описание окружения")
     void shouldMoveForwardAndDescribeEnvironmentCorrectly() {
         // загружаем лабиринт
-        gameEngine.loadMaze("test2", userLogin);
+        gameEngine.loadMaze(userLogin, "test2");
 
         // для наглядности покажем его
         System.out.println(gameEngine.visualizeMaze(userLogin));
@@ -112,7 +112,7 @@ class GameEngineIntegrationTest {
     @DisplayName("Игрок должен корректно повернуться налево и получать правильное описание окружения")
     void shouldTurnLeftAndDescribeEnvironmentCorrectly() {
         // загружаем лабиринт
-        gameEngine.loadMaze("test2", userLogin);
+        gameEngine.loadMaze(userLogin, "test2");
 
         // для наглядности покажем его
         System.out.println(gameEngine.visualizeMaze(userLogin));
@@ -137,7 +137,7 @@ class GameEngineIntegrationTest {
     @DisplayName("Игрок должен корректно повернуться назад и получать правильное описание окружения")
     void shouldTurnBackAndDescribeEnvironmentCorrectly() {
         // загружаем лабиринт
-        gameEngine.loadMaze("test2", userLogin);
+        gameEngine.loadMaze(userLogin, "test2");
 
         // для наглядности покажем его
         System.out.println(gameEngine.visualizeMaze(userLogin));
@@ -162,7 +162,7 @@ class GameEngineIntegrationTest {
     @DisplayName("Игрок должен попытаться выйти за пределы лабиринта и получать правильное описание окружения")
     void shouldGoAwayAndDescribeEnvironmentCorrectly() {
         // загружаем лабиринт
-        gameEngine.loadMaze("test2", userLogin);
+        gameEngine.loadMaze(userLogin, "test2");
 
         // для наглядности покажем его
         System.out.println(gameEngine.visualizeMaze(userLogin));
@@ -186,7 +186,7 @@ class GameEngineIntegrationTest {
     @DisplayName("Игрок должен попытаться пройти сквозь стену и получать правильное описание окружения")
     void shouldGoThroughWallAndDescribeEnvironmentCorrectly() {
         // загружаем лабиринт
-        gameEngine.loadMaze("test2", userLogin);
+        gameEngine.loadMaze(userLogin, "test2");
 
         // для наглядности покажем его
         System.out.println(gameEngine.visualizeMaze(userLogin));

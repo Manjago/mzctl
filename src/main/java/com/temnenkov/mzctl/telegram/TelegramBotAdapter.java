@@ -107,7 +107,7 @@ public class TelegramBotAdapter {
             }
             case "/load" -> {
                 if (args.length == 2) {
-                    gameEngine.loadMaze(args[1], userId);
+                    gameEngine.loadMaze(userId, args[1]);
                     yield "Лабиринт '" + args[1] + "' загружен.\n" + gameEngine.describeEnvironment(userId);
                 } else {
                     yield "Использование: /load <имя>";
@@ -134,13 +134,13 @@ public class TelegramBotAdapter {
             try {
                 // Проверяем, есть ли лабиринт default у пользователя
                 gameContext.getMazeManager().loadUserMaze(userId, defaultMazeName);
-                gameEngine.loadMaze(userId, defaultMazeName);
+                gameEngine.loadMaze(defaultMazeName, userId);
             } catch (Exception e) {
                 logger.warn("Лабиринт '{}' не найден для пользователя {}. Генерируем новый лабиринт автоматически.", defaultMazeName, userId);
                 // Если нет, генерируем и сохраняем лабиринт персонально для пользователя
                 gameEngine.generateMaze(userId, defaultMazeName, 3, 3, MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
                 // Теперь загружаем его для пользователя
-                gameEngine.loadMaze(userId, defaultMazeName);
+                gameEngine.loadMaze(defaultMazeName, userId);
             }
         }
     }

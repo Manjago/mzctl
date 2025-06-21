@@ -39,7 +39,7 @@ class GameEngineTest {
         context = new SimpleGameContext(mazeManager);
         final FixedPlayerPositionProvider fixedPlayerPositionProvider = new FixedPlayerPositionProvider(0, 0, Facing.NORTH);
         gameEngine = new GameEngineImpl(context, fixedPlayerPositionProvider, new RussianDescriberFactory(), new RoleResolver());
-        gameEngine.loadMaze("test", LOGIN);
+        gameEngine.loadMaze(LOGIN, "test");
 
         final Cell position = context.getPlayerSession(LOGIN).getPlayerStateND().getPosition();
         final Facing facing = context.getPlayerSession(LOGIN).getPlayerStateND().getFacing();

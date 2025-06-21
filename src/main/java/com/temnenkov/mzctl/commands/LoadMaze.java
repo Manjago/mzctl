@@ -32,7 +32,7 @@ public class LoadMaze implements Runnable {
             if (resolvedUserId == null) {
                 return;
             }
-            gameEngine.loadMaze(name, resolvedUserId);
+            gameEngine.loadMaze(resolvedUserId, name);
             System.out.println("Лабиринт '" + name + "' загружен.");
             System.out.println(gameEngine.describeEnvironment(resolvedUserId));
         } catch (MazeSerializationException e) {
