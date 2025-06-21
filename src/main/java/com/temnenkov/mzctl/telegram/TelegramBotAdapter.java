@@ -128,15 +128,19 @@ public class TelegramBotAdapter {
     ) {}
 
     private void ensureSessionExists(String userId) {
-        PlayerSession session = gameContext.getPlayerSession(userId);
+        final PlayerSession session = gameContext.getPlayerSession(userId);
         if (session == null) {
-            String defaultMazeName = "default";
+            final String defaultMazeName = "default";
             try {
-                gameEngine.loadMaze(defaultMazeName, userId);
+                // Проверяем, есть ли лабиринт default у пользователя
+                gameContext.getMazeManager().loadUserMaze(userId, defaultMazeName);
+                gameEngine.loadMaze(userId, defaultMazeName);
             } catch (Exception e) {
-                logger.warn("Лабиринт '{}' не найден. Генерируем новый лабиринт автоматически.", defaultMazeName);
+                logger.warn("Лабиринт '{}' не найден для пользователя {}. Генерируем новый лабиринт автоматически.", defaultMazeName, userId);
+                // Если нет, генерируем и сохраняем лабиринт персонально для пользователя
                 gameEngine.generateMaze(userId, defaultMazeName, 3, 3, MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
-                gameEngine.loadMaze(defaultMazeName, userId);
+                // Теперь загружаем его для пользователя
+                gameEngine.loadMaze(userId, defaultMazeName);
             }
         }
     }
