@@ -1,6 +1,7 @@
 package com.temnenkov.mzctl.game.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.temnenkov.mzctl.auth.Role;
 import com.temnenkov.mzctl.model.Maze;
@@ -61,6 +62,7 @@ public class PlayerSession {
         return role;
     }
 
+    @JsonIgnore
     public UserId getUserId() {
         return new UserId(login);
     }
