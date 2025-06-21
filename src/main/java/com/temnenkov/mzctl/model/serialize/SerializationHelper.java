@@ -28,27 +28,11 @@ public final class SerializationHelper {
         }
     }
 
-    public static byte[] playerStateToMessagePack(@NotNull PlayerStateND playerState) {
-        try {
-            return MESSAGE_PACK_MAPPER.writeValueAsBytes(playerState);
-        } catch (IOException e) {
-            throw new MazeSerializationException("Cannot serialize facing " + playerState, e);
-        }
-    }
-
     public static Maze mazeFromMessagePack(byte[] bytes) {
         try {
             return MESSAGE_PACK_MAPPER.readValue(bytes, Maze.class);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot deserialize maze " + bytesToString(bytes, 20), e);
-        }
-    }
-
-    public static PlayerStateND playerStateFromMessagePack(byte[] bytes) {
-        try {
-            return MESSAGE_PACK_MAPPER.readValue(bytes, PlayerStateND.class);
-        } catch (IOException e) {
-            throw new MazeSerializationException("Cannot deserialize playerState " + bytesToString(bytes, 20), e);
         }
     }
 
@@ -104,22 +88,19 @@ public final class SerializationHelper {
     }
 
     public static void savePlayerStateToFile(@NotNull PlayerStateND playerState, @NotNull String filename) {
-        final byte[] bytes = playerStateToMessagePack(playerState);
         try {
-            Files.write(Path.of(filename), bytes);
+            KryoHelper.saveToFile(playerState, filename);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot save playerState to file " + filename, e);
         }
     }
 
     public static @NotNull PlayerStateND loadPlayerStateFromFile(@NotNull String filename) {
-        final byte[] bytes;
         try {
-            bytes = Files.readAllBytes(Path.of(filename));
+            return KryoHelper.loadFromFile(PlayerStateND.class, filename);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot read playerState from file " + filename, e);
         }
-        return playerStateFromMessagePack(bytes);
     }
 
     private static @NotNull ObjectMapper createMessagePackMapper() {
