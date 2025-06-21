@@ -1,58 +1,32 @@
 package com.temnenkov.mzctl.model.serialize;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.temnenkov.mzctl.game.model.Facing;
 import com.temnenkov.mzctl.game.model.PlayerSession;
 import com.temnenkov.mzctl.game.model.PlayerStateND;
-import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import org.jetbrains.annotations.NotNull;
-import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public final class SerializationHelper {
-    private static final ObjectMapper MESSAGE_PACK_MAPPER = createMessagePackMapper();
 
     private SerializationHelper() {
     }
 
-    public static byte[] mazeToMessagePack(@NotNull Maze maze) {
-        try {
-            return MESSAGE_PACK_MAPPER.writeValueAsBytes(maze);
-        } catch (IOException e) {
-            throw new MazeSerializationException("Cannot serialize maze " + maze, e);
-        }
-    }
-
-    public static Maze mazeFromMessagePack(byte[] bytes) {
-        try {
-            return MESSAGE_PACK_MAPPER.readValue(bytes, Maze.class);
-        } catch (IOException e) {
-            throw new MazeSerializationException("Cannot deserialize maze " + bytesToString(bytes, 20), e);
-        }
-    }
-
     public static void saveMazeToFile(@NotNull Maze maze, @NotNull String filename) {
-        final byte[] bytes = mazeToMessagePack(maze);
         try {
-            Files.write(Path.of(filename), bytes);
+            KryoHelper.saveToFile(maze, filename);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot save maze to file " + filename, e);
         }
     }
 
     public static @NotNull Maze loadMazeFromFile(@NotNull String filename) {
-        final byte[] bytes;
         try {
-            bytes = Files.readAllBytes(Path.of(filename));
+            return KryoHelper.loadFromFile(Maze.class, filename);
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot read maze from file " + filename, e);
         }
-        return mazeFromMessagePack(bytes);
     }
 
     public static void savePlayerSessionToFile(@NotNull PlayerSession playerSession, @NotNull String filename) {
@@ -101,41 +75,6 @@ public final class SerializationHelper {
         } catch (IOException e) {
             throw new MazeSerializationException("Cannot read playerState from file " + filename, e);
         }
-    }
-
-    private static @NotNull ObjectMapper createMessagePackMapper() {
-        final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
-        final SimpleModule module = new SimpleModule();
-
-        // Facing
-        module.addSerializer(Facing.class, new FacingSerializer());
-        module.addDeserializer(Facing.class, new FacingDeserializer());
-
-        // Cell as map key
-        module.addKeySerializer(Cell.class, new CellKeySerializer());
-        module.addKeyDeserializer(Cell.class, new CellKeyDeserializer());
-
-        mapper.registerModule(module);
-        return mapper;
-    }
-
-    private static @NotNull String bytesToString(byte[] bytes, int maxLength) {
-        if (bytes == null) {
-            return "null";
-        }
-        int length = Math.min(bytes.length, maxLength);
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < length; i++) {
-            sb.append(bytes[i]);
-            if (i < length - 1) {
-                sb.append(", ");
-            }
-        }
-        if (bytes.length > maxLength) {
-            sb.append(", …");
-        }
-        sb.append("]");
-        return sb.toString();
     }
 
 }

@@ -32,25 +32,6 @@ class MazeTest {
     }
 
     @Test
-    void testMessagePackSerialization() {
-        Maze maze = new Maze(new MazeDim(List.of(3, 3)));
-        Cell cellA = Cell.of(0, 0);
-        Cell cellB = Cell.of(0, 1);
-        maze.addPass(cellA, Set.of(cellB));
-
-        byte[] bytes = SerializationHelper.mazeToMessagePack(maze);
-        assertNotNull(bytes);
-        assertTrue(bytes.length > 0);
-
-        Maze loadedMaze = SerializationHelper.mazeFromMessagePack(bytes);
-        assertNotNull(loadedMaze);
-        assertTrue(loadedMaze.canPass(cellA, cellB));
-        assertTrue(loadedMaze.canPass(cellB, cellA));
-
-        assertEquals(maze, loadedMaze);
-    }
-
-    @Test
     void testMazeSaveAndLoad(@TempDir Path tempDir) {
         Maze maze = new Maze(new MazeDim(List.of(3, 3)));
         Cell cellA = Cell.of(0, 0);

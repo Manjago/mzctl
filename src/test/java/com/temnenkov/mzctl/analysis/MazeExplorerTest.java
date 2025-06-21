@@ -3,12 +3,11 @@ package com.temnenkov.mzctl.analysis;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.MazeFactory;
-import com.temnenkov.mzctl.model.serialize.SerializationHelper;
+import com.temnenkov.mzctl.model.serialize.KryoHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Random;
 import java.util.Set;
 
@@ -211,24 +210,21 @@ class MazeExplorerTest {
      */
     @Test
     void testMaze5to5() throws IOException {
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("maze-5-5.mzpack")) {
-            assertNotNull(is, "Resource maze-5-5.mzpack not found");
-            final Maze maze = SerializationHelper.mazeFromMessagePack(is.readAllBytes());
-            assertNotNull(maze);
+        final Maze maze = KryoHelper.loadFromResource(Maze.class, "maze-5-5.mzpack");
+        assertNotNull(maze);
 
-            final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
 
-            assertTrue(mazeExplorer.isConnected());
-            assertTrue(mazeExplorer.isAcyclic());
-            assertTrue(mazeExplorer.isPerfect());
-            assertEquals(5L, mazeExplorer.deadEndCount());
-            assertEquals(18, mazeExplorer.diameter());
-            assertEquals(6.8867, mazeExplorer.averagePathLength(), 1e-4);
-            assertEquals(3L, mazeExplorer.intersectionCount());
-            assertEquals(0.32, mazeExplorer.randomnessScore(), 1e-4);
-            assertEquals(0.75, mazeExplorer.balanceScore(), 1e-4);
-            assertEquals(0.4583, mazeExplorer.symmetryScore(), 1e-4);
-        }
+        assertTrue(mazeExplorer.isConnected());
+        assertTrue(mazeExplorer.isAcyclic());
+        assertTrue(mazeExplorer.isPerfect());
+        assertEquals(5L, mazeExplorer.deadEndCount());
+        assertEquals(18, mazeExplorer.diameter());
+        assertEquals(6.8867, mazeExplorer.averagePathLength(), 1e-4);
+        assertEquals(3L, mazeExplorer.intersectionCount());
+        assertEquals(0.32, mazeExplorer.randomnessScore(), 1e-4);
+        assertEquals(0.75, mazeExplorer.balanceScore(), 1e-4);
+        assertEquals(0.4583, mazeExplorer.symmetryScore(), 1e-4);
     }
 
     /*
@@ -256,24 +252,21 @@ class MazeExplorerTest {
      */
     @Test
     void testMaze10to10() throws IOException {
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("maze-10-10.mzpack")) {
-            assertNotNull(is, "Resource maze-10-10.mzpack not found");
-            final Maze maze = SerializationHelper.mazeFromMessagePack(is.readAllBytes());
-            assertNotNull(maze);
+        final Maze maze = KryoHelper.loadFromResource(Maze.class, "maze-10-10.mzpack");
+        assertNotNull(maze);
 
-            final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
+        final MazeExplorer mazeExplorer = new MazeExplorer(maze, testRandom);
 
-            assertTrue(mazeExplorer.isConnected());
-            assertTrue(mazeExplorer.isAcyclic());
-            assertTrue(mazeExplorer.isPerfect());
-            assertEquals(11L, mazeExplorer.deadEndCount());
-            assertEquals(70, mazeExplorer.diameter());
-            assertEquals(25.2804, mazeExplorer.averagePathLength(), 1e-4);
-            assertEquals(9L, mazeExplorer.intersectionCount());
-            assertEquals(0.2, mazeExplorer.randomnessScore(), 1e-4);
-            assertEquals(0.9, mazeExplorer.balanceScore(), 1e-4);
-            assertEquals(0.6162, mazeExplorer.symmetryScore(), 1e-4);
-        }
+        assertTrue(mazeExplorer.isConnected());
+        assertTrue(mazeExplorer.isAcyclic());
+        assertTrue(mazeExplorer.isPerfect());
+        assertEquals(11L, mazeExplorer.deadEndCount());
+        assertEquals(70, mazeExplorer.diameter());
+        assertEquals(25.2804, mazeExplorer.averagePathLength(), 1e-4);
+        assertEquals(9L, mazeExplorer.intersectionCount());
+        assertEquals(0.2, mazeExplorer.randomnessScore(), 1e-4);
+        assertEquals(0.9, mazeExplorer.balanceScore(), 1e-4);
+        assertEquals(0.6162, mazeExplorer.symmetryScore(), 1e-4);
     }
 
     @Test
