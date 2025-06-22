@@ -37,7 +37,7 @@ public class TelegramHttpClient {
         this.httpClient = builder.build();
     }
 
-    public String sendRequest(String method, String jsonBody) throws IOException, InterruptedException {
+    public String sendRequest(String method, String jsonBody) throws IOException {
         final String url = "https://api.telegram.org/bot" + token + "/" + method;
         final String maskedUrl = maskToken(url);
         final String requestId = NanoIdUtils.randomNanoId();
@@ -54,14 +54,20 @@ public class TelegramHttpClient {
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
 
-        final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        final HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException(String.format("Telegram API request '%s' to '%s' was interrupted", method, maskedUrl), e);
+        }
 
         logResponse(requestId, response);
 
         return response.body();
     }
 
-    public String getUpdates(long offset, int longPollingTimeout) throws IOException, InterruptedException {
+    public String getUpdates(long offset, int longPollingTimeout) throws IOException {
         final String url = String.format("https://api.telegram.org/bot%s/getUpdates?timeout=%d&offset=%d",
                 token, longPollingTimeout, offset);
         final String maskedUrl = maskToken(url);
@@ -77,7 +83,13 @@ public class TelegramHttpClient {
                 .GET()
                 .build();
 
-        final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        final HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException(String.format("Telegram API request 'getUpdates' to '%s' was interrupted", maskedUrl), e);
+        }
 
         logResponse(requestId, response);
 

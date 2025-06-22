@@ -22,11 +22,11 @@ public class TelegramBotAdapter {
     private static final String WHERE_AM_I_CMD = "❓";
     private static final String RIGHT_CMD = "➡️";
     private static final String BACK_CMD = "🔄";
-    private static final String GO_AHEAD = "⬆️ Вперёд";
-    private static final String LEFT = "⬅️ Влево";
+    private static final String GO_AHEAD = "⬆️ Иди вперёд";
+    private static final String LEFT = "⬅️ Поворот влево";
     private static final String WHERE_AM_I = "❓ Где я?";
-    private static final String RIGHT = "➡️ Вправо";
-    private static final String BACK = "🔄 Назад";
+    private static final String RIGHT = "➡️ Поворот вправо";
+    private static final String BACK = "🔄 Разворот назад";
 
     private final TelegramHttpClient client;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -44,7 +44,7 @@ public class TelegramBotAdapter {
         this.gameContext = gameContext;
     }
 
-    public void run() throws Exception {
+    public void run() {
         long offset = 0;
         final int longPollingTimeout = config.getLongPollingTimeout();
 
@@ -68,7 +68,7 @@ public class TelegramBotAdapter {
         }
     }
 
-    private void processUpdate(@NotNull JsonNode update) throws Exception {
+    private void processUpdate(@NotNull JsonNode update) throws IOException {
         final JsonNode message = update.get("message");
         if (message != null && message.has("text")) {
             final long chatId = message.get("chat").get("id").asLong();
@@ -122,7 +122,7 @@ public class TelegramBotAdapter {
         };
     }
 
-    private void sendMessage(long chatId, String text) throws IOException, InterruptedException {
+    private void sendMessage(long chatId, String text) throws IOException {
         final String json = mapper.writeValueAsString(new Message(chatId, text));
         client.sendRequest("sendMessage", json);
     }
@@ -150,7 +150,7 @@ public class TelegramBotAdapter {
         }
     }
 
-    private void sendMessageWithKeyboard(long chatId, String text) throws IOException, InterruptedException {
+    private void sendMessageWithKeyboard(long chatId, String text) throws IOException {
         final String json = mapper.writeValueAsString(new MessageWithKeyboard(chatId, text, new ReplyKeyboardMarkup()));
         client.sendRequest("sendMessage", json);
     }
@@ -165,8 +165,9 @@ public class TelegramBotAdapter {
         @JsonProperty("keyboard")
         private final String[][] keyboard = {
                 {GO_AHEAD},
-                {LEFT, WHERE_AM_I, RIGHT},
-                {BACK}
+                {LEFT, RIGHT},
+                {BACK},
+                {WHERE_AM_I}
         };
 
         @JsonProperty("resize_keyboard")
