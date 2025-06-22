@@ -89,6 +89,7 @@ public class SimpleGameContext implements GameContext {
             Files.createDirectories(sessionDir);
             Path sessionFile = sessionDir.resolve("session.mzpack");
             SerializationHelper.savePlayerSessionToFile(session, sessionFile.toString());
+            logger.debug("Save session {} to {}", session, sessionFile);
         } catch (IOException e) {
             logger.error("Не удалось сохранить сессию пользователя {}", userId, e);
         }

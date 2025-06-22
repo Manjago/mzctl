@@ -1,6 +1,7 @@
 package com.temnenkov.mzctl.telegram;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import com.temnenkov.mzctl.util.UnicodeUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -88,7 +89,7 @@ public class TelegramHttpClient {
             logger.debug("[{}] Telegram API Response: Status {}\nHeaders: {}\nBody: {}", requestId,
                     response.statusCode(),
                     response.headers().map(),
-                    response.body());
+                    UnicodeUtils.unescapeUnicode(response.body()));
         }
     }
 

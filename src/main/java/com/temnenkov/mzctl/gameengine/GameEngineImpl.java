@@ -3,6 +3,7 @@ package com.temnenkov.mzctl.gameengine;
 import com.temnenkov.mzctl.auth.Role;
 import com.temnenkov.mzctl.auth.RoleResolver;
 import com.temnenkov.mzctl.context.GameContext;
+import com.temnenkov.mzctl.exception.MzCtlRecoverableException;
 import com.temnenkov.mzctl.game.model.EnvironmentDescriber;
 import com.temnenkov.mzctl.game.model.Facing;
 import com.temnenkov.mzctl.game.model.PlayerSession;
@@ -37,7 +38,7 @@ public class GameEngineImpl implements GameEngine {
         try {
             context.getMazeManager().saveUserMaze(userId, mazeName, maze);
         } catch (IOException e) {
-            throw new RuntimeException("Не удалось сохранить лабиринт для пользователя " + userId, e);
+            throw new MzCtlRecoverableException("Не удалось сохранить лабиринт для пользователя " + userId, e);
         }
     }
 
@@ -51,7 +52,7 @@ public class GameEngineImpl implements GameEngine {
             PlayerSession playerSession = new PlayerSession(userId.getValue(), maze, describer, playerState, role, null);
             context.createPlayerSession(playerSession);
         } catch (IOException e) {
-            throw new RuntimeException("Не удалось загрузить лабиринт '" + mazeName + "' для пользователя " + userId, e);
+            throw new MzCtlRecoverableException("Не удалось загрузить лабиринт '" + mazeName + "' для пользователя " + userId, e);
         }
     }
 

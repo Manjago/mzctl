@@ -93,6 +93,6 @@ public class MazeEnvironmentDescriber implements EnvironmentDescriber {
 
     @Override
     public String toString() {
-        return "MazeEnvironmentDescriber{maze=" + maze + '}';
+        return "MazeEnvironmentDescriber{maze=" + maze.toShortString() + '}';
     }
 }

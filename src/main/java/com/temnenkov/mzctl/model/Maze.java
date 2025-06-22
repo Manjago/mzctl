@@ -287,4 +287,8 @@ public class Maze implements Iterable<Cell> {
     public String toString() {
         return "Maze{" + "mazeDimension=" + mazeDimension + ", passes=" + passes + '}';
     }
+
+    public String toShortString() {
+        return "Maze{" + mazeDimension + "}";
+    }
 }

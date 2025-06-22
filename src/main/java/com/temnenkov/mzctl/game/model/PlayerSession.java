@@ -89,6 +89,6 @@ public class PlayerSession {
 
     @Override
     public String toString() {
-        return "PlayerSession{" + "login='" + login + '\'' + ", maze=" + maze + ", mazeEnvironmentDescriber=" + mazeEnvironmentDescriber + ", playerStateND=" + playerStateND + ", role=" + role + ", version=" + version + '}';
+        return "PlayerSession{" + "login='" + login + '\'' + ", maze=" + maze.toShortString() + ", mazeEnvironmentDescriber=" + mazeEnvironmentDescriber + ", playerStateND=" + playerStateND + ", role=" + role + ", version=" + version + '}';
     }
 }

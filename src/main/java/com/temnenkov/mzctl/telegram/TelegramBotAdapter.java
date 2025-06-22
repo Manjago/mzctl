@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.temnenkov.mzctl.context.GameContext;
+import com.temnenkov.mzctl.exception.MzCtlRecoverableException;
 import com.temnenkov.mzctl.game.model.PlayerSession;
 import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
@@ -58,7 +59,10 @@ public class TelegramBotAdapter {
                         processUpdate(update);
                     }
                 }
-            } catch (IOException e) {
+            } catch (MzCtlRecoverableException e) {
+                logger.error("Ошибка при работе Telegram-бота: {}, продолжаем работу", e.getMessage(), e);
+            }
+            catch (IOException e) {
                 logger.warn("Telegram bot request failed", e);
             }
         }
@@ -103,7 +107,7 @@ public class TelegramBotAdapter {
                     gameEngine.generateMaze(userId, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), MazeGeneratorFactory.Algo.RANDOMIZED_PRIM);
                     yield "Лабиринт '" + args[1] + "' сгенерирован";
                 } else {
-                    yield "Использование: /generate <имя> <ширина> <высота>";
+                    yield "Использование: /generate <имя> <ширина> <длина>";
                 }
             }
             case "/load" -> {
