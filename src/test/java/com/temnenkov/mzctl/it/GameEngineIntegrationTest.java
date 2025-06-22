@@ -4,6 +4,7 @@ import com.temnenkov.mzctl.auth.RoleResolver;
 import com.temnenkov.mzctl.context.GameContext;
 import com.temnenkov.mzctl.context.SimpleGameContext;
 import com.temnenkov.mzctl.di.SimpleDIContainer;
+import com.temnenkov.mzctl.exception.MzCtlRecoverableException;
 import com.temnenkov.mzctl.game.MazeManager;
 import com.temnenkov.mzctl.game.model.Facing;
 import com.temnenkov.mzctl.game.model.ShortDescriberFactory;
@@ -13,7 +14,6 @@ import com.temnenkov.mzctl.gameengine.GameEngine;
 import com.temnenkov.mzctl.gameengine.GameEngineImpl;
 import com.temnenkov.mzctl.gameengine.PlayerPositionProvider;
 import com.temnenkov.mzctl.model.UserId;
-import com.temnenkov.mzctl.model.serialize.MazeSerializationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -76,9 +76,9 @@ class GameEngineIntegrationTest {
     @Test
     @DisplayName("Должен бросать исключение при загрузке несуществующего лабиринта")
     void shouldThrowExceptionWhenMazeNotExists() {
-        final MazeSerializationException exception = assertThrows(MazeSerializationException.class,
+        final MzCtlRecoverableException exception = assertThrows(MzCtlRecoverableException.class,
                 () -> gameEngine.loadMaze(userLogin, "test-not-existed"));
-        assertTrue(exception.getMessage().contains("Cannot read maze from file"), "Сообщение исключения должно " +
+        assertTrue(exception.getMessage().contains("Не удалось загрузить лабиринт"), "Сообщение исключения должно " +
                 "содержать информацию о невозможности прочитать файл лабиринта");
     }
 

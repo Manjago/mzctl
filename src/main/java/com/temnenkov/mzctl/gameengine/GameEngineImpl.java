@@ -12,6 +12,7 @@ import com.temnenkov.mzctl.generation.MazeGeneratorFactory;
 import com.temnenkov.mzctl.model.Cell;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.UserId;
+import com.temnenkov.mzctl.model.serialize.MazeSerializationException;
 import com.temnenkov.mzctl.visualization.MazeAsciiVisualizer;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +38,7 @@ public class GameEngineImpl implements GameEngine {
         Maze maze = context.getMazeManager().generateMaze2D(width, height, algo);
         try {
             context.getMazeManager().saveUserMaze(userId, mazeName, maze);
-        } catch (IOException e) {
+        } catch (IOException | MazeSerializationException e) {
             throw new MzCtlRecoverableException("Не удалось сохранить лабиринт для пользователя " + userId, e);
         }
     }
@@ -51,7 +52,7 @@ public class GameEngineImpl implements GameEngine {
             final Role role = roleResolver.roleByUserId(userId);
             PlayerSession playerSession = new PlayerSession(userId.getValue(), maze, describer, playerState, role, null);
             context.createPlayerSession(playerSession);
-        } catch (IOException e) {
+        } catch (IOException | MazeSerializationException e) {
             throw new MzCtlRecoverableException("Не удалось загрузить лабиринт '" + mazeName + "' для пользователя " + userId, e);
         }
     }
