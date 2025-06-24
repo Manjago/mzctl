@@ -77,6 +77,11 @@ public class PlayerSession {
         return currentQuest;
     }
 
+    public <T extends QuestState> void setQuest(GameQuest<T> quest, T state) {
+        this.currentQuest = quest;
+        this.currentQuestState = state;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass())
