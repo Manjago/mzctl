@@ -1,9 +1,9 @@
 package com.temnenkov.mzctl.game.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.temnenkov.mzctl.auth.Role;
+import com.temnenkov.mzctl.game.quest.GameQuest;
+import com.temnenkov.mzctl.game.quest.QuestState;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.UserId;
 import org.jetbrains.annotations.NotNull;
@@ -18,14 +18,16 @@ public class PlayerSession {
     private final PlayerStateND playerStateND;
     private final Role role;
     private Long version;
+    private GameQuest<?> currentQuest;
+    private QuestState currentQuestState;
 
     @JsonCreator
-    public PlayerSession(@JsonProperty("login") @NotNull String login,
-            @JsonProperty("maze") @NotNull Maze maze,
-            @JsonProperty("mazeEnvironmentDescriber") @NotNull EnvironmentDescriber environmentDescriber,
-            @JsonProperty("playerStateND") @NotNull PlayerStateND playerStateND,
-            @JsonProperty("role") @NotNull Role role,
-            @JsonProperty("version") @Nullable Long version) {
+    public PlayerSession(@NotNull String login,
+            @NotNull Maze maze,
+            @NotNull EnvironmentDescriber environmentDescriber,
+            @NotNull PlayerStateND playerStateND,
+            @NotNull Role role,
+            @Nullable Long version) {
         this.login = login;
         this.maze = maze;
         this.mazeEnvironmentDescriber = environmentDescriber;
@@ -62,9 +64,17 @@ public class PlayerSession {
         return role;
     }
 
-    @JsonIgnore
     public UserId getUserId() {
         return new UserId(login);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends QuestState> T getQuestState() {
+        return (T) currentQuestState;
+    }
+
+    public GameQuest<?> getCurrentQuest() {
+        return currentQuest;
     }
 
     @Override

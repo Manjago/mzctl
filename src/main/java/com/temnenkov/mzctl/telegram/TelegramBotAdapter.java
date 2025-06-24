@@ -15,6 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static com.temnenkov.mzctl.game.model.Actions.BACK;
+import static com.temnenkov.mzctl.game.model.Actions.GO_AHEAD;
+import static com.temnenkov.mzctl.game.model.Actions.LEFT;
+import static com.temnenkov.mzctl.game.model.Actions.RIGHT;
+import static com.temnenkov.mzctl.game.model.Actions.WHERE_AM_I;
+
 public class TelegramBotAdapter {
     private static final Logger logger = LoggerFactory.getLogger(TelegramBotAdapter.class);
     private static final String GO_AHEAD_CMD = "⬆️";
@@ -22,11 +28,6 @@ public class TelegramBotAdapter {
     private static final String WHERE_AM_I_CMD = "❓";
     private static final String RIGHT_CMD = "➡️";
     private static final String BACK_CMD = "🔄";
-    private static final String GO_AHEAD = "⬆️ Иди вперёд";
-    private static final String LEFT = "⬅️ Поворот влево";
-    private static final String WHERE_AM_I = "❓ Где я?";
-    private static final String RIGHT = "➡️ Поворот вправо";
-    private static final String BACK = "🔄 Разворот назад";
 
     private final TelegramHttpClient client;
     private final ObjectMapper mapper = new ObjectMapper();
