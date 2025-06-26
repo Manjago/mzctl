@@ -101,4 +101,34 @@ class ExploreAllRoomsQuestTest {
         assertFalse(result.success());
         assertEquals("Неизвестная команда: неизвестная команда", result.message());
     }
+
+    @Test
+    void testTurnLeft() {
+        Facing initialFacing = session.getPlayerStateND().getFacing();
+        QuestActionResult result = quest.handleCommand(Actions.LEFT, state, session);
+
+        assertTrue(result.success());
+        assertEquals("Вы повернули налево.", result.message());
+        assertEquals(initialFacing.rotateCounterClockwise2D(), session.getPlayerStateND().getFacing());
+    }
+
+    @Test
+    void testTurnRight() {
+        Facing initialFacing = session.getPlayerStateND().getFacing();
+        QuestActionResult result = quest.handleCommand(Actions.RIGHT, state, session);
+
+        assertTrue(result.success());
+        assertEquals("Вы повернули направо.", result.message());
+        assertEquals(initialFacing.rotateClockwise2D(), session.getPlayerStateND().getFacing());
+    }
+
+    @Test
+    void testTurnBack() {
+        Facing initialFacing = session.getPlayerStateND().getFacing();
+        QuestActionResult result = quest.handleCommand(Actions.BACK, state, session);
+
+        assertTrue(result.success());
+        assertEquals("Вы развернулись назад.", result.message());
+        assertEquals(initialFacing.opposite(), session.getPlayerStateND().getFacing());
+    }
 }
