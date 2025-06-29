@@ -3,13 +3,18 @@ package com.temnenkov.mzctl.game.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.temnenkov.mzctl.auth.Role;
 import com.temnenkov.mzctl.game.quest.GameQuest;
+import com.temnenkov.mzctl.game.quest.QuestActionResult;
 import com.temnenkov.mzctl.game.quest.QuestState;
+import com.temnenkov.mzctl.gameengine.PlayerPositionProvider;
+import com.temnenkov.mzctl.gameengine.RandomPlayerPositionProvider;
 import com.temnenkov.mzctl.model.Maze;
 import com.temnenkov.mzctl.model.UserId;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class PlayerSession {
     private final String login;
@@ -21,6 +26,7 @@ public class PlayerSession {
     private GameQuest<?> currentQuest;
     private QuestState currentQuestState;
 
+    //todo убрать эту аннотацию, мы же перешли на kryo с messagePack
     @JsonCreator
     public PlayerSession(@NotNull String login,
             @NotNull Maze maze,
@@ -34,6 +40,17 @@ public class PlayerSession {
         this.playerStateND = playerStateND;
         this.role = role;
         this.version = version;
+    }
+
+    // Добавляем этот новый конструктор
+    public PlayerSession(@NotNull String login, @NotNull Maze maze, @NotNull Role role) {
+        this.login = login;
+        this.maze = maze;
+        this.role = role;
+        this.mazeEnvironmentDescriber = new MazeEnvironmentDescriber(maze);
+        final PlayerPositionProvider positionProvider = new RandomPlayerPositionProvider(ThreadLocalRandom::current);
+        this.playerStateND = positionProvider.createPlayerPosition(maze);
+        this.version = 0L;
     }
 
     public Long getVersion() {
@@ -80,6 +97,50 @@ public class PlayerSession {
     public <T extends QuestState> void setQuest(GameQuest<T> quest, T state) {
         this.currentQuest = quest;
         this.currentQuestState = state;
+    }
+
+    public boolean hasActiveQuest() {
+        return currentQuest != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public QuestActionResult handleQuestCommand(String command) {
+        if (!hasActiveQuest()) {
+            return new QuestActionResult(false, "Нет активного квеста.");
+        }
+        final GameQuest<QuestState> quest = (GameQuest<QuestState>) this.currentQuest;
+        final QuestState state = this.getQuestState();
+        return quest.handleCommand(command, state, this);
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean isCurrentQuestCompleted() {
+        if (!hasActiveQuest()) {
+            return false;
+        }
+        final GameQuest<QuestState> quest = (GameQuest<QuestState>) this.currentQuest;
+        final QuestState state = this.getQuestState();
+        return quest.isCompleted(state, this);
+    }
+
+    @SuppressWarnings("unchecked")
+    public String describeCurrentQuestSituation() {
+        if (!hasActiveQuest()) {
+            return "Нет активного квеста.";
+        }
+        final GameQuest<QuestState> quest = (GameQuest<QuestState>) this.currentQuest;
+        final QuestState state = this.getQuestState();
+        return quest.describeCurrentSituation(state, this);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getAvailableQuestCommands() {
+        if (!hasActiveQuest()) {
+            return List.of();
+        }
+        final GameQuest<QuestState> quest = (GameQuest<QuestState>) this.currentQuest;
+        final QuestState state = this.getQuestState();
+        return quest.availableCommands(state, this);
     }
 
     @Override
